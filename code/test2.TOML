@@ -1,0 +1,15 @@
+# data_path = "//Users/yunzheli/Class/ocean/"
+data_path = "../data/"
+datafile = "test.jld2"
+# save_pat = "//Users/yunzheli/Class/ocean/fit_test.jld2"
+save_path = "../output/fit_test-short.jld2"
+nsam = 100
+[hyper]
+a1 = 0.1
+b1 = 0.1 
+a2 = 0.1
+b2 = 0.1 
+al = 10
+bl = 0.1
+ae = 10
+be = 0.1
