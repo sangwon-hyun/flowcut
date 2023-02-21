@@ -3,7 +3,6 @@ function update_mu2(cur, dat)
     T = dat["T"]
     Z = cur["Z"]
     sigma2 = cur["sigma2"]
-    # mu2 = cur["mu2"]
     _y = cur["_y"]
 
     N = zeros(T)
@@ -18,10 +17,12 @@ function update_mu2(cur, dat)
         end
     end 
     SigmaBar2_inv = (1 / sigma2) .* Matrix(Diagonal(N))
+    Sigma2 = get_dist_matrix(1:T, 1:T, cur["l1"], cur["e1"])
+    Sigma2_inv = svd2inv(Sigma2)
 
-    Sigma2 = get_dist_matrix(1:T, cur["l1"], cur["e1"])
-
-    SigmaNew = svd2inv(svd2inv(Sigma2) + SigmaBar2_inv)
+    SigmaNew = svd2inv(Sigma2_inv + SigmaBar2_inv)
+    SigmaNew = (SigmaNew + SigmaNew') / 2
+    SigmaNew = stablizeMatrix(SigmaNew)
     muNew = SigmaNew * SigmaBar2_inv * ybar2
 
     mu2_new = rand(MvNormal(muNew, SigmaNew), 1)

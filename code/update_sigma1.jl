@@ -1,5 +1,9 @@
 function update_sigma1(cur, hyper, dat)
+    """
+    Update σ₁² 
+    """
     T = dat["T"]
+    nt = dat["nt"]
     Z = cur["Z"]
     _y = cur["_y"]
     
@@ -8,27 +12,18 @@ function update_sigma1(cur, hyper, dat)
     mu1 = cur["mu1"]
 
     N = zeros(T)
-    ybar1 = zeros(T) 
+    y_mu = 0 
     for t in 1:T
-        index1 = findall(Z[t] .== 1)
-        N[t] = length(index1)
-        if N[t] == 0
-            ybar1[t] = 0
-        else
-            ybar1[t] = mean(_y[t][index1])
-        end 
+        for i in 1:nt[t]
+            if Z[t][i] == 1
+                N[t] += 1
+                y_mu += (_y[t][i] - mu1[t])^2
+            end
+        end
     end 
 
-    SigmaTilde1 = Matrix(Diagonal(1 ./ N))
-
-    a1new = a1 + T/2 
-    tmp = (mu1 - ybar1)' * SigmaTilde1 * (mu1 - ybar1)
-    b1new = 1 / (1/b1 + tmp[1])
-
-    if isnan(b1new)
-        print("mu1: ", mu1, "\n")
-        print("ybar1: ", ybar1, "\n")
-    end
+    a1new = a1+sum(N)/2 
+    b1new = b1+y_mu/2
 
     sigma1new = rand(InverseGamma(a1new, b1new), 1)[1]
     return sigma1new 

@@ -1,5 +1,9 @@
 function update_sigma2(cur, hyper, dat)
+    """
+    Update σ₂² 
+    """
     T = dat["T"]
+    nt = dat["nt"]
     Z = cur["Z"]
     _y = cur["_y"]
     
@@ -8,23 +12,18 @@ function update_sigma2(cur, hyper, dat)
     mu2 = cur["mu2"]
 
     N = zeros(T)
-    ybar2 = zeros(T) 
+    y_mu = 0
     for t in 1:T
-        index2 = findall(Z[t] .== 2)
-        N[t] = length(index2)
-        if N[t] == 0
-            ybar2[t] = 0
-        else
-            ybar2[t] = mean(_y[t][index2])
-        end
+        for i in 1:nt[t]
+            if Z[t][i] == 2
+                N[t] += 1
+                y_mu += (_y[t][i] - mu2[t])^2
+            end
+        end 
     end 
 
-    SigmaTilde2 = Matrix(Diagonal(1 ./ N))
-
-    a2new = a2 + T/2 
-
-    tmp = (mu2 - ybar2)' * SigmaTilde2 * (mu2 - ybar2)
-    b2new = 1 / (1 / b2 + tmp[1])
+    a2new = a2+sum(N)/2 
+    b2new = b2+y_mu/2
 
     sigma2new = rand(InverseGamma(a2new, b2new), 1)[1]
     return sigma2new 

@@ -1,0 +1,12 @@
+datafile = "../data/test2.jld2"
+save_path = "../output/fit_test2.jld2"
+nsam = 20000
+[hyper]
+a1 = 0.1
+b1 = 0.1 
+a2 = 0.1
+b2 = 0.1 
+al = 10
+bl = 0.1
+ae = 10
+be = 0.1

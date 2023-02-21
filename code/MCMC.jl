@@ -1,3 +1,9 @@
+# Yunzhe
+# Version 1
+# Date Feb. 20
+# Julia 1.7.2 
+
+
 using Distributions
 using StatsBase
 using LinearAlgebra
@@ -25,7 +31,7 @@ function MCMC(config_file)
     config = TOML.parsefile(config_file) 
 
     nsam = config["nsam"]
-    dat = load(config["data_path"] * config["datafile"])
+    dat = load(config["datafile"])
     hyper = config["hyper"]
 
     # dat is a list of list 
@@ -48,17 +54,17 @@ function MCMC(config_file)
     cur = Dict(
         "mu1" => ones(T),
         "mu2" => -1 .* ones(T),
-        "phi1" => zeros(T),
-        "Z" => Z, 
+        "phi1" => -1 .+ zeros(T),
         "sigma1" => 1, 
         "sigma2" => 1, 
-        "l1" => 1,
-        "e1" => 1,
-        "l2" => 1,
-        "e2" => 1,
+        "l1" => 20,
+        "e1" => 20,
+        "l2" => 20,
+        "e2" => 20,
         "l3" => 1,
         "e3" => 1,
-        "_y" => dat["y"] # imputated data 
+        "_y" => dat["y"], # imputated data 
+        "Z" => Z
     )
 
     pos = Dict(
@@ -73,27 +79,40 @@ function MCMC(config_file)
         "e1" => zeros(nsam),
         "e2" => zeros(nsam),
         "e3" => zeros(nsam),
-        "_y" => []
+        "_y" => [],
+        "Z"  => [] 
     )
 
+    # count = 1
+    # acc = [0]
+    # l_rate = [0.1]
     for i in ProgressBar(1:nsam)
+
         cur["_y"] = impute_data(cur, dat) 
         push!(pos["_y"], cur["_y"])
+
         cur["Z"] = update_Z(cur, dat)
+        push!(pos["Z"], cur["Z"])
+
         pos["mu1"][i,:] = cur["mu1"] = update_mu1(cur, dat) 
         pos["mu2"][i,:] = cur["mu2"] = update_mu2(cur, dat)
         pos["phi1"][i,:] = cur["phi1"] = update_phi1(cur, dat) 
+
         pos["sigma1"][i] = cur["sigma1"] = update_sigma1(cur, hyper, dat)
         pos["sigma2"][i] = cur["sigma2"] = update_sigma2(cur, hyper, dat)
+
         cur["l1"], cur["e1"] = update_l1_e1(cur, hyper, dat) 
         pos["l1"][i] = cur["l1"]
         pos["e1"][i] = cur["e1"]
+
         cur["l2"], cur["e2"] = update_l2_e2(cur, hyper, dat) 
         pos["l2"][i] = cur["l2"]
         pos["e2"][i] = cur["e2"]
+
         cur["l3"], cur["e3"] = update_l3_e3(cur, hyper, dat) 
         pos["l3"][i] = cur["l3"]
         pos["e3"][i] = cur["e3"]
+        
     end
 
     result = Dict("pos" => pos,
