@@ -85,7 +85,7 @@ function MCMC(config_file)
 
         for k in 1:K 
             if k < K
-                pos["phi"*string(k)][i,:] = cur["phi"*string(k)] = update_phi_k(cur, dat, k) 
+                pos["phi"*string(k)][i,:] = cur["phi"*string(k)] = update_phi_k(cur, hyper, dat, k) 
                 cur["s"*string(k)], cur["p"*string(k)] = update_s_p_k(cur, hyper, dat, k) 
                 pos["s"*string(k)][i] = cur["s"*string(k)]
                 pos["p"*string(k)][i] = cur["p"*string(k)]
