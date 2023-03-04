@@ -1,14 +1,17 @@
-datafile = "../data/test.jld2"
-savepath = "../output/fit_test.jld2"
-nsam = 10000
+datafile = "../data/test5.jld2"
+savepath = "../output/fit_test5.jld2"
+nsam = 50000
 [hyper]
-K = 2
+K = 3
 # sigma1
 a1 = 1
 b1 = 1 
 # sigma2 
 a2 = 1
 b2 = 1 
+# sigma3
+a3 = 1
+b3 = 1 
 # mean GP 
 al1 = 0.1
 bl1 = 1
@@ -18,12 +21,16 @@ al2 = 0.1
 bl2 = 1
 ae2 = 0.1
 be2 = 1
+al3 = 0.1
+bl3 = 1
+ae3 = 0.1
+be3 = 1
 # weight GP 
-as1 = 0.1
+as1 = 1
 bs1 = 1
-ap1 = 0.1
+ap1 = 1
 bp1 = 1
-as2 = 0.1
+as2 = 1
 bs2 = 1
-ap2 = 0.1
+ap2 = 1
 bp2 = 1
