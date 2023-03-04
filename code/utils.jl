@@ -25,8 +25,9 @@ function stablizeMatrix(K)
         return K
     end 
 
-    while !isposdef(K)
-        K = K + Diagonal(10e-7 .* ones(size(K)[1]))
+    K = (K + K')/2
+    if !isposdef(K)
+        K = K + 10e-7*I
     end
     return K
 end
@@ -37,11 +38,7 @@ function svd2inv(M)
     Matrix inversion using singular value decomposition
     """
     
-    N = size(M)[1]
-
-    if !isposdef(M)
-        M = M + Matrix(Diagonal(10e-7 .* ones(N))) 
-    end 
+    M = stablizeMatrix(M)    
 	X = svd(M)
 	Minv = X.Vt' * Diagonal(1 ./ X.S) * X.U'
 	Minv = (Minv + Minv')/2

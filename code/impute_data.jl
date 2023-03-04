@@ -6,20 +6,12 @@ function impute_data(cur, dat)
     L, R = dat["L"], dat["R"] # left and right boundaries  
 
     Z = cur["Z"]
-    mu1 = cur["mu1"]
-    mu2 = cur["mu2"]
-    sigma1 = cur["sigma1"]
-    sigma2 = cur["sigma2"]
-
     _y = cur["_y"]
 
     for t in 1:T
         for i in 1:nt[t]
-            if Z[t][i] == 1
-                d = Normal(mu1[t], sigma1)
-            else
-                d = Normal(mu2[t], sigma2)
-            end 
+            k = Z[t][i]
+            d = Normal(cur["mu"*string(k)][t], cur["sigma"*string(k)])
             
             if L == y[t][i]
                 _y[t][i] = rand(truncated(d, upper=L), 1)[1]

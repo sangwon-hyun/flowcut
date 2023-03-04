@@ -1,29 +1,25 @@
 # Yunzhe
-# Version 1
-# Date Feb. 20
+# Version 2
+# Date Mar. 2
 # Julia 1.7.2 
-
 
 using Distributions
 using StatsBase
 using LinearAlgebra
 using TOML 
 using JLD2
-using ProgressBars
+using ProgressMeter
 using Random 
 Random.seed!(100)
 
 include("utils.jl")
 include("impute_data.jl")
-include("update_l1_e1.jl")
-include("update_l2_e2.jl")
-include("update_l3_e3.jl")
-include("update_mu1.jl")
-include("update_mu2.jl")
-include("update_phi1.jl")
-include("update_sigma1.jl")
-include("update_sigma2.jl")
-include("updat_Z.jl")
+include("update_l_e_k.jl")
+include("update_s_p_k.jl")
+include("update_mu_k.jl")
+include("update_phi_k.jl")
+include("update_sigma_k.jl")
+include("update_Z.jl")
 
 
 function MCMC(config_file) 
@@ -33,6 +29,7 @@ function MCMC(config_file)
     nsam = config["nsam"]
     dat = load(config["datafile"])
     hyper = config["hyper"]
+    K = hyper["K"]
 
     # dat is a list of list 
     # yᵢᵗ for i=1,...,nₜ, and t=1,...,T 
@@ -44,80 +41,67 @@ function MCMC(config_file)
 
     Z = []
     for t in 1:T
-        tmp = zeros(Int64, nt[t])
-        for i in 1:nt[t]
-            tmp[i] = sample([1,2])
-        end 
+        tmp = sample(1:K, nt[t])
         push!(Z, tmp) 
     end 
 
-    cur = Dict(
-        "mu1" => ones(T),
-        "mu2" => -1 .* ones(T),
-        "phi1" => -1 .+ zeros(T),
-        "sigma1" => 1, 
-        "sigma2" => 1, 
-        "l1" => 20,
-        "e1" => 20,
-        "l2" => 20,
-        "e2" => 20,
-        "l3" => 1,
-        "e3" => 1,
-        "_y" => dat["y"], # imputated data 
-        "Z" => Z
-    )
+    cur = Dict() 
+    for k in 1:K 
+        if k < K
+            cur["phi"*string(k)] = zeros(T)
+            cur["s"*string(k)] = 2
+            cur["p"*string(k)] = 2
+        end
+        cur["mu"*string(k)] = k .* ones(T)
+        cur["sigma"*string(k)] = 1
+        cur["l"*string(k)] = 2
+        cur["e"*string(k)] = 2
+        cur["_y"] = dat["y"]
+        cur["Z"] = Z
+    end 
 
-    pos = Dict(
-        "mu1" => zeros(nsam, T),
-        "mu2" => zeros(nsam, T),
-        "phi1" => zeros(nsam, T), 
-        "sigma1" => zeros(nsam), 
-        "sigma2" => zeros(nsam),
-        "l1" => zeros(nsam), 
-        "l2" => zeros(nsam),
-        "l3" => zeros(nsam),
-        "e1" => zeros(nsam),
-        "e2" => zeros(nsam),
-        "e3" => zeros(nsam),
-        "_y" => [],
-        "Z"  => [] 
-    )
+    pos = Dict() 
+    for k in 1:K
+        if k < K 
+            pos["phi"*string(k)] = zeros(nsam, T)
+            pos["s"*string(k)] = zeros(nsam) 
+            pos["p"*string(k)] = zeros(nsam)
+        end
+        pos["mu"*string(k)] = zeros(nsam, T)
+        pos["sigma"*string(k)] = zeros(nsam)
+        pos["l"*string(k)] = zeros(nsam) 
+        pos["e"*string(k)] = zeros(nsam)
+        pos["_y"] = []
+        pos["Z"] = [] 
+    end
 
-    # count = 1
-    # acc = [0]
-    # l_rate = [0.1]
-    for i in ProgressBar(1:nsam)
+    @showprogress for i in (1:nsam)
 
         cur["_y"] = impute_data(cur, dat) 
         push!(pos["_y"], cur["_y"])
 
-        cur["Z"] = update_Z(cur, dat)
+        cur["Z"] = update_Z(cur, hyper, dat)
         push!(pos["Z"], cur["Z"])
 
-        pos["mu1"][i,:] = cur["mu1"] = update_mu1(cur, dat) 
-        pos["mu2"][i,:] = cur["mu2"] = update_mu2(cur, dat)
-        pos["phi1"][i,:] = cur["phi1"] = update_phi1(cur, dat) 
-
-        pos["sigma1"][i] = cur["sigma1"] = update_sigma1(cur, hyper, dat)
-        pos["sigma2"][i] = cur["sigma2"] = update_sigma2(cur, hyper, dat)
-
-        cur["l1"], cur["e1"] = update_l1_e1(cur, hyper, dat) 
-        pos["l1"][i] = cur["l1"]
-        pos["e1"][i] = cur["e1"]
-
-        cur["l2"], cur["e2"] = update_l2_e2(cur, hyper, dat) 
-        pos["l2"][i] = cur["l2"]
-        pos["e2"][i] = cur["e2"]
-
-        cur["l3"], cur["e3"] = update_l3_e3(cur, hyper, dat) 
-        pos["l3"][i] = cur["l3"]
-        pos["e3"][i] = cur["e3"]
+        for k in 1:K 
+            if k < K
+                pos["phi"*string(k)][i,:] = cur["phi"*string(k)] = update_phi_k(cur, dat, k) 
+                cur["s"*string(k)], cur["p"*string(k)] = update_s_p_k(cur, hyper, dat, k) 
+                pos["s"*string(k)][i] = cur["s"*string(k)]
+                pos["p"*string(k)][i] = cur["p"*string(k)]
+            end
+            pos["mu"*string(k)][i,:] = cur["mu"*string(k)] = update_mu_k(cur, dat, k) 
+            pos["sigma"*string(k)][i] = cur["sigma"*string(k)] = update_sigma_k(cur, hyper, dat, k)
+            cur["l"*string(k)], cur["e"*string(k)] = update_l_e_k(cur, hyper, dat, k)
+            pos["l"*string(k)][i] = cur["l"*string(k)]
+            pos["e"*string(k)][i] = cur["e"*string(k)]
+        end
         
     end
 
     result = Dict("pos" => pos,
                   "hyper" => hyper)
 
-    savefile = config["save_path"] 
+    savefile = config["savepath"] 
     save(savefile, result) 
 end
