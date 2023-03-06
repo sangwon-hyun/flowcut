@@ -40,8 +40,10 @@ function MCMC(config_file)
     dat["nt"] = nt 
 
     Z = []
+    _y = [] 
     for t in 1:T
         tmp = sample(1:K, nt[t])
+        push!(_y, dat["y"][t])
         push!(Z, tmp) 
     end 
 
@@ -56,9 +58,9 @@ function MCMC(config_file)
         cur["sigma"*string(k)] = 1
         cur["l"*string(k)] = 2
         cur["e"*string(k)] = 2
-        cur["_y"] = dat["y"]
-        cur["Z"] = Z
     end 
+    cur["_y"] = _y
+    cur["Z"] = Z
 
     pos = Dict() 
     for k in 1:K
@@ -77,9 +79,6 @@ function MCMC(config_file)
 
     @showprogress for i in (1:nsam)
 
-        cur["_y"] = impute_data(cur, dat) 
-        push!(pos["_y"], cur["_y"])
-
         cur["Z"] = update_Z(cur, hyper, dat)
         push!(pos["Z"], cur["Z"])
 
@@ -96,6 +95,9 @@ function MCMC(config_file)
             pos["l"*string(k)][i] = cur["l"*string(k)]
             pos["e"*string(k)][i] = cur["e"*string(k)]
         end
+
+        cur["_y"] = impute_data(cur, dat) 
+        push!(pos["_y"], cur["_y"])
         
     end
 
