@@ -1,8 +1,12 @@
 # Generated from _main.Rmd: do not edit by hand
 
-#' Generate 1d data with 2 clusters from a list
+#' Generate 1d data with 2 clusters from a list (|true_model|)
+#' containing true model parameters.
 #'
 #' @param true_model List containing beta, alpha, mn, prob, numclust.
+#'
+#' @return Cytograms (a |ylist| object)
+#' @export
 gen_1d <- function(true_model, nt = 1000){
 
   ## Setup

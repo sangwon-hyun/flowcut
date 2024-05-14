@@ -6,3 +6,4 @@ gibbs-sampler
 the-main-gibbs-sampler
 simulations
 real-data-example
+documenting-the-package-and-building

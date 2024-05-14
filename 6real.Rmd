@@ -71,3 +71,16 @@ Gibbs.res0 <- run.Gibbs.fast(ylist = datobj$ylist,
                              Cbox = datobj$Cbox, verbose = TRUE,
                              warm.start = NULL)
 ```
+
+
+
+
+
+# Documenting the package and building
+
+We finish by running commands that will document, build, and install the
+package.  It may also be a good idea to check the package from within this file.
+
+```{r, results='hide'}
+litr::document() # <-- use instead of devtools::document() 
+```

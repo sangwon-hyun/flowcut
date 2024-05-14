@@ -23,7 +23,7 @@
 <meta name="author" content="Sheng Jiang, Sangwon Hyun" />
 
 
-<meta name="date" content="2024-05-13" />
+<meta name="date" content="2024-05-14" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -147,6 +147,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="6" data-path="simulations.html"><a href="simulations.html"><i class="fa fa-check"></i><b>6</b> Simulations</a></li>
 <li class="chapter" data-level="7" data-path="real-data-example.html"><a href="real-data-example.html"><i class="fa fa-check"></i><b>7</b> Real data example</a></li>
+<li class="chapter" data-level="8" data-path="documenting-the-package-and-building.html"><a href="documenting-the-package-and-building.html"><i class="fa fa-check"></i><b>8</b> Documenting the package and building</a></li>
 </ul>
 
       </nav>
@@ -200,47 +201,52 @@ boundaries towards the center. (not done yet!)</p></li>
 highest signal size (gap between the two means).</p>
 <p>The cluster probabilities are set to be all 1/2 everywhere. This means that the
 true <span class="math inline">\(\alpha\)</span> coefficients are zero.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="syntheticdata.html#cb8-1" tabindex="-1"></a><span class="co">#&#39; From an original set of model parameters (|true_model|), generate synthetic 2-cluster 1-dimensional data with equal means.</span></span>
-<span id="cb8-2"><a href="syntheticdata.html#cb8-2" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb8-3"><a href="syntheticdata.html#cb8-3" tabindex="-1"></a><span class="co">#&#39; @param isignal 0 to 10, which generates the means.</span></span>
-<span id="cb8-4"><a href="syntheticdata.html#cb8-4" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb8-5"><a href="syntheticdata.html#cb8-5" tabindex="-1"></a><span class="co">#&#39; @return </span></span>
-<span id="cb8-6"><a href="syntheticdata.html#cb8-6" tabindex="-1"></a><span id='make_model'>make_model</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(orig_model, isignal){</span>
-<span id="cb8-7"><a href="syntheticdata.html#cb8-7" tabindex="-1"></a></span>
-<span id="cb8-8"><a href="syntheticdata.html#cb8-8" tabindex="-1"></a>  <span class="do">## Setup</span></span>
-<span id="cb8-9"><a href="syntheticdata.html#cb8-9" tabindex="-1"></a>  <span class="fu">stopifnot</span>(isignal <span class="sc">%in%</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">10</span>)</span>
-<span id="cb8-10"><a href="syntheticdata.html#cb8-10" tabindex="-1"></a>  new_model <span class="ot">=</span> orig_model</span>
-<span id="cb8-11"><a href="syntheticdata.html#cb8-11" tabindex="-1"></a>  new_model<span class="sc">$</span>numclust <span class="ot">=</span> <span class="dv">2</span></span>
-<span id="cb8-12"><a href="syntheticdata.html#cb8-12" tabindex="-1"></a></span>
-<span id="cb8-13"><a href="syntheticdata.html#cb8-13" tabindex="-1"></a>  <span class="do">## Take the two intercepts</span></span>
-<span id="cb8-14"><a href="syntheticdata.html#cb8-14" tabindex="-1"></a>  intp_high <span class="ot">=</span> orig_model<span class="sc">$</span>beta <span class="sc">%&gt;%</span> .[[<span class="dv">1</span>]]<span class="sc">%&gt;%</span> .[<span class="st">&quot;intp&quot;</span>,]  </span>
-<span id="cb8-15"><a href="syntheticdata.html#cb8-15" tabindex="-1"></a>  intp_low <span class="ot">=</span> orig_model<span class="sc">$</span>beta <span class="sc">%&gt;%</span> .[[<span class="dv">2</span>]]<span class="sc">%&gt;%</span> .[<span class="st">&quot;intp&quot;</span>,] </span>
-<span id="cb8-16"><a href="syntheticdata.html#cb8-16" tabindex="-1"></a>  increment <span class="ot">=</span> (intp_high <span class="sc">-</span> intp_low)<span class="sc">/</span><span class="dv">10</span></span>
-<span id="cb8-17"><a href="syntheticdata.html#cb8-17" tabindex="-1"></a>  </span>
-<span id="cb8-18"><a href="syntheticdata.html#cb8-18" tabindex="-1"></a>  <span class="do">## Bring the larger mean down.</span></span>
-<span id="cb8-19"><a href="syntheticdata.html#cb8-19" tabindex="-1"></a>  new_model<span class="sc">$</span>beta[[<span class="dv">1</span>]][<span class="st">&quot;intp&quot;</span>,] <span class="ot">=</span> intp_low <span class="sc">+</span> increment <span class="sc">*</span> isignal</span>
-<span id="cb8-20"><a href="syntheticdata.html#cb8-20" tabindex="-1"></a>  new_model<span class="sc">$</span>mn <span class="ot">=</span> <span class="fu">array</span>(<span class="cn">NA</span>, <span class="at">dim =</span> <span class="fu">c</span>(orig_model<span class="sc">$</span>TT, <span class="dv">1</span>, <span class="dv">2</span>))</span>
-<span id="cb8-21"><a href="syntheticdata.html#cb8-21" tabindex="-1"></a>  new_model<span class="sc">$</span>mn[,,<span class="dv">1</span>] <span class="ot">=</span> (<span class="fu">cbind</span>(<span class="dv">1</span>,new_model<span class="sc">$</span>X))  <span class="sc">%*%</span>  (new_model<span class="sc">$</span>beta[[<span class="dv">1</span>]])</span>
-<span id="cb8-22"><a href="syntheticdata.html#cb8-22" tabindex="-1"></a>  new_model<span class="sc">$</span>mn[,,<span class="dv">2</span>] <span class="ot">=</span> (<span class="fu">cbind</span>(<span class="dv">1</span>,new_model<span class="sc">$</span>X))  <span class="sc">%*%</span>  (new_model<span class="sc">$</span>beta[[<span class="dv">2</span>]])</span>
-<span id="cb8-23"><a href="syntheticdata.html#cb8-23" tabindex="-1"></a>  </span>
-<span id="cb8-24"><a href="syntheticdata.html#cb8-24" tabindex="-1"></a>  <span class="do">## Optional: plot the means</span></span>
-<span id="cb8-25"><a href="syntheticdata.html#cb8-25" tabindex="-1"></a>  <span class="cf">if</span>(<span class="cn">FALSE</span>){</span>
-<span id="cb8-26"><a href="syntheticdata.html#cb8-26" tabindex="-1"></a>    new_model<span class="sc">$</span>mn[,<span class="dv">1</span>,] <span class="sc">%&gt;%</span> <span class="fu">matplot</span>(<span class="at">type =</span> <span class="st">&#39;l&#39;</span>, <span class="at">lty =</span> <span class="dv">1</span>)</span>
-<span id="cb8-27"><a href="syntheticdata.html#cb8-27" tabindex="-1"></a>  }</span>
-<span id="cb8-28"><a href="syntheticdata.html#cb8-28" tabindex="-1"></a>  </span>
-<span id="cb8-29"><a href="syntheticdata.html#cb8-29" tabindex="-1"></a>  <span class="do">## Optional: Renormalize the probabilities</span></span>
-<span id="cb8-30"><a href="syntheticdata.html#cb8-30" tabindex="-1"></a>  <span class="cf">if</span>(<span class="cn">FALSE</span>){</span>
-<span id="cb8-31"><a href="syntheticdata.html#cb8-31" tabindex="-1"></a>    link <span class="ot">=</span> <span class="fu">cbind</span>(<span class="dv">1</span>, orig_model<span class="sc">$</span>X) <span class="sc">%*%</span> <span class="fu">t</span>(orig_model<span class="sc">$</span>alpha)</span>
-<span id="cb8-32"><a href="syntheticdata.html#cb8-32" tabindex="-1"></a>    new_model<span class="sc">$</span>prob <span class="ot">=</span> <span class="fu">exp</span>(link) <span class="sc">/</span> <span class="fu">rowSums</span>(<span class="fu">exp</span>(link))</span>
-<span id="cb8-33"><a href="syntheticdata.html#cb8-33" tabindex="-1"></a>    new_model<span class="sc">$</span>prob  <span class="sc">%&gt;%</span> <span class="fu">matplot</span>(<span class="at">type =</span> <span class="st">&#39;l&#39;</span>, <span class="at">lty =</span> <span class="dv">1</span>)</span>
-<span id="cb8-34"><a href="syntheticdata.html#cb8-34" tabindex="-1"></a>  }</span>
-<span id="cb8-35"><a href="syntheticdata.html#cb8-35" tabindex="-1"></a></span>
-<span id="cb8-36"><a href="syntheticdata.html#cb8-36" tabindex="-1"></a>  <span class="do">## We are actually just going to use flat probabilities, for now.</span></span>
-<span id="cb8-37"><a href="syntheticdata.html#cb8-37" tabindex="-1"></a>  new_model<span class="sc">$</span>prob <span class="ot">=</span> <span class="fu">matrix</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>, <span class="at">nrow =</span> orig_model<span class="sc">$</span>TT, <span class="at">ncol =</span> <span class="dv">2</span>)</span>
-<span id="cb8-38"><a href="syntheticdata.html#cb8-38" tabindex="-1"></a>  </span>
-<span id="cb8-39"><a href="syntheticdata.html#cb8-39" tabindex="-1"></a></span>
-<span id="cb8-40"><a href="syntheticdata.html#cb8-40" tabindex="-1"></a>  <span class="fu">return</span>(new_model)</span>
-<span id="cb8-41"><a href="syntheticdata.html#cb8-41" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="syntheticdata.html#cb8-1" tabindex="-1"></a><span class="co">#&#39; From an original set of model parameters (|true_model|),</span></span>
+<span id="cb8-2"><a href="syntheticdata.html#cb8-2" tabindex="-1"></a><span class="co">#&#39; generate synthetic 2-cluster 1-dimensional data with equal probabilities.</span></span>
+<span id="cb8-3"><a href="syntheticdata.html#cb8-3" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb8-4"><a href="syntheticdata.html#cb8-4" tabindex="-1"></a><span class="co">#&#39; @param isignal 0 to 10, which generates the means.</span></span>
+<span id="cb8-5"><a href="syntheticdata.html#cb8-5" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb8-6"><a href="syntheticdata.html#cb8-6" tabindex="-1"></a><span class="co">#&#39; @return A list with beta, mn, alpha, prob, X, sigma, TT, numclust.</span></span>
+<span id="cb8-7"><a href="syntheticdata.html#cb8-7" tabindex="-1"></a><span class="co">#&#39; @export</span></span>
+<span id="cb8-8"><a href="syntheticdata.html#cb8-8" tabindex="-1"></a><span id='make_model'>make_model</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(orig_model, isignal){</span>
+<span id="cb8-9"><a href="syntheticdata.html#cb8-9" tabindex="-1"></a></span>
+<span id="cb8-10"><a href="syntheticdata.html#cb8-10" tabindex="-1"></a>  <span class="do">## Setup</span></span>
+<span id="cb8-11"><a href="syntheticdata.html#cb8-11" tabindex="-1"></a>  <span class="fu">stopifnot</span>(isignal <span class="sc">%in%</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">10</span>)</span>
+<span id="cb8-12"><a href="syntheticdata.html#cb8-12" tabindex="-1"></a>  new_model <span class="ot">=</span> orig_model</span>
+<span id="cb8-13"><a href="syntheticdata.html#cb8-13" tabindex="-1"></a>  new_model<span class="sc">$</span>numclust <span class="ot">=</span> <span class="dv">2</span></span>
+<span id="cb8-14"><a href="syntheticdata.html#cb8-14" tabindex="-1"></a></span>
+<span id="cb8-15"><a href="syntheticdata.html#cb8-15" tabindex="-1"></a>  <span class="do">## Not used now: Renormalize the probabilities</span></span>
+<span id="cb8-16"><a href="syntheticdata.html#cb8-16" tabindex="-1"></a>  <span class="cf">if</span>(<span class="cn">FALSE</span>){</span>
+<span id="cb8-17"><a href="syntheticdata.html#cb8-17" tabindex="-1"></a>    link <span class="ot">=</span> <span class="fu">cbind</span>(<span class="dv">1</span>, orig_model<span class="sc">$</span>X) <span class="sc">%*%</span> <span class="fu">t</span>(orig_model<span class="sc">$</span>alpha)</span>
+<span id="cb8-18"><a href="syntheticdata.html#cb8-18" tabindex="-1"></a>    new_model<span class="sc">$</span>prob <span class="ot">=</span> <span class="fu">exp</span>(link) <span class="sc">/</span> <span class="fu">rowSums</span>(<span class="fu">exp</span>(link))</span>
+<span id="cb8-19"><a href="syntheticdata.html#cb8-19" tabindex="-1"></a>    new_model<span class="sc">$</span>prob  <span class="sc">%&gt;%</span> <span class="fu">matplot</span>(<span class="at">type =</span> <span class="st">&#39;l&#39;</span>, <span class="at">lty =</span> <span class="dv">1</span>)</span>
+<span id="cb8-20"><a href="syntheticdata.html#cb8-20" tabindex="-1"></a>  }</span>
+<span id="cb8-21"><a href="syntheticdata.html#cb8-21" tabindex="-1"></a></span>
+<span id="cb8-22"><a href="syntheticdata.html#cb8-22" tabindex="-1"></a>  <span class="do">## We are actually just going to use flat probabilities, for now.</span></span>
+<span id="cb8-23"><a href="syntheticdata.html#cb8-23" tabindex="-1"></a>  alphamat <span class="ot">=</span> orig_model<span class="sc">$</span>alpha</span>
+<span id="cb8-24"><a href="syntheticdata.html#cb8-24" tabindex="-1"></a>  alphamat[,<span class="sc">-</span><span class="dv">1</span>] <span class="ot">=</span> <span class="dv">0</span></span>
+<span id="cb8-25"><a href="syntheticdata.html#cb8-25" tabindex="-1"></a>  alphamat[,<span class="dv">1</span>] <span class="ot">=</span> <span class="dv">1</span></span>
+<span id="cb8-26"><a href="syntheticdata.html#cb8-26" tabindex="-1"></a>  new_model<span class="sc">$</span>alpha <span class="ot">=</span> alphamat</span>
+<span id="cb8-27"><a href="syntheticdata.html#cb8-27" tabindex="-1"></a>  new_model<span class="sc">$</span>prob <span class="ot">=</span> <span class="fu">matrix</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>, <span class="at">nrow =</span> orig_model<span class="sc">$</span>TT, <span class="at">ncol =</span> <span class="dv">2</span>)</span>
+<span id="cb8-28"><a href="syntheticdata.html#cb8-28" tabindex="-1"></a></span>
+<span id="cb8-29"><a href="syntheticdata.html#cb8-29" tabindex="-1"></a>  <span class="do">## Take the two intercepts</span></span>
+<span id="cb8-30"><a href="syntheticdata.html#cb8-30" tabindex="-1"></a>  intp_high <span class="ot">=</span> orig_model<span class="sc">$</span>beta <span class="sc">%&gt;%</span> .[[<span class="dv">1</span>]]<span class="sc">%&gt;%</span> .[<span class="st">&quot;intp&quot;</span>,]  </span>
+<span id="cb8-31"><a href="syntheticdata.html#cb8-31" tabindex="-1"></a>  intp_low <span class="ot">=</span> orig_model<span class="sc">$</span>beta <span class="sc">%&gt;%</span> .[[<span class="dv">2</span>]]<span class="sc">%&gt;%</span> .[<span class="st">&quot;intp&quot;</span>,] </span>
+<span id="cb8-32"><a href="syntheticdata.html#cb8-32" tabindex="-1"></a>  increment <span class="ot">=</span> (intp_high <span class="sc">-</span> intp_low)<span class="sc">/</span><span class="dv">10</span></span>
+<span id="cb8-33"><a href="syntheticdata.html#cb8-33" tabindex="-1"></a>  </span>
+<span id="cb8-34"><a href="syntheticdata.html#cb8-34" tabindex="-1"></a>  <span class="do">## Bring the larger mean down.</span></span>
+<span id="cb8-35"><a href="syntheticdata.html#cb8-35" tabindex="-1"></a>  new_model<span class="sc">$</span>beta[[<span class="dv">1</span>]][<span class="st">&quot;intp&quot;</span>,] <span class="ot">=</span> intp_low <span class="sc">+</span> increment <span class="sc">*</span> isignal</span>
+<span id="cb8-36"><a href="syntheticdata.html#cb8-36" tabindex="-1"></a>  new_model<span class="sc">$</span>mn <span class="ot">=</span> <span class="fu">array</span>(<span class="cn">NA</span>, <span class="at">dim =</span> <span class="fu">c</span>(orig_model<span class="sc">$</span>TT, <span class="dv">1</span>, <span class="dv">2</span>))</span>
+<span id="cb8-37"><a href="syntheticdata.html#cb8-37" tabindex="-1"></a>  new_model<span class="sc">$</span>mn[,,<span class="dv">1</span>] <span class="ot">=</span> (<span class="fu">cbind</span>(<span class="dv">1</span>,new_model<span class="sc">$</span>X))  <span class="sc">%*%</span>  (new_model<span class="sc">$</span>beta[[<span class="dv">1</span>]])</span>
+<span id="cb8-38"><a href="syntheticdata.html#cb8-38" tabindex="-1"></a>  new_model<span class="sc">$</span>mn[,,<span class="dv">2</span>] <span class="ot">=</span> (<span class="fu">cbind</span>(<span class="dv">1</span>,new_model<span class="sc">$</span>X))  <span class="sc">%*%</span>  (new_model<span class="sc">$</span>beta[[<span class="dv">2</span>]])</span>
+<span id="cb8-39"><a href="syntheticdata.html#cb8-39" tabindex="-1"></a>  </span>
+<span id="cb8-40"><a href="syntheticdata.html#cb8-40" tabindex="-1"></a>  <span class="do">## Optional: plot the means</span></span>
+<span id="cb8-41"><a href="syntheticdata.html#cb8-41" tabindex="-1"></a>  <span class="cf">if</span>(<span class="cn">FALSE</span>){</span>
+<span id="cb8-42"><a href="syntheticdata.html#cb8-42" tabindex="-1"></a>    new_model<span class="sc">$</span>mn[,<span class="dv">1</span>,] <span class="sc">%&gt;%</span> <span class="fu">matplot</span>(<span class="at">type =</span> <span class="st">&#39;l&#39;</span>, <span class="at">lty =</span> <span class="dv">1</span>)</span>
+<span id="cb8-43"><a href="syntheticdata.html#cb8-43" tabindex="-1"></a>  }</span>
+<span id="cb8-44"><a href="syntheticdata.html#cb8-44" tabindex="-1"></a>  </span>
+<span id="cb8-45"><a href="syntheticdata.html#cb8-45" tabindex="-1"></a>  <span class="fu">return</span>(new_model)</span>
+<span id="cb8-46"><a href="syntheticdata.html#cb8-46" tabindex="-1"></a>}</span></code></pre></div>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="syntheticdata.html#cb9-1" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">1</span>))</span>
 <span id="cb9-2"><a href="syntheticdata.html#cb9-2" tabindex="-1"></a>new_model <span class="ot">=</span> <a href='syntheticdata.html#make_model'>make_model</a>(orig_model, <span class="dv">0</span>)</span>
 <span id="cb9-3"><a href="syntheticdata.html#cb9-3" tabindex="-1"></a>new_model<span class="sc">$</span>mn <span class="sc">%&gt;%</span> .[,<span class="dv">1</span>,] <span class="sc">%&gt;%</span> <span class="fu">matplot</span>(<span class="at">type=</span><span class="st">&#39;l&#39;</span>, <span class="at">main =</span> <span class="fu">paste0</span>(<span class="st">&quot;isignal=&quot;</span>, <span class="dv">0</span>), <span class="at">ylim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.5</span>, <span class="fl">0.6</span>))</span>
@@ -250,40 +256,44 @@ true <span class="math inline">\(\alpha\)</span> coefficients are zero.</p>
 <span id="cb9-7"><a href="syntheticdata.html#cb9-7" tabindex="-1"></a>new_model<span class="sc">$</span>mn <span class="sc">%&gt;%</span> .[,<span class="dv">1</span>,] <span class="sc">%&gt;%</span> <span class="fu">matplot</span>(<span class="at">type=</span><span class="st">&#39;l&#39;</span>, <span class="at">main =</span> <span class="fu">paste0</span>(<span class="st">&quot;isignal=&quot;</span>, <span class="dv">10</span>), <span class="at">ylim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.5</span>, <span class="fl">0.6</span>))</span></code></pre></div>
 <p><img src="_main_files/figure-html/plot-data-1.png" width="960" /></p>
 <p>Then, we will generate data from this model using the function <code><a href='syntheticdata.html#gen_1d'>gen_1d</a>()</code>.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="syntheticdata.html#cb10-1" tabindex="-1"></a><span class="co">#&#39; Generate 1d data with 2 clusters from a list</span></span>
-<span id="cb10-2"><a href="syntheticdata.html#cb10-2" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb10-3"><a href="syntheticdata.html#cb10-3" tabindex="-1"></a><span class="co">#&#39; @param true_model List containing beta, alpha, mn, prob, numclust.</span></span>
-<span id="cb10-4"><a href="syntheticdata.html#cb10-4" tabindex="-1"></a><span id='gen_1d'>gen_1d</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(true_model, <span class="at">nt =</span> <span class="dv">1000</span>){</span>
-<span id="cb10-5"><a href="syntheticdata.html#cb10-5" tabindex="-1"></a></span>
-<span id="cb10-6"><a href="syntheticdata.html#cb10-6" tabindex="-1"></a>  <span class="do">## Setup</span></span>
-<span id="cb10-7"><a href="syntheticdata.html#cb10-7" tabindex="-1"></a>  <span class="fu">stopifnot</span>(true_model<span class="sc">$</span>numclust <span class="sc">==</span> <span class="dv">2</span>)</span>
-<span id="cb10-8"><a href="syntheticdata.html#cb10-8" tabindex="-1"></a>  TT <span class="ot">=</span> <span class="fu">dim</span>(true_model<span class="sc">$</span>mn)[<span class="dv">1</span>]</span>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="syntheticdata.html#cb10-1" tabindex="-1"></a><span class="co">#&#39; Generate 1d data with 2 clusters from a list (|true_model|)</span></span>
+<span id="cb10-2"><a href="syntheticdata.html#cb10-2" tabindex="-1"></a><span class="co">#&#39; containing true model parameters.</span></span>
+<span id="cb10-3"><a href="syntheticdata.html#cb10-3" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb10-4"><a href="syntheticdata.html#cb10-4" tabindex="-1"></a><span class="co">#&#39; @param true_model List containing beta, alpha, mn, prob, numclust.</span></span>
+<span id="cb10-5"><a href="syntheticdata.html#cb10-5" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb10-6"><a href="syntheticdata.html#cb10-6" tabindex="-1"></a><span class="co">#&#39; @return Cytograms (a |ylist| object)</span></span>
+<span id="cb10-7"><a href="syntheticdata.html#cb10-7" tabindex="-1"></a><span class="co">#&#39; @export</span></span>
+<span id="cb10-8"><a href="syntheticdata.html#cb10-8" tabindex="-1"></a><span id='gen_1d'>gen_1d</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(true_model, <span class="at">nt =</span> <span class="dv">1000</span>){</span>
 <span id="cb10-9"><a href="syntheticdata.html#cb10-9" tabindex="-1"></a></span>
-<span id="cb10-10"><a href="syntheticdata.html#cb10-10" tabindex="-1"></a>  <span class="do">## Generate cytograms</span></span>
-<span id="cb10-11"><a href="syntheticdata.html#cb10-11" tabindex="-1"></a>  ylist <span class="ot">=</span> <span class="fu">list</span>()</span>
-<span id="cb10-12"><a href="syntheticdata.html#cb10-12" tabindex="-1"></a>  <span class="cf">for</span>(tt <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>TT){</span>
-<span id="cb10-13"><a href="syntheticdata.html#cb10-13" tabindex="-1"></a>  </span>
-<span id="cb10-14"><a href="syntheticdata.html#cb10-14" tabindex="-1"></a>    <span class="do">## Generate memberships Samples |nt| memberships out of (1:numclust)</span></span>
-<span id="cb10-15"><a href="syntheticdata.html#cb10-15" tabindex="-1"></a>    <span class="do">## according to the cluster probabilities in |prob|.</span></span>
-<span id="cb10-16"><a href="syntheticdata.html#cb10-16" tabindex="-1"></a>    nt_by_clust <span class="ot">=</span> <span class="fu">rmultinom</span>(<span class="dv">1</span>, <span class="at">size =</span> nt, true_model<span class="sc">$</span>prob[tt,])</span>
-<span id="cb10-17"><a href="syntheticdata.html#cb10-17" tabindex="-1"></a>    <span class="do">## draws = sample(1:numclust, size = nt, replace = TRUE, prob = true_model$prob[tt,])</span></span>
-<span id="cb10-18"><a href="syntheticdata.html#cb10-18" tabindex="-1"></a>    draws <span class="ot">=</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="dv">1</span>, nt_by_clust[<span class="dv">1</span>]), <span class="fu">rep</span>(<span class="dv">2</span>, nt_by_clust[<span class="dv">2</span>]))</span>
-<span id="cb10-19"><a href="syntheticdata.html#cb10-19" tabindex="-1"></a>  </span>
-<span id="cb10-20"><a href="syntheticdata.html#cb10-20" tabindex="-1"></a>    y_onetime <span class="ot">=</span> <span class="fu">list</span>()</span>
-<span id="cb10-21"><a href="syntheticdata.html#cb10-21" tabindex="-1"></a>    <span class="cf">for</span>(iclust <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>true_model<span class="sc">$</span>numclust){</span>
-<span id="cb10-22"><a href="syntheticdata.html#cb10-22" tabindex="-1"></a>      ntk <span class="ot">=</span> nt_by_clust[iclust]</span>
-<span id="cb10-23"><a href="syntheticdata.html#cb10-23" tabindex="-1"></a>      membership <span class="ot">=</span> <span class="fu">rep</span>(iclust, ntk)</span>
-<span id="cb10-24"><a href="syntheticdata.html#cb10-24" tabindex="-1"></a>      y_onetime[[iclust]] <span class="ot">=</span> <span class="fu">cbind</span>(MASS<span class="sc">::</span><span class="fu">mvrnorm</span>(<span class="at">n =</span> ntk,</span>
-<span id="cb10-25"><a href="syntheticdata.html#cb10-25" tabindex="-1"></a>                                                <span class="at">mu =</span> true_model<span class="sc">$</span>mn[tt,,iclust],</span>
-<span id="cb10-26"><a href="syntheticdata.html#cb10-26" tabindex="-1"></a>                                                <span class="at">Sigma =</span> true_model<span class="sc">$</span>sigma[iclust,,]))</span>
-<span id="cb10-27"><a href="syntheticdata.html#cb10-27" tabindex="-1"></a>    }</span>
-<span id="cb10-28"><a href="syntheticdata.html#cb10-28" tabindex="-1"></a>    y <span class="ot">=</span> <span class="fu">do.call</span>(rbind, y_onetime)</span>
-<span id="cb10-29"><a href="syntheticdata.html#cb10-29" tabindex="-1"></a>  </span>
-<span id="cb10-30"><a href="syntheticdata.html#cb10-30" tabindex="-1"></a>    <span class="do">## Data</span></span>
-<span id="cb10-31"><a href="syntheticdata.html#cb10-31" tabindex="-1"></a>    ylist[[tt]] <span class="ot">=</span> y</span>
-<span id="cb10-32"><a href="syntheticdata.html#cb10-32" tabindex="-1"></a>  }</span>
-<span id="cb10-33"><a href="syntheticdata.html#cb10-33" tabindex="-1"></a>  <span class="fu">return</span>(ylist)</span>
-<span id="cb10-34"><a href="syntheticdata.html#cb10-34" tabindex="-1"></a>}</span></code></pre></div>
+<span id="cb10-10"><a href="syntheticdata.html#cb10-10" tabindex="-1"></a>  <span class="do">## Setup</span></span>
+<span id="cb10-11"><a href="syntheticdata.html#cb10-11" tabindex="-1"></a>  <span class="fu">stopifnot</span>(true_model<span class="sc">$</span>numclust <span class="sc">==</span> <span class="dv">2</span>)</span>
+<span id="cb10-12"><a href="syntheticdata.html#cb10-12" tabindex="-1"></a>  TT <span class="ot">=</span> <span class="fu">dim</span>(true_model<span class="sc">$</span>mn)[<span class="dv">1</span>]</span>
+<span id="cb10-13"><a href="syntheticdata.html#cb10-13" tabindex="-1"></a></span>
+<span id="cb10-14"><a href="syntheticdata.html#cb10-14" tabindex="-1"></a>  <span class="do">## Generate cytograms</span></span>
+<span id="cb10-15"><a href="syntheticdata.html#cb10-15" tabindex="-1"></a>  ylist <span class="ot">=</span> <span class="fu">list</span>()</span>
+<span id="cb10-16"><a href="syntheticdata.html#cb10-16" tabindex="-1"></a>  <span class="cf">for</span>(tt <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>TT){</span>
+<span id="cb10-17"><a href="syntheticdata.html#cb10-17" tabindex="-1"></a>  </span>
+<span id="cb10-18"><a href="syntheticdata.html#cb10-18" tabindex="-1"></a>    <span class="do">## Generate memberships Samples |nt| memberships out of (1:numclust)</span></span>
+<span id="cb10-19"><a href="syntheticdata.html#cb10-19" tabindex="-1"></a>    <span class="do">## according to the cluster probabilities in |prob|.</span></span>
+<span id="cb10-20"><a href="syntheticdata.html#cb10-20" tabindex="-1"></a>    nt_by_clust <span class="ot">=</span> <span class="fu">rmultinom</span>(<span class="dv">1</span>, <span class="at">size =</span> nt, true_model<span class="sc">$</span>prob[tt,])</span>
+<span id="cb10-21"><a href="syntheticdata.html#cb10-21" tabindex="-1"></a>    <span class="do">## draws = sample(1:numclust, size = nt, replace = TRUE, prob = true_model$prob[tt,])</span></span>
+<span id="cb10-22"><a href="syntheticdata.html#cb10-22" tabindex="-1"></a>    draws <span class="ot">=</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="dv">1</span>, nt_by_clust[<span class="dv">1</span>]), <span class="fu">rep</span>(<span class="dv">2</span>, nt_by_clust[<span class="dv">2</span>]))</span>
+<span id="cb10-23"><a href="syntheticdata.html#cb10-23" tabindex="-1"></a>  </span>
+<span id="cb10-24"><a href="syntheticdata.html#cb10-24" tabindex="-1"></a>    y_onetime <span class="ot">=</span> <span class="fu">list</span>()</span>
+<span id="cb10-25"><a href="syntheticdata.html#cb10-25" tabindex="-1"></a>    <span class="cf">for</span>(iclust <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>true_model<span class="sc">$</span>numclust){</span>
+<span id="cb10-26"><a href="syntheticdata.html#cb10-26" tabindex="-1"></a>      ntk <span class="ot">=</span> nt_by_clust[iclust]</span>
+<span id="cb10-27"><a href="syntheticdata.html#cb10-27" tabindex="-1"></a>      membership <span class="ot">=</span> <span class="fu">rep</span>(iclust, ntk)</span>
+<span id="cb10-28"><a href="syntheticdata.html#cb10-28" tabindex="-1"></a>      y_onetime[[iclust]] <span class="ot">=</span> <span class="fu">cbind</span>(MASS<span class="sc">::</span><span class="fu">mvrnorm</span>(<span class="at">n =</span> ntk,</span>
+<span id="cb10-29"><a href="syntheticdata.html#cb10-29" tabindex="-1"></a>                                                <span class="at">mu =</span> true_model<span class="sc">$</span>mn[tt,,iclust],</span>
+<span id="cb10-30"><a href="syntheticdata.html#cb10-30" tabindex="-1"></a>                                                <span class="at">Sigma =</span> true_model<span class="sc">$</span>sigma[iclust,,]))</span>
+<span id="cb10-31"><a href="syntheticdata.html#cb10-31" tabindex="-1"></a>    }</span>
+<span id="cb10-32"><a href="syntheticdata.html#cb10-32" tabindex="-1"></a>    y <span class="ot">=</span> <span class="fu">do.call</span>(rbind, y_onetime)</span>
+<span id="cb10-33"><a href="syntheticdata.html#cb10-33" tabindex="-1"></a>  </span>
+<span id="cb10-34"><a href="syntheticdata.html#cb10-34" tabindex="-1"></a>    <span class="do">## Data</span></span>
+<span id="cb10-35"><a href="syntheticdata.html#cb10-35" tabindex="-1"></a>    ylist[[tt]] <span class="ot">=</span> y</span>
+<span id="cb10-36"><a href="syntheticdata.html#cb10-36" tabindex="-1"></a>  }</span>
+<span id="cb10-37"><a href="syntheticdata.html#cb10-37" tabindex="-1"></a>  <span class="fu">return</span>(ylist)</span>
+<span id="cb10-38"><a href="syntheticdata.html#cb10-38" tabindex="-1"></a>}</span></code></pre></div>
 <p>(TODO We’ll generate data particles with probability proportional to 1/biomass.)</p>
 <p>Testing this function out.</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="syntheticdata.html#cb11-1" tabindex="-1"></a><span class="do">## Generate data</span></span>

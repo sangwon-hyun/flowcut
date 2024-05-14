@@ -45,17 +45,33 @@ The cluster probabilities are set to be all 1/2 everywhere. This means that the
 true $\alpha$ coefficients are zero.
 
 ```{r}
-#' From an original set of model parameters (|true_model|), generate synthetic 2-cluster 1-dimensional data with equal means.
+#' From an original set of model parameters (|true_model|),
+#' generate synthetic 2-cluster 1-dimensional data with equal probabilities.
 #'
 #' @param isignal 0 to 10, which generates the means.
 #'
-#' @return 
+#' @return A list with beta, mn, alpha, prob, X, sigma, TT, numclust.
+#' @export
 make_model <- function(orig_model, isignal){
 
   ## Setup
   stopifnot(isignal %in% 0:10)
   new_model = orig_model
   new_model$numclust = 2
+
+  ## Not used now: Renormalize the probabilities
+  if(FALSE){
+    link = cbind(1, orig_model$X) %*% t(orig_model$alpha)
+    new_model$prob = exp(link) / rowSums(exp(link))
+    new_model$prob  %>% matplot(type = 'l', lty = 1)
+  }
+
+  ## We are actually just going to use flat probabilities, for now.
+  alphamat = orig_model$alpha
+  alphamat[,-1] = 0
+  alphamat[,1] = 1
+  new_model$alpha = alphamat
+  new_model$prob = matrix(1/2, nrow = orig_model$TT, ncol = 2)
 
   ## Take the two intercepts
   intp_high = orig_model$beta %>% .[[1]]%>% .["intp",]  
@@ -73,17 +89,6 @@ make_model <- function(orig_model, isignal){
     new_model$mn[,1,] %>% matplot(type = 'l', lty = 1)
   }
   
-  ## Optional: Renormalize the probabilities
-  if(FALSE){
-    link = cbind(1, orig_model$X) %*% t(orig_model$alpha)
-    new_model$prob = exp(link) / rowSums(exp(link))
-    new_model$prob  %>% matplot(type = 'l', lty = 1)
-  }
-
-  ## We are actually just going to use flat probabilities, for now.
-  new_model$prob = matrix(1/2, nrow = orig_model$TT, ncol = 2)
-  
-
   return(new_model)
 }
 ```
@@ -101,9 +106,13 @@ new_model$mn %>% .[,1,] %>% matplot(type='l', main = paste0("isignal=", 10), yli
 Then, we will generate data from this model using the function `gen_1d()`.
 
 ```{r}
-#' Generate 1d data with 2 clusters from a list
+#' Generate 1d data with 2 clusters from a list (|true_model|)
+#' containing true model parameters.
 #'
 #' @param true_model List containing beta, alpha, mn, prob, numclust.
+#'
+#' @return Cytograms (a |ylist| object)
+#' @export
 gen_1d <- function(true_model, nt = 1000){
 
   ## Setup

@@ -44,6 +44,89 @@ saveRDS(datobj,
                   paste0("isignal-", isignal, "-datobj.RDS")))
 ```
 
+We also need some *prior elicitation* to prevent the cluster means from changing
+too much across time.
+
+(code copy-pasted as-is for now, not meant to be run)
+
+```{r, eval = FALSE}
+##############################
+###### prior elicitation
+##############################
+
+d <- 3
+p <- 39 
+X <- t(readRDS("pre-censor-datobj.RDS")$X)
+    
+nu0=d
+nu1=p+1 
+S0=diag(d)
+S1=diag(p+1)
+inv.XTX  <- solve(tcrossprod(X))
+dim(inv.XTX)
+
+## Sig.ell <- rinvwishart(1,nu0+d,S0)[,,1]
+## gg <- 1 
+## beta.ell <- rmatnorm(M = matrix(0,d,p), 
+##                      U = Sig.ell, 
+##                      V = inv.XTX*gg, 
+##                      tol = .Machine$double.eps^0.5)
+## mean.vec <- apply(beta.ell%*% X,1,mean)
+## l2.norm <- mean(apply(beta.ell%*% X,2,function(xx)
+##     crossprod(xx-mean.vec)))
+## hist(apply(beta.ell%*% X,2,function(xx)
+##     crossprod(xx-mean.vec)),breaks = "FD")
+
+ball.deviance <- function(gg,rr,X, Nmc=5000,
+                          nu0=d, nu1=p+1,
+                          S0=diag(d), S1=diag(p+1),
+                          simple= TRUE){
+    inv.XTX  <- solve(tcrossprod(X))
+    ms.deviance <- rep(NA,Nmc) 
+
+    Sig.ell <- rinvwishart(Nmc,nu0+d,S0)
+    beta.ell <- apply(Sig.ell,3,function(xx)
+        as.matrix(rmatnorm(M = matrix(0,d,p), 
+                 U = xx, 
+                 V = inv.XTX*gg, 
+                 tol = .Machine$double.eps^0.5)),
+        simplify = FALSE)
+    xb <- lapply(beta.ell, function(bb) bb%*% X)  
+    mean.vec <- lapply(xb, function(bb)
+        apply(bb,1,mean))
+    ms.deviance <- mapply(function(xx,mm){
+        mean(apply(xx,2,function(cols) crossprod(cols-mm)))
+    }, xx=xb,mm=mean.vec)
+    prob <- mean(ms.deviance > rr^2)
+    if(simple){
+        return(list(gg=gg,rr=rr,prob=prob))
+    }else{
+        return(list(gg = gg, rr = rr,
+                    prob=prob,
+                    msd = ms.deviance)) 
+    }
+}
+
+gglist <- as.list(1:100/100)
+plist <- mclapply(gglist,function(gg)
+    ball.deviance(gg,0.5,X,Nmc=1e4)$prob,
+    mc.cores = min(n.cores, length(gglist)))
+plot(gglist,plist,type = "l") 
+abline(h=0.05,lwd=2,col = "red")
+abline(h=0.01,lwd=2,col = "red")
+lines(gglist,lowess(plist~gglist,f=0.3)$y,lwd=2,col="blue")
+
+
+
+
+hist(ball.deviance(0.01,0.5,X)$msd, breaks = "FD")
+hist(ball.deviance(0.1,0.5,X)$msd, breaks = "FD")
+hist(ball.deviance(0.2,0.5,X)$msd, breaks = "FD")
+hist(ball.deviance(0.5,0.5,X)$msd, breaks = "FD")
+hist(ball.deviance(1,0.5,X)$msd, breaks = "FD")
+hist(ball.deviance(2,0.5,X)$msd, breaks = "FD")
+```
+
 
 Next, we run the MCMC.
 
