@@ -1,0 +1,46 @@
+# Package setup
+
+The DESCRIPTION file is created using this code.
+
+```{r package-setup, message=FALSE, results='hide'}
+usethis::create_package(
+  path = ".",
+  fields = list(
+    Package = params$package_name,
+    Version = "0.0.0.9000",
+    Title = "flowcut",
+    Description = "Time-smooth mixture modeling for flow cytometry data.",
+    `Authors@R` = person(
+      given = "Sangwon",
+      family = "Hyun",
+      email = "sangwonh@ucsc.edu",
+      role = c("aut", "cre")
+      )
+  )
+)
+usethis::use_mit_license(copyright_holder = "Sangwon Hyun")
+```
+
+The following is what will show up when someone types `package?flowcut` in
+the console.
+
+```{package_doc}
+#' flowcut
+#'
+#' This package implements the `flowcut` method.
+#' 
+#' @docType package
+```
+
+
+This package will have some dependancies:
+
+```{r dependencies, message = FALSE}
+library(tidyverse)
+library(ggplot2)
+usethis::use_package("tidyverse", type = "depends") 
+usethis::use_package("ggplot2")
+usethis::use_package("clue")
+usethis::use_package("glmnet")
+```
+

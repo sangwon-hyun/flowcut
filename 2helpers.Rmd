@@ -1,0 +1,262 @@
+# Helpers functions
+
+These are some helper functions that are needed for the MCMC.
+
+These functions are not documented for now. (TODO: do this.)
+
+```{r}
+#'
+wcrossprod.fast <- function(x,w.sqrt, weighting = TRUE){
+    if(weighting){
+        x <- x*w.sqrt
+    }
+    if(min(dim(x))==1){
+        ret <- x %*% t(x)
+    }else{
+        ret <- Rfast::Crossprod(x,x)
+    }
+  return(ret)
+}
+
+#'
+self.crossprod <- function(x){
+    if(min(dim(x))==1){
+        ret <- x %*% t(x)
+    }else{
+        ret <- crossprod(x)
+    }
+  return(ret)
+}
+
+#'
+logsumexp <- function (x) {
+  y = max(x)
+  y + log(sum(exp(x - y)))
+}
+
+#'
+softmax <- function (x) {
+  exp(x - logsumexp(x))
+}
+
+#'
+softmax2 <- function(x){
+    return(exp(x)/sum(exp(x)))
+}
+
+#'
+logMNdensity <- function(y,invSig,logdet){
+    ## The term "-log(2*pi)*d/2" is omitted
+    return(-t(y)%*%invSig%*%y /2-logdet/2)
+}
+
+#'
+KL.MN <- function(p,q){
+    sum(p*log(p/q))
+}
+
+#'
+pgdraw.mod <- function(b,c){
+    if(b>0){
+        ret <- pgdraw(b,c)
+    }else{
+##        print("in pgdraw: b=0")
+        ret <- 0
+    }
+    return(ret)
+}
+
+#'
+SB2MN <- function(pi.sb){
+    pi.sb <- c(pi.sb,1) ## append 1
+    K <- length(pi.sb)
+    pi.mn <- rep(0,K)
+    pi.mn[1] <- pi.sb[1]
+    for(kk in 2:K){
+        pi.mn[kk] <- pi.sb[kk]*(1-sum(pi.mn))
+    }
+    return(pi.mn)
+}
+
+#'
+MN2SB <- function(pi.mn){
+    K <- length(pi.mn)
+    pi.sb <- rep(0,K-1)
+    pi.cs <- cumsum(pi.mn[-K])
+    pi.sb[1] <- pi.mn[1]
+    pi.sb[2:(K-1)] <- pi.mn[2:(K-1)]/(1-pi.cs[-(K-1)])
+    return(pi.sb)
+}
+
+#'
+gamma2pi <- function(gamma,Xp){
+    XpGamma <- t(gamma) %*% Xp ## K-1 x T
+    pi.sb <- 1/(1+exp(-XpGamma))
+    return(pi.sb)
+}
+
+#'
+dtaMatCensor <- function(x,Cbox){
+    d <- dim(x)[2]
+    for(ii in 1:d){
+        x[,ii] <- pmin(pmax(x[,ii],Cbox[ii,1]),Cbox[ii,2])
+    }
+    return(x)
+}
+
+#'
+censorIndicator <- function(x,Cbox){
+    d <- dim(Cbox)[1]
+    if(dim(x)[2]!=d & dim(x)[1]==d){
+        x <- t(x)
+    }
+    for(ii in 1:d){
+        x[,ii] <- (x[,ii]==Cbox[ii,2]) - (x[,ii]==Cbox[ii,1])
+    }
+    return(x)
+}
+
+#'
+sample.region <- function(cc,Cbox){
+    limits <- NULL
+    d <- length(cc)
+    for(i in 1:d){
+        if(cc[i]==-1){
+            limits <- rbind(limits, c(-Inf,Cbox[i,1]))
+        }else if(cc[i]==0){
+            limits <- rbind(limits, c(-Inf,Inf))
+        }else{
+            limits <- rbind(limits, c(Cbox[i,2], Inf))
+        }
+    }
+    colnames(limits) <- c("lower","upper")
+    return(limits)
+}
+
+
+
+#'
+samp.trunc.normal <- function(yy, zz, cc.info, bounds.info, mu.mat, Sigma.ell, dimdat){
+    cc <- abs(cc.info)==1
+    nc <- cc==0
+    d <- length(cc.info)
+    lower.info <- bounds.info[1:d]
+    upper.info <- bounds.info[(d+1):(2*d)]
+    mu <- mu.mat[,zz]
+
+    ## If all dimensions are censored.
+    if(all(cc)){
+      sig = Sigma.ell[,,zz]
+      if(dimdat==1) sig = as.matrix(sig)
+        yy <- tmvnsim(nsamp=1,d,lower=lower.info,upper=upper.info,
+                      mean= mu, sigma = sig)$samp
+
+    ## If /not/ all dimensions are censored.
+    } else {
+      ## Conditional mean and variance
+        slope <- Sigma.ell[cc,nc,zz] %*% solve(Sigma.ell[nc,nc,zz])
+        cond.sig <- Sigma.ell[cc,cc,zz] - slope %*% Sigma.ell[nc,cc,zz]
+        cond.m <- mu[cc]+slope %*% (yy[nc]-mu[nc])
+
+      ## Sample from this conditional truncated normal
+      if(dimdat==1) cond.sig = as.matrix(cond.sig)
+      stopifnot("matrix" %in% class(cond.sig))
+      imputed_y = tmvnsim(nsamp = 1, length(cond.m),
+              lower=lower.info[cc], upper = upper.info[cc],
+              mean= cond.m, sigma = cond.sig)$samp
+        yy[cc] <- imputed_y
+    }
+    if(!is.numeric(yy)) browser()
+
+    return(yy)
+}
+
+#'
+impute.censored <- function(ww, yy, zz, cc.info.mat, bounds.mat,
+                            mu.mat, Sigma.ell, dimdat){
+  ## Setup
+  stopifnot("array" %in% class(Sigma.ell))
+    if(length(zz) == 0){
+        ret <- NULL
+    }else if (length(zz)==1){
+        ret <- samp.trunc.normal(yy, zz, cc.info.mat, bounds.mat,
+                                 mu.mat, Sigma.ell, dimdat)
+    } else {
+        ret <- t(sapply(1:length(zz), function(ii)
+            samp.trunc.normal(yy[ii,], zz[ii],
+                              cc.info.mat[ii,], bounds.mat[,ii],
+                              mu.mat, Sigma.ell, dimdat)))
+    }
+    return(ret)
+}
+
+
+#'
+gen.syn.dta <- function(T, K, p, d=3, Cbox=NULL, Pi =NULL, avg.clust.size=100){
+    ### by default, d = 3
+    nt <- rpois(n=T,lambda=avg.clust.size*K)
+    X <- t(sapply(1:p, function(pp) arima.sim(list(order=c(1,0,0), ar=pp/(pp+1)/2), n=T)))
+    Beta <- array(rnorm(K*p*d), c(d,p,K))
+    beta0 <- matrix(rnorm(K*d), nrow=d,ncol=K)
+
+    if(is.null(Pi)){
+        Gamma0 <- matrix(rnorm(K*p), nrow= p, ncol = K)
+        Gamma0 <- t(apply(Gamma0,1,function(x) x-x[K]))/10
+        gamma0 <- (1:K)/1
+        Pi <- t(apply(t(X) %*% Gamma0+gamma0, 1, function(x) exp(x)/sum(exp(x))))
+    }
+
+    Sigma <- rWishart(K, 1, diag(d))
+
+    Z.list <- lapply(1:T, function(tt) sample(1:K, nt[[tt]], prob = Pi[tt,],replace = TRUE))
+
+    Y.list <- NULL
+    for(t in 1:T){
+        Z <- Z.list[[t]]
+        Y.list[[t]] <- t(sapply(Z,function(z)
+            mvrnorm(n=1, mu = beta0[,z]+Beta[,,z]%*%X[,t],Sigma = Sigma[,,z])))
+    }
+    Ytrue.list <- Y.list
+
+    if(is.null(Cbox)==FALSE){
+        Y.list <- lapply(Y.list, function(x) dtaMatCensor(x,Cbox))
+    }
+    return(list(Y.list=Y.list, X=X, Z.list=Z.list, nt=nt, Cbox=Cbox, K=K,
+                Ytrue.list = Ytrue.list,
+                Pi = Pi, beta0 = beta0, Beta = Beta, Sigma = Sigma))
+}
+
+
+#'
+loglik_eval <- function(mu.list, chol.Sig.list,
+                        W.list, X.list, Y.list, Z.list,
+                        nt.list, simple = FALSE){
+
+    ## logPiZ <- mcmapply(function(xx,yy,mm){sapply(1:K, function(kk)
+    ##     mvnfast::dmvn(yy, mm[,kk], chol.Sig.list[[kk]],log=TRUE,isChol = TRUE)) },
+    ##     xx=X.list, yy = Y.list, mm=mu.list, mc.cores = min(n.cores, T),
+    ##     SIMPLIFY = FALSE)
+
+    if(simple == TRUE){
+        ll.vec <- sapply(1:nt.list[[1]], function(id)
+            mvnfast::dmvn(Y.list[[1]][id,],
+                          mu.list[[1]][,Z.list[[1]][id]],
+                          chol.Sig.list[[Z.list[[1]][id]]],
+                          log=TRUE, isChol = TRUE))
+        out <- sum(ll.vec * W.list[[1]]) / nt.list[[1]]
+    }else{
+        ll.sums  <-  mcmapply(function(ww, xx,yy,mm,zz,nt){
+            sum(ww * sapply(1:nt,function(id)
+                mvnfast::dmvn(yy[id,], mm[,zz[id]], chol.Sig.list[[zz[id]]],
+                              log=TRUE,isChol = TRUE)) )},
+            ww = W.list, xx = X.list, yy = Y.list,
+            mm=mu.list, zz = Z.list, nt = nt.list,
+            mc.cores = min(n.cores, T), SIMPLIFY = TRUE)
+        out <- Reduce("+",ll.sums)/sum(unlist(nt.list))
+    }
+    return(out)
+}
+```
+
+
+

@@ -1,0 +1,66 @@
+# Simulations
+
+Refer back to the data generation in \@ref{syntheticdata}. We will be
+top-censoring the data at 0.5. Before censoring, this is what the data looks
+like.
+
+```{r, fig.width = 6, fig.height = 4}
+## Load the "original" model
+orig_model = readRDS(file=file.path("~/repos/flowcut/inst/output", "orig_model.RDS"))
+
+## Generate data
+set.seed(100)
+isignal = 8
+new_model = make_model(orig_model, isignal)
+ylist = gen_1d(new_model, nt = 100)
+flowtrend::plot_1d(ylist, obj = new_model)
+```
+
+After censoring, this is it.
+
+
+```{r, fig.width = 6, fig.height = 4}
+## Censor it
+ylist = lapply(ylist, function(y){
+  y = pmin(y, 0.5)
+})
+flowtrend::plot_1d(ylist, obj = new_model)
+```
+
+We need to specify a few things (1) like the censoring limits `Cbox` and (2)
+`countslist` before running the MCMC.
+
+```{r}
+## Form the censoring "box"
+Cbox = rbind(c(-Inf, 0.5)) 
+
+## Counts are all equal for now
+countslist = lapply(ylist, function(y){ rep(1, nrow(y)) })
+
+## Save the metadata
+datobj = list(ylist=ylist, countslist=countslist, Cbox=Cbox, X=orig_model$X)
+saveRDS(datobj,
+        file.path("~/repos/flowcut/inst/output",
+                  paste0("isignal-", isignal, "-datobj.RDS")))
+```
+
+
+Next, we run the MCMC.
+
+```{r, eval = FALSE}
+## Run the MCMC
+Nmc <- 1e3 * 5
+Nburn <- 500
+Gibbs.res <- run.Gibbs.fast(ylist = datobj$ylist,
+                            countslist = datobj$countslist,
+                            numclust = 2,
+                            Nmc = Nmc, Nburn = Nburn,
+                            gg = 0.1, 
+                            X = t(datobj$X),
+                            Cbox = datobj$Cbox, verbose = TRUE)
+
+## Save the results
+saveRDS(Gibbs.res,
+        file.path("~/repos/flowcut/inst/output",
+                  paste0("isignal-", isignal, "-gibbs.RDS")))
+```

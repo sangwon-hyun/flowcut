@@ -1,0 +1,8 @@
+introduction
+package-setup
+helpers-functions
+syntheticdata
+gibbs-sampler
+the-main-gibbs-sampler
+simulations
+real-data-example

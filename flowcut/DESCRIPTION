@@ -1,0 +1,18 @@
+Package: flowcut
+Title: flowcut
+Version: 0.0.0.9000
+Authors@R: 
+    person("Sangwon", "Hyun", , "sangwonh@ucsc.edu", role = c("aut", "cre"))
+Description: Time-smooth mixture modeling for flow cytometry data.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
+Depends: 
+    tidyverse
+Imports: 
+    clue,
+    ggplot2,
+    glmnet
+LitrVersionUsed: 0.9.0
+LitrId: 4ea021ce8cc75ff95d586202ef8dab91
