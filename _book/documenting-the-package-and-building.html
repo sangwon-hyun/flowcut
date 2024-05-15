@@ -4,18 +4,18 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>2 Package setup | Creating the flowcut R package</title>
-  <meta name="description" content="2 Package setup | Creating the flowcut R package" />
+  <title>8 Documenting the package and building | Creating the flowcut R package</title>
+  <meta name="description" content="8 Documenting the package and building | Creating the flowcut R package" />
   <meta name="generator" content="bookdown 0.35 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="2 Package setup | Creating the flowcut R package" />
+  <meta property="og:title" content="8 Documenting the package and building | Creating the flowcut R package" />
   <meta property="og:type" content="book" />
   
   
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="2 Package setup | Creating the flowcut R package" />
+  <meta name="twitter:title" content="8 Documenting the package and building | Creating the flowcut R package" />
   
   
   
@@ -30,8 +30,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="index.html"/>
-<link rel="next" href="helpers-functions.html"/>
+<link rel="prev" href="real-data-example.html"/>
+
 <script src="libs/header-attrs-2.25/header-attrs.js"></script>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
@@ -165,39 +165,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="package-setup" class="section level1 hasAnchor" number="2">
-<h1><span class="header-section-number">2</span> Package setup<a href="package-setup.html#package-setup" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<p>The DESCRIPTION file is created using this code.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="package-setup.html#cb3-1" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">create_package</span>(</span>
-<span id="cb3-2"><a href="package-setup.html#cb3-2" tabindex="-1"></a>  <span class="at">path =</span> <span class="st">&quot;.&quot;</span>,</span>
-<span id="cb3-3"><a href="package-setup.html#cb3-3" tabindex="-1"></a>  <span class="at">fields =</span> <span class="fu">list</span>(</span>
-<span id="cb3-4"><a href="package-setup.html#cb3-4" tabindex="-1"></a>    <span class="at">Package =</span> params<span class="sc">$</span>package_name,</span>
-<span id="cb3-5"><a href="package-setup.html#cb3-5" tabindex="-1"></a>    <span class="at">Version =</span> <span class="st">&quot;0.0.0.9000&quot;</span>,</span>
-<span id="cb3-6"><a href="package-setup.html#cb3-6" tabindex="-1"></a>    <span class="at">Title =</span> <span class="st">&quot;flowcut&quot;</span>,</span>
-<span id="cb3-7"><a href="package-setup.html#cb3-7" tabindex="-1"></a>    <span class="at">Description =</span> <span class="st">&quot;Time-smooth mixture modeling for flow cytometry data.&quot;</span>,</span>
-<span id="cb3-8"><a href="package-setup.html#cb3-8" tabindex="-1"></a>    <span class="st">`</span><span class="at">Authors@R</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">person</span>(</span>
-<span id="cb3-9"><a href="package-setup.html#cb3-9" tabindex="-1"></a>      <span class="at">given =</span> <span class="st">&quot;Sangwon&quot;</span>,</span>
-<span id="cb3-10"><a href="package-setup.html#cb3-10" tabindex="-1"></a>      <span class="at">family =</span> <span class="st">&quot;Hyun&quot;</span>,</span>
-<span id="cb3-11"><a href="package-setup.html#cb3-11" tabindex="-1"></a>      <span class="at">email =</span> <span class="st">&quot;sangwonh@ucsc.edu&quot;</span>,</span>
-<span id="cb3-12"><a href="package-setup.html#cb3-12" tabindex="-1"></a>      <span class="at">role =</span> <span class="fu">c</span>(<span class="st">&quot;aut&quot;</span>, <span class="st">&quot;cre&quot;</span>)</span>
-<span id="cb3-13"><a href="package-setup.html#cb3-13" tabindex="-1"></a>      )</span>
-<span id="cb3-14"><a href="package-setup.html#cb3-14" tabindex="-1"></a>  )</span>
-<span id="cb3-15"><a href="package-setup.html#cb3-15" tabindex="-1"></a>)</span>
-<span id="cb3-16"><a href="package-setup.html#cb3-16" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">use_mit_license</span>(<span class="at">copyright_holder =</span> <span class="st">&quot;Sangwon Hyun&quot;</span>)</span></code></pre></div>
-<p>The following is what will show up when someone types <code>package?flowcut</code> in
-the console.</p>
-<pre class="package_doc"><code>#&#39; flowcut
-#&#39;
-#&#39; This package implements the `flowcut` method.
-#&#39; 
-#&#39; @docType package</code></pre>
-<p>This package will have some dependancies:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="package-setup.html#cb5-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb5-2"><a href="package-setup.html#cb5-2" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb5-3"><a href="package-setup.html#cb5-3" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">use_package</span>(<span class="st">&quot;tidyverse&quot;</span>, <span class="at">type =</span> <span class="st">&quot;depends&quot;</span>) </span>
-<span id="cb5-4"><a href="package-setup.html#cb5-4" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">use_package</span>(<span class="st">&quot;ggplot2&quot;</span>)</span>
-<span id="cb5-5"><a href="package-setup.html#cb5-5" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">use_package</span>(<span class="st">&quot;clue&quot;</span>)</span>
-<span id="cb5-6"><a href="package-setup.html#cb5-6" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">use_package</span>(<span class="st">&quot;glmnet&quot;</span>)</span></code></pre></div>
+<div id="documenting-the-package-and-building" class="section level1 hasAnchor" number="8">
+<h1><span class="header-section-number">8</span> Documenting the package and building<a href="documenting-the-package-and-building.html#documenting-the-package-and-building" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>We finish by running commands that will document, build, and install the
+package. It may also be a good idea to check the package from within this file.</p>
+<!-- ```{r, results='hide'} -->
+<!-- litr::document() # <-- use instead of devtools::document()  -->
+<!-- ``` -->
 
 </div>
             </section>
@@ -205,8 +179,8 @@ the console.</p>
           </div>
         </div>
       </div>
-<a href="index.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="helpers-functions.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="real-data-example.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

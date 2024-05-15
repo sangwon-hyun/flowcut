@@ -1,12 +1,5 @@
-# Helpers functions
+# Generated from _main.Rmd: do not edit by hand
 
-These are some helper functions that are needed for the MCMC.
-
-These functions are not documented for now. (TODO: do this).
-
-<!-- send_to to put all helper functions into one file.. -->
-
-```{r, send_to = 'R/all-helpers.R'}
 #' cross product
 #'
 wcrossprod.fast <- function(x,w.sqrt, weighting = TRUE){
@@ -259,7 +252,3 @@ loglik_eval <- function(mu.list, chol.Sig.list,
     }
     return(out)
 }
-```
-
-
-

@@ -17,7 +17,9 @@
 #' @param n_cores Number of cores for multiple cores.
 #' 
 #'
-#' @return 
+#' @return
+#'
+#' @export
 run.Gibbs.fast <- function(ylist, countslist, X, 
                            numclust,
                            Nmc = 3000,
