@@ -169,9 +169,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h1><span class="header-section-number">8</span> Documenting the package and building<a href="documenting-the-package-and-building.html#documenting-the-package-and-building" class="anchor-section" aria-label="Anchor link to header"></a></h1>
 <p>We finish by running commands that will document, build, and install the
 package. It may also be a good idea to check the package from within this file.</p>
-<!-- ```{r, results='hide'} -->
-<!-- litr::document() # <-- use instead of devtools::document()  -->
-<!-- ``` -->
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="documenting-the-package-and-building.html#cb20-1" tabindex="-1"></a>litr<span class="sc">::</span><span class="fu">document</span>() <span class="co"># &lt;-- use instead of devtools::document()</span></span></code></pre></div>
+<pre><code>## ℹ Updating flowcut documentation
+## ℹ Loading flowcut</code></pre>
+<pre><code>## Warning: [run.Gibbs.fast.R:20] @return requires a value</code></pre>
+<pre><code>## Writing &#39;NAMESPACE&#39;
+## Writing &#39;wcrossprod.fast.Rd&#39;
+## Writing &#39;flowcut-package.Rd&#39;
+## Writing &#39;gen_1d.Rd&#39;
+## Writing &#39;make_model.Rd&#39;
+## Writing &#39;run.Gibbs.fast.Rd&#39;</code></pre>
 
 </div>
             </section>

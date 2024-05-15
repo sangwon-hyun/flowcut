@@ -282,18 +282,19 @@ too much across time.</p>
 <div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="simulations.html#cb18-1" tabindex="-1"></a><span class="do">## Run the MCMC</span></span>
 <span id="cb18-2"><a href="simulations.html#cb18-2" tabindex="-1"></a>Nmc <span class="ot">&lt;-</span> <span class="fl">1e3</span> <span class="sc">*</span> <span class="dv">5</span></span>
 <span id="cb18-3"><a href="simulations.html#cb18-3" tabindex="-1"></a>Nburn <span class="ot">&lt;-</span> <span class="dv">500</span></span>
-<span id="cb18-4"><a href="simulations.html#cb18-4" tabindex="-1"></a>Gibbs.res <span class="ot">&lt;-</span> <a href='gibbs-sampler.html#run.Gibbs.fast'>run.Gibbs.fast</a>(<span class="at">ylist =</span> datobj<span class="sc">$</span>ylist,</span>
-<span id="cb18-5"><a href="simulations.html#cb18-5" tabindex="-1"></a>                            <span class="at">countslist =</span> datobj<span class="sc">$</span>countslist,</span>
-<span id="cb18-6"><a href="simulations.html#cb18-6" tabindex="-1"></a>                            <span class="at">numclust =</span> <span class="dv">2</span>,</span>
-<span id="cb18-7"><a href="simulations.html#cb18-7" tabindex="-1"></a>                            <span class="at">Nmc =</span> Nmc, <span class="at">Nburn =</span> Nburn,</span>
-<span id="cb18-8"><a href="simulations.html#cb18-8" tabindex="-1"></a>                            <span class="at">gg =</span> <span class="fl">0.1</span>, </span>
-<span id="cb18-9"><a href="simulations.html#cb18-9" tabindex="-1"></a>                            <span class="at">X =</span> <span class="fu">t</span>(datobj<span class="sc">$</span>X),</span>
-<span id="cb18-10"><a href="simulations.html#cb18-10" tabindex="-1"></a>                            <span class="at">Cbox =</span> datobj<span class="sc">$</span>Cbox, <span class="at">verbose =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb18-11"><a href="simulations.html#cb18-11" tabindex="-1"></a></span>
-<span id="cb18-12"><a href="simulations.html#cb18-12" tabindex="-1"></a><span class="do">## Save the results</span></span>
-<span id="cb18-13"><a href="simulations.html#cb18-13" tabindex="-1"></a><span class="fu">saveRDS</span>(Gibbs.res,</span>
-<span id="cb18-14"><a href="simulations.html#cb18-14" tabindex="-1"></a>        <span class="fu">file.path</span>(<span class="st">&quot;~/repos/flowcut/inst/output&quot;</span>,</span>
-<span id="cb18-15"><a href="simulations.html#cb18-15" tabindex="-1"></a>                  <span class="fu">paste0</span>(<span class="st">&quot;isignal-&quot;</span>, isignal, <span class="st">&quot;-gibbs.RDS&quot;</span>)))</span></code></pre></div>
+<span id="cb18-4"><a href="simulations.html#cb18-4" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb18-5"><a href="simulations.html#cb18-5" tabindex="-1"></a>Gibbs.res <span class="ot">&lt;-</span> <a href='gibbs-sampler.html#run.Gibbs.fast'>run.Gibbs.fast</a>(<span class="at">ylist =</span> datobj<span class="sc">$</span>ylist,</span>
+<span id="cb18-6"><a href="simulations.html#cb18-6" tabindex="-1"></a>                            <span class="at">countslist =</span> datobj<span class="sc">$</span>countslist,</span>
+<span id="cb18-7"><a href="simulations.html#cb18-7" tabindex="-1"></a>                            <span class="at">numclust =</span> <span class="dv">2</span>,</span>
+<span id="cb18-8"><a href="simulations.html#cb18-8" tabindex="-1"></a>                            <span class="at">Nmc =</span> Nmc, <span class="at">Nburn =</span> Nburn,</span>
+<span id="cb18-9"><a href="simulations.html#cb18-9" tabindex="-1"></a>                            <span class="at">gg =</span> <span class="fl">0.1</span>, </span>
+<span id="cb18-10"><a href="simulations.html#cb18-10" tabindex="-1"></a>                            <span class="at">X =</span> <span class="fu">t</span>(datobj<span class="sc">$</span>X),</span>
+<span id="cb18-11"><a href="simulations.html#cb18-11" tabindex="-1"></a>                            <span class="at">Cbox =</span> datobj<span class="sc">$</span>Cbox, <span class="at">verbose =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb18-12"><a href="simulations.html#cb18-12" tabindex="-1"></a></span>
+<span id="cb18-13"><a href="simulations.html#cb18-13" tabindex="-1"></a><span class="do">## Save the results</span></span>
+<span id="cb18-14"><a href="simulations.html#cb18-14" tabindex="-1"></a><span class="fu">saveRDS</span>(Gibbs.res,</span>
+<span id="cb18-15"><a href="simulations.html#cb18-15" tabindex="-1"></a>        <span class="fu">file.path</span>(<span class="st">&quot;~/repos/flowcut/inst/output&quot;</span>,</span>
+<span id="cb18-16"><a href="simulations.html#cb18-16" tabindex="-1"></a>                  <span class="fu">paste0</span>(<span class="st">&quot;isignal-&quot;</span>, isignal, <span class="st">&quot;-gibbs.RDS&quot;</span>)))</span></code></pre></div>
 
 </div>
             </section>
