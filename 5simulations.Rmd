@@ -11,8 +11,8 @@ orig_model = readRDS(file=file.path("~/repos/flowcut/inst/output", "orig_model.R
 ## Generate data
 set.seed(100)
 isignal = 8
-new_model = make_model(orig_model, isignal)
-ylist = gen_1d(new_model, nt = 100)
+new_model = flowcut::make_model(orig_model, isignal)
+ylist = flowcut::gen_1d(new_model, nt = 100)
 flowtrend::plot_1d(ylist, obj = new_model)
 ```
 

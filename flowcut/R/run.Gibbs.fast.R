@@ -14,6 +14,7 @@
 #' @param verbose Whether to be loud.
 #' @param warm.start If supplied, restart the MCMC at these values.
 #' @param tol NOT USED.
+#' @param n_cores Number of cores for multiple cores.
 #' 
 #'
 #' @return 
@@ -22,9 +23,12 @@ run.Gibbs.fast <- function(ylist, countslist, X,
                            Nmc = 3000,
                            Nburn = 500,
                            Cbox = NULL,  
-                           user.prior = NULL, gg=1,
+                           user.prior = NULL,
+                           gg=1,
                            verbose = FALSE,
-                           warm.start = NULL, tol = 1/1e8){
+                           warm.start = NULL,
+                           tol = 1/1e8,
+                           n.cores = 1){
 
   ## Basic setup
   TT <- length(ylist)
@@ -34,6 +38,8 @@ run.Gibbs.fast <- function(ylist, countslist, X,
   NN <- sum(ntlist)
   tt.impute <- min(20,floor(Nburn/5))
   ylist.raw <- ylist ## store raw ylist 
+  ## n.cores <- detectCores()
+  n.cores = min(n.cores, TT)
 
   ##### pre computed quantities
   X.list <- as.list(as.data.frame(X))
@@ -55,19 +61,19 @@ run.Gibbs.fast <- function(ylist, countslist, X,
   ## Build censored box
   if(!is.null(Cbox)){
       Censor.list <- mclapply(ylist, function(x) censorIndicator(x,Cbox),
-                              mc.cores = min(n.cores, TT))
+                              mc.cores = n.cores)
       censor.01.list <- mclapply(Censor.list, function(x)
           apply(x,1, function(xx)
-              sum(abs(xx))>0), mc.cores = min(n.cores, TT))
+              sum(abs(xx))>0), mc.cores = n.cores)
       censored.ylist <- mcmapply(function(yy,c01) {yy[c01==TRUE,,drop=FALSE]},
                                   yy = ylist, c01 = censor.01.list,
-                                  mc.cores = min(n.cores, TT))
+                                  mc.cores = n.cores)
       censored.C.list <- mcmapply(function(c01,cc){cc[c01==TRUE,,drop=FALSE]},
                                   c01 = censor.01.list, cc=Censor.list,
-                                  mc.cores = min(n.cores, TT))
+                                  mc.cores = n.cores)
       censored.countslist <- mcmapply(function(c01,ww){ww[c01==TRUE]},
                                   c01 = censor.01.list, w=countslist,
-                                  mc.cores = min(n.cores, TT))  
+                                  mc.cores = n.cores)  
       ntlist.censor <- sapply(1:TT,function(tt) sum(censor.01.list[[tt]])) 
       samp.region.list <- lapply(1:TT, function(tt){
           c01 <- censor.01.list[[tt]]
@@ -202,7 +208,7 @@ run.Gibbs.fast <- function(ylist, countslist, X,
         mt.ell <- mcmapply(function(ww,zz){
             sapply(1:numclust, function(kk) sum(ww[zz==kk]))},
             ww = countslist, zz = Z.list, SIMPLIFY = TRUE,
-            mc.cores = min(n.cores, TT))
+            mc.cores = n.cores)
         m.ell <-  Rfast::rowsums(mt.ell)
 
         ## nt.ell  <- do.call(cbind,mclapply(Z.list, function(zz){
@@ -227,7 +233,6 @@ run.Gibbs.fast <- function(ylist, countslist, X,
 
             SX.ell <- XTXp/gg + Reduce('+',Map(`*`, XtXtTp, mt.ell[ell,]))  
             inv.SX.ell <- Rfast::spdinv(SX.ell) ## (p+1) x (p+1)
-            ## Sy.ell <- mcmapply(function(ww, yy, zz){
             Sy.ell <- mapply(function(ww, yy, zz){
                 t(as.matrix(ww[zz==ell])) %*% yy[zz==ell,,drop=FALSE]},
                 ww = countslist, yy = ylist, zz = Z.list, SIMPLIFY = TRUE)
@@ -245,7 +250,7 @@ run.Gibbs.fast <- function(ylist, countslist, X,
                                 ww[zz==ell], weighting = TRUE)},
                 xx = Xp.list, yy = ylist, zz=Z.list, ww = W.sq.list, 
                 SIMPLIFY = FALSE,
-                mc.cores = min(n.cores, TT)) 
+                mc.cores = n.cores) 
           if(dimdat == 1) Sn.ell = sum(unlist(sse))
           if(dimdat > 1) Sn.ell <- Reduce('+',sse)
             Sig.ell[,,ell] <- rinvwishart(1,nu0+dimdat + m.ell[ell], S0 + Sn.ell)[,,1]
@@ -257,14 +262,14 @@ run.Gibbs.fast <- function(ylist, countslist, X,
         ## mt.ell <- mcmapply(function(ww,zz){
         ##     sapply(1:numclust, function(kk) sum(ww[zz==kk]))},
         ##     ww = countslist, zz = Z.list, SIMPLIFY = TRUE,
-        ##     mc.cores = min(n.cores, TT))
+        ##     mc.cores = n.cores)
         ## m.ell <-  Rfast::rowsums(mt.ell)
 
         ## XpGamma.abs <- abs(t(gamma.ell) %*% Xp) ## numclust-1 x T 
         ## mt.cumsum <- Rfast::colCumSums(mt.ell) 
         ## Mt.ell <- rbind(nt,-sweep(mt.cumsum[-numclust,], 2, mt.cumsum[numclust,])) 
         ## omega.tell <- matrix(mcmapply(pgdraw, round(Mt.ell[-numclust,]), XpGamma.abs,
-        ##                               mc.cores = min(n.cores, TT)),
+        ##                               mc.cores = n.cores),
         ##                      nrow=numclust-1, ncol = TT)
         ## kappa <- mt.ell[-numclust,] - Mt.ell[-numclust,]/2
 
@@ -273,14 +278,14 @@ run.Gibbs.fast <- function(ylist, countslist, X,
         ## nt.cumsum <- Rfast::colCumSums(as.matrix(nt.ell))  
         ## Nt.ell <- rbind(nt,-sweep(nt.cumsum[-numclust,], 2, nt.cumsum[numclust,])) 
         ## omega.tell <- matrix(mcmapply(pgdraw, Nt.ell[-numclust,], XpGamma.abs,
-        ##                               mc.cores = min(n.cores, TT)),
+        ##                               mc.cores = n.cores),
         ##                      nrow=numclust-1, ncol = TT)
         ## kappa <- nt.ell[-numclust,] - Nt.ell[-numclust,]/2
 
         mt.cumsum <- Rfast::colCumSums(as.matrix(mt.ell))  
         Mt.ell <- rbind(mt,-sweep(mt.cumsum[-numclust,,drop=FALSE], 2, mt.cumsum[numclust,,drop=FALSE])) 
         omega.tell <- matrix(mcmapply(pgdraw, round(Mt.ell[-numclust,]), XpGamma.abs,
-                                      mc.cores = min(n.cores, TT)),
+                                      mc.cores = n.cores),
                              nrow=numclust-1, ncol = TT)
         kappa <- mt.ell[-numclust,,drop=FALSE] - Mt.ell[-numclust,,drop=FALSE]/2
 
@@ -315,16 +320,16 @@ run.Gibbs.fast <- function(ylist, countslist, X,
                 mvnfast::dmvn(yy, mm[,kk], chol.Sig.list[[kk]],
                               log=TRUE, isChol = TRUE) + pp[kk])}, ## mod here 
             ww = countslist, xx =X.list, yy = ylist, mm = mu.list, pp=logpi.list,
-            mc.cores = min(n.cores, TT), SIMPLIFY = FALSE)
+            mc.cores = n.cores, SIMPLIFY = FALSE)
 
         Z.list <- mclapply(logPiZ, function(pp) apply(pp,1, function(lpi)
             sample(1:numclust,1,prob=softmax(lpi))),
-            mc.cores = min(n.cores, TT))
+            mc.cores = n.cores)
 
         ## mt.ell <- mcmapply(function(ww,zz){
         ##     sapply(1:numclust, function(kk) sum(ww[zz==kk]))},
         ##     ww = countslist, zz = Z.list, SIMPLIFY = TRUE,
-        ##     mc.cores = min(n.cores, TT))
+        ##     mc.cores = n.cores)
         ## m.ell <-  Rfast::rowsums(mt.ell)
 
 
@@ -338,9 +343,9 @@ run.Gibbs.fast <- function(ylist, countslist, X,
 ##        if(is.null(Cbox)==FALSE){
             censored.Z.list <- mcmapply(function(c01,zz){zz[c01==TRUE]},
                                         c01 = censor.01.list, zz=Z.list,
-                                        mc.cores = min(n.cores, TT))  
-            ## imputed.ylist <- mclapply(1:TT, function(tt) {
-            imputed.ylist <- lapply(1:TT, function(tt){
+                                        mc.cores = n.cores)  
+            imputed.ylist <- mclapply(1:TT, function(tt) {
+            ## imputed.ylist <- lapply(1:TT, function(tt){
               yy =
                 impute.censored(ww = censored.countslist[[tt]], 
                                 yy = censored.ylist[[tt]],
@@ -349,8 +354,8 @@ run.Gibbs.fast <- function(ylist, countslist, X,
                                 bounds.mat = samp.region.list[[tt]],
                                 mu.mat = mu.list[[tt]], Sigma.ell = Sig.ell,
                                 dimdat = dimdat)
-            })             
-           ## mc.cores = min(n.cores, TT), mc.preschedule = FALSE)             
+            ## })             
+            },mc.cores = n.cores, mc.preschedule = FALSE)             
             for(tt in 1:TT){
                 ylist[[tt]][censor.01.list[[tt]]==TRUE,] <- imputed.ylist[[tt]]
             }            
@@ -442,7 +447,7 @@ run.Gibbs.fast <- function(ylist, countslist, X,
 ## benchmark("ss"={sapply(1:TT, function(t) sapply(1:(numclust-1), function(kk)
 ##     pgdraw(Nt.ell[kk,t],abs(XpGamma[kk,t]))))},
 ##     "mcmapp"={matrix(mcmapply(pgdraw, Nt.ell[-numclust,], abs(XpGamma),
-##                               mc.cores = min(n.cores, TT)),
+##                               mc.cores = n.cores),
 ##                      nrow=numclust-1, ncol = TT)},
 ##     "mapp"={matrix(mapply(pgdraw, Nt.ell[-numclust,], abs(XpGamma)),
 ##                    nrow=numclust-1, ncol = TT)},

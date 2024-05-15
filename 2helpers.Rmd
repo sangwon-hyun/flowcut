@@ -2,7 +2,7 @@
 
 These are some helper functions that are needed for the MCMC.
 
-These functions are not documented for now. (TODO: do this.)
+These functions are not documented for now. (TODO: do this).
 
 ```{r}
 #'

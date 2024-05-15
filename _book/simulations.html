@@ -176,8 +176,8 @@ like.</p>
 <span id="cb14-4"><a href="simulations.html#cb14-4" tabindex="-1"></a><span class="do">## Generate data</span></span>
 <span id="cb14-5"><a href="simulations.html#cb14-5" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">100</span>)</span>
 <span id="cb14-6"><a href="simulations.html#cb14-6" tabindex="-1"></a>isignal <span class="ot">=</span> <span class="dv">8</span></span>
-<span id="cb14-7"><a href="simulations.html#cb14-7" tabindex="-1"></a>new_model <span class="ot">=</span> <a href='syntheticdata.html#make_model'>make_model</a>(orig_model, isignal)</span>
-<span id="cb14-8"><a href="simulations.html#cb14-8" tabindex="-1"></a>ylist <span class="ot">=</span> <a href='syntheticdata.html#gen_1d'>gen_1d</a>(new_model, <span class="at">nt =</span> <span class="dv">100</span>)</span>
+<span id="cb14-7"><a href="simulations.html#cb14-7" tabindex="-1"></a>new_model <span class="ot">=</span> flowcut<span class="sc">::</span><a href='syntheticdata.html#make_model'>make_model</a>(orig_model, isignal)</span>
+<span id="cb14-8"><a href="simulations.html#cb14-8" tabindex="-1"></a>ylist <span class="ot">=</span> flowcut<span class="sc">::</span><a href='syntheticdata.html#gen_1d'>gen_1d</a>(new_model, <span class="at">nt =</span> <span class="dv">100</span>)</span>
 <span id="cb14-9"><a href="simulations.html#cb14-9" tabindex="-1"></a>flowtrend<span class="sc">::</span><span class="fu">plot_1d</span>(ylist, <span class="at">obj =</span> new_model)</span></code></pre></div>
 <p><img src="_main_files/figure-html/unnamed-chunk-8-1.png" width="576" /></p>
 <p>After censoring, this is it.</p>
