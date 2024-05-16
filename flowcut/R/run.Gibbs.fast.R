@@ -356,6 +356,7 @@ run.Gibbs.fast <- function(ylist, countslist, X,
                                 bounds.mat = samp.region.list[[tt]],
                                 mu.mat = mu.list[[tt]], Sigma.ell = Sig.ell,
                                 dimdat = dimdat)
+              if(dimdat==1 & !is.null(yy)) yy= t(yy)
             ## })             
             },mc.cores = n.cores, mc.preschedule = FALSE)             
             for(tt in 1:TT){
@@ -409,6 +410,7 @@ run.Gibbs.fast <- function(ylist, countslist, X,
         print("time cost per iteration, in seconds") 
         print((proc.time()-ptm)/(Nburn+Nmc - tt.impute))
     }
+  
 
     if(is.null(Cbox)){
         ret <- list( ## burn.beta0=burn.beta0,
@@ -430,7 +432,7 @@ run.Gibbs.fast <- function(ylist, countslist, X,
             pos.Sigma = pos.Sigma,
             pos.gamma = pos.gamma,
             ## pos.Omega = pos.Omega,
-            pos.imputed.Y = do.call(rbind,imputed.ylist),
+            pos.imputed.Y = do.call(rbind, imputed.ylist),
             burn.avgloglik = burn.avgloglik,
             pos.avgloglik = pos.avgloglik,
             raw.ylist = ylist.raw, 

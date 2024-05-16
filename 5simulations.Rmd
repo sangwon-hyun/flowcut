@@ -134,6 +134,10 @@ Next, we run the MCMC.
 ## Run the MCMC
 Nmc <- 1e3 * 5
 Nburn <- 500
+
+Nmc <- 20
+Nburn <- 10
+
 set.seed(123)
 Gibbs.res <- run.Gibbs.fast(ylist = datobj$ylist,
                             countslist = datobj$countslist,
