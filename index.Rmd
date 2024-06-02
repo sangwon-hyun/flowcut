@@ -21,7 +21,6 @@ package are both created using one simple command:
 litr::render("index.Rmd", output_format = litr::litr_gitbook())
 ```
 
-
 This line is purely for testing (to be deleted later!).
 
 ```{r, eval = FALSE}
@@ -30,6 +29,8 @@ my_load <- function(){
   litr::render("~/repos/flowcut/index.Rmd", output_format = litr::litr_gitbook(minimal_eval = TRUE))
   devtools::load_all("~/repos/flowcut/flowcut")
 }
+
+devtools::check("~/repos/flowcut/flowcut", document = FALSE)
 ```
 
 

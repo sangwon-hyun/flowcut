@@ -7,11 +7,10 @@ These functions are not documented for now. (TODO: do this).
 <!-- send_to to put all helper functions into one file.. -->
 
 ```{r, send_to = 'R/all-helpers.R'}
-#' cross product
 #'
-wcrossprod.fast <- function(x,w.sqrt, weighting = TRUE){
+wcrossprod.fast <- function(x, w.sqrt, weighting = TRUE){
     if(weighting){
-        x <- x*w.sqrt
+        x <- x * w.sqrt
     }
     if(min(dim(x))==1){
         ret <- x %*% t(x)
@@ -61,7 +60,7 @@ KL.MN <- function(p,q){
 #'
 pgdraw.mod <- function(b,c){
     if(b>0){
-        ret <- pgdraw(b,c)
+        ret <- pgdraw::pgdraw(b,c)
     }else{
 ##        print("in pgdraw: b=0")
         ret <- 0
@@ -151,7 +150,7 @@ samp.trunc.normal <- function(yy, zz, cc.info, bounds.info, mu.mat, Sigma.ell, d
     if(all(cc)){
       sig = Sigma.ell[,,zz]
       if(dimdat==1) sig = as.matrix(sig)
-        yy <- tmvnsim(nsamp=1,d,lower=lower.info,upper=upper.info,
+        yy <- tmvnsim::tmvnsim(nsamp=1,d,lower=lower.info,upper=upper.info,
                       mean= mu, sigma = sig)$samp
 
     ## If /not/ all dimensions are censored.
@@ -197,19 +196,19 @@ impute.censored <- function(ww, yy, zz, cc.info.mat, bounds.mat,
 #'
 gen.syn.dta <- function(T, K, p, d=3, Cbox=NULL, Pi =NULL, avg.clust.size=100){
     ### by default, d = 3
-    nt <- rpois(n=T,lambda=avg.clust.size*K)
-    X <- t(sapply(1:p, function(pp) arima.sim(list(order=c(1,0,0), ar=pp/(pp+1)/2), n=T)))
-    Beta <- array(rnorm(K*p*d), c(d,p,K))
-    beta0 <- matrix(rnorm(K*d), nrow=d,ncol=K)
+    nt <- stats::rpois(n=T,lambda=avg.clust.size*K)
+    X <- t(sapply(1:p, function(pp) stats::arima.sim(list(order=c(1,0,0), ar=pp/(pp+1)/2), n=T)))
+    Beta <- array(stats::rnorm(K*p*d), c(d,p,K))
+    beta0 <- matrix(stats::rnorm(K*d), nrow=d,ncol=K)
 
     if(is.null(Pi)){
-        Gamma0 <- matrix(rnorm(K*p), nrow= p, ncol = K)
+        Gamma0 <- matrix(stats::rnorm(K*p), nrow= p, ncol = K)
         Gamma0 <- t(apply(Gamma0,1,function(x) x-x[K]))/10
         gamma0 <- (1:K)/1
         Pi <- t(apply(t(X) %*% Gamma0+gamma0, 1, function(x) exp(x)/sum(exp(x))))
     }
 
-    Sigma <- rWishart(K, 1, diag(d))
+    Sigma <- stats::rWishart(K, 1, diag(d))
 
     Z.list <- lapply(1:T, function(tt) sample(1:K, nt[[tt]], prob = Pi[tt,],replace = TRUE))
 
@@ -217,7 +216,7 @@ gen.syn.dta <- function(T, K, p, d=3, Cbox=NULL, Pi =NULL, avg.clust.size=100){
     for(t in 1:T){
         Z <- Z.list[[t]]
         Y.list[[t]] <- t(sapply(Z,function(z)
-            mvrnorm(n=1, mu = beta0[,z]+Beta[,,z]%*%X[,t],Sigma = Sigma[,,z])))
+          MASS::mvrnorm(n=1, mu = beta0[,z]+Beta[,,z]%*%X[,t],Sigma = Sigma[,,z])))
     }
     Ytrue.list <- Y.list
 
@@ -233,7 +232,7 @@ gen.syn.dta <- function(T, K, p, d=3, Cbox=NULL, Pi =NULL, avg.clust.size=100){
 #'
 loglik_eval <- function(mu.list, chol.Sig.list,
                         W.list, X.list, Y.list, Z.list,
-                        nt.list, simple = FALSE){
+                        nt.list, simple = FALSE, n.cores = 1){
 
     ## logPiZ <- mcmapply(function(xx,yy,mm){sapply(1:K, function(kk)
     ##     mvnfast::dmvn(yy, mm[,kk], chol.Sig.list[[kk]],log=TRUE,isChol = TRUE)) },
@@ -248,7 +247,7 @@ loglik_eval <- function(mu.list, chol.Sig.list,
                           log=TRUE, isChol = TRUE))
         out <- sum(ll.vec * W.list[[1]]) / nt.list[[1]]
     }else{
-        ll.sums  <-  mcmapply(function(ww, xx,yy,mm,zz,nt){
+        ll.sums  <-  parallel::mcmapply(function(ww, xx,yy,mm,zz,nt){
             sum(ww * sapply(1:nt,function(id)
                 mvnfast::dmvn(yy[id,], mm[,zz[id]], chol.Sig.list[[zz[id]]],
                               log=TRUE,isChol = TRUE)) )},

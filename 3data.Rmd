@@ -44,11 +44,16 @@ highest signal size (gap between the two means).
 The cluster probabilities are set to be all 1/2 everywhere. This means that the
 true $\alpha$ coefficients are zero.
 
+
+(TODO: Check object classes and restrict to flowmix or flowcut (but not
+flowtrend) model objects.)
+
 ```{r}
 #' From an original set of model parameters (|true_model|),
 #' generate synthetic 2-cluster 1-dimensional data with equal probabilities.
 #'
 #' @param isignal 0 to 10, which generates the means.
+#' @param orig_model Original model of class flowmix or flowcut; a list that contains alpha, beta and TT.
 #'
 #' @return A list with beta, mn, alpha, prob, X, sigma, TT, numclust.
 #' @export
@@ -110,6 +115,7 @@ Then, we will generate data from this model using the function `gen_1d()`.
 #' containing true model parameters.
 #'
 #' @param true_model List containing beta, alpha, mn, prob, numclust.
+#' @param nt Particles per time point.
 #'
 #' @return Cytograms (a |ylist| object)
 #' @export
@@ -125,7 +131,7 @@ gen_1d <- function(true_model, nt = 1000){
   
     ## Generate memberships Samples |nt| memberships out of (1:numclust)
     ## according to the cluster probabilities in |prob|.
-    nt_by_clust = rmultinom(1, size = nt, true_model$prob[tt,])
+    nt_by_clust = stats::rmultinom(1, size = nt, true_model$prob[tt,])
     ## draws = sample(1:numclust, size = nt, replace = TRUE, prob = true_model$prob[tt,])
     draws = c(rep(1, nt_by_clust[1]), rep(2, nt_by_clust[2]))
   

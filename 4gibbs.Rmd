@@ -9,15 +9,17 @@ TODO items:
 
 - We should write a function that makes a Cbox object.
 - We should write what user.prior refers to.
-- We should write what gg refers to, precisely.
+- We should write what gg refers to, precisely. <-- actually, we should have maxdev as an input.
+- telefit::rmatnorm should potentially be replaced with a function from a more well-known (stable) package?
 
 ```{r}
 #' Runs a gibbs sampler to estimate the posterior distribution of the flowcut 
 #' model.
 #'
 #' @param ylist data.
-#' @param countlist weights (counts) for data in |ylist|.
+#' @param countslist weights (counts) for data in |ylist|.
 #' @param X covariates; a (p x T) matrix (TODO: change code so that X is T x p).
+#' @param numclust NUmber of clusters.
 #' @param Nmc Number of MCMC iterations
 #' @param Nburn Number of burn-in iterations.
 #' @param Cbox Censored box.
@@ -26,7 +28,7 @@ TODO items:
 #' @param verbose Whether to be loud.
 #' @param warm.start If supplied, restart the MCMC at these values.
 #' @param tol NOT USED.
-#' @param n_cores Number of cores for multiple cores.
+#' @param n.cores Number of cores for multiple cores.
 #' 
 #'
 #' @return
@@ -74,18 +76,18 @@ run.Gibbs.fast <- function(ylist, countslist, X,
 
   ## Build censored box
   if(!is.null(Cbox)){
-      Censor.list <- mclapply(ylist, function(x) censorIndicator(x,Cbox),
+      Censor.list <- parallel::mclapply(ylist, function(x) censorIndicator(x,Cbox),
                               mc.cores = n.cores)
-      censor.01.list <- mclapply(Censor.list, function(x)
+      censor.01.list <- parallel::mclapply(Censor.list, function(x)
           apply(x,1, function(xx)
               sum(abs(xx))>0), mc.cores = n.cores)
-      censored.ylist <- mcmapply(function(yy,c01) {yy[c01==TRUE,,drop=FALSE]},
+      censored.ylist <- parallel::mcmapply(function(yy,c01) {yy[c01==TRUE,,drop=FALSE]},
                                   yy = ylist, c01 = censor.01.list,
                                   mc.cores = n.cores)
-      censored.C.list <- mcmapply(function(c01,cc){cc[c01==TRUE,,drop=FALSE]},
+      censored.C.list <- parallel::mcmapply(function(c01,cc){cc[c01==TRUE,,drop=FALSE]},
                                   c01 = censor.01.list, cc=Censor.list,
                                   mc.cores = n.cores)
-      censored.countslist <- mcmapply(function(c01,ww){ww[c01==TRUE]},
+      censored.countslist <- parallel::mcmapply(function(c01,ww){ww[c01==TRUE]},
                                   c01 = censor.01.list, w=countslist,
                                   mc.cores = n.cores)  
       ntlist.censor <- sapply(1:TT,function(tt) sum(censor.01.list[[tt]])) 
@@ -129,9 +131,10 @@ run.Gibbs.fast <- function(ylist, countslist, X,
     }else{
         Z.list <- lapply(1:TT,function(tt) sample(1:numclust,ntlist[tt],replace = TRUE)) 
         ## Omega <- rinvwishart(1,nu1+p+1,S1)[,,1]
-        beta.ell <-  array(rnorm(numclust*(p+1)*dimdat), c(dimdat,p+1,numclust))
-        gamma.ell <- matrix(rnorm((p+1)*(numclust-1)),nrow=p+1,ncol=numclust-1) 
-        Sig.ell <- rinvwishart(numclust,nu0+dimdat,S0)## %>% as.matrix()
+        beta.ell <-  array(stats::rnorm(numclust*(p+1)*dimdat), c(dimdat,p+1,numclust))
+        gamma.ell <- matrix(stats::rnorm((p+1)*(numclust-1)),nrow=p+1,ncol=numclust-1) 
+        Sig.ell <- matrixsampling::rinvwishart(numclust,nu0+dimdat,S0)## %>% as.matrix()
+        invNugget <- 1 
     }
 
 ##    Omega.ell <- rinvwishart(numclust-1,nu1+p+1,S1)
@@ -219,7 +222,7 @@ run.Gibbs.fast <- function(ylist, countslist, X,
         ## experts' estimation ###
 ################################################ 
         
-        mt.ell <- mcmapply(function(ww,zz){
+        mt.ell <- parallel::mcmapply(function(ww,zz){
             sapply(1:numclust, function(kk) sum(ww[zz==kk]))},
             ww = countslist, zz = Z.list, SIMPLIFY = TRUE,
             mc.cores = n.cores)
@@ -253,12 +256,12 @@ run.Gibbs.fast <- function(ylist, countslist, X,
           if(dimdat == 1) Sy.ell = rbind(Sy.ell)
           ## if(!is.numeric(Sy.ell[1])) browser()
             Sxy.ell <- Xp %*% t(Sy.ell)  ## (p+1) x d
-            beta.ell[,,ell] <- rmatnorm(M = t(Sxy.ell) %*% inv.SX.ell, 
+            beta.ell[,,ell] <- telefit::rmatnorm(M = t(Sxy.ell) %*% inv.SX.ell, 
                                         U = Sig.ell[,,ell], 
                                         V = inv.SX.ell, 
                                         tol = .Machine$double.eps^0.95)
             
-            sse <- mcmapply(function(ww,xx,yy,zz) {
+            sse <- parallel::mcmapply(function(ww,xx,yy,zz) {
                 wcrossprod.fast(Rfast::eachrow(as.matrix(yy[zz==ell,,drop=FALSE]),
                                                beta.ell[,,ell]%*%xx, '-'),
                                 ww[zz==ell], weighting = TRUE)},
@@ -267,7 +270,7 @@ run.Gibbs.fast <- function(ylist, countslist, X,
                 mc.cores = n.cores) 
           if(dimdat == 1) Sn.ell = sum(unlist(sse))
           if(dimdat > 1) Sn.ell <- Reduce('+',sse)
-            Sig.ell[,,ell] <- rinvwishart(1,nu0+dimdat + m.ell[ell], S0 + Sn.ell)[,,1]
+            Sig.ell[,,ell] <- matrixsampling::rinvwishart(1,nu0+dimdat + m.ell[ell], S0 + Sn.ell)[,,1]
         }
         
         ################################################ 
@@ -298,23 +301,26 @@ run.Gibbs.fast <- function(ylist, countslist, X,
 
         mt.cumsum <- Rfast::colCumSums(as.matrix(mt.ell))  
         Mt.ell <- rbind(mt,-sweep(mt.cumsum[-numclust,,drop=FALSE], 2, mt.cumsum[numclust,,drop=FALSE])) 
-        omega.tell <- matrix(mcmapply(pgdraw, round(Mt.ell[-numclust,]), XpGamma.abs,
+        omega.tell <- matrix(parallel::mcmapply(pgdraw::pgdraw, round(Mt.ell[-numclust,]), XpGamma.abs,
                                       mc.cores = n.cores),
                              nrow=numclust-1, ncol = TT)
         kappa <- mt.ell[-numclust,,drop=FALSE] - Mt.ell[-numclust,,drop=FALSE]/2
 
         ##        inv.Omega <- Rfast::spdinv(Omega)
         for(ell in 1:(numclust-1)){
-            V.omell <- Rfast::spdinv(Reduce('+', Map('*',XtXtTp, omega.tell[ell,]))) ##+diag(p+1)/TT ) Mod2 
+            V.omell <- Rfast::spdinv(Reduce('+', Map('*',XtXtTp, omega.tell[ell,]))
+                                     + diag(p+1)*invNugget) ##+diag(p+1)/TT ) Mod2 
             m.omell <- V.omell%*% Reduce('+', Map('*',Xp.list,kappa[ell,]))
             gamma.ell[,ell] <- Rfast::rmvnorm(1,m.omell, V.omell)
+
         }        
 
+        invNugget <- 1 / rgamma(1, (numclust-1+a_gamma)/2, (apply(gamma.ell,2,crossprod)%>%sum() + b_gamma)/2)
 
         XpGamma <- t(gamma.ell) %*% Xp ## K-1 x TT 
         pi.sb <- 1/(1+exp(-XpGamma))
         pi.mn <- apply(pi.sb,2,SB2MN)
-        logpi.list <- mclapply(1:TT,function(t) log(pi.mn[,t]),
+        logpi.list <- parallel::mclapply(1:TT,function(t) log(pi.mn[,t]),
                                mc.cores = min(n.cores,TT)) 
         
         chol.Sig.ell <- apply(Sig.ell,3, chol)
@@ -329,14 +335,14 @@ run.Gibbs.fast <- function(ylist, countslist, X,
         })
 #            beta0.ell[,kk] + beta.ell[,,kk] %*% X[,tt])) 
         
-        logPiZ <- mcmapply(function(ww, xx, yy, mm, pp){
+        logPiZ <- parallel::mcmapply(function(ww, xx, yy, mm, pp){
             sapply(1:numclust, function(kk)
                 mvnfast::dmvn(yy, mm[,kk], chol.Sig.list[[kk]],
                               log=TRUE, isChol = TRUE) + pp[kk])}, ## mod here 
             ww = countslist, xx =X.list, yy = ylist, mm = mu.list, pp=logpi.list,
             mc.cores = n.cores, SIMPLIFY = FALSE)
 
-        Z.list <- mclapply(logPiZ, function(pp) apply(pp,1, function(lpi)
+        Z.list <- parallel::mclapply(logPiZ, function(pp) apply(pp,1, function(lpi)
             sample(1:numclust,1,prob=softmax(lpi))),
             mc.cores = n.cores)
 
@@ -355,10 +361,10 @@ run.Gibbs.fast <- function(ylist, countslist, X,
 ################################################
          if((jj> tt.impute | !is.null(warm.start)) & !is.null(Cbox)){
 ##        if(is.null(Cbox)==FALSE){
-            censored.Z.list <- mcmapply(function(c01,zz){zz[c01==TRUE]},
+            censored.Z.list <- parallel::mcmapply(function(c01,zz){zz[c01==TRUE]},
                                         c01 = censor.01.list, zz=Z.list,
                                         mc.cores = n.cores)  
-            imputed.ylist <- mclapply(1:TT, function(tt) {
+            imputed.ylist <- parallel::mclapply(1:TT, function(tt) {
             ## imputed.ylist <- lapply(1:TT, function(tt){
               yy =
                 impute.censored(ww = censored.countslist[[tt]], 

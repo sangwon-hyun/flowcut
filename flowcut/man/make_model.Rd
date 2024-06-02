@@ -8,6 +8,8 @@ generate synthetic 2-cluster 1-dimensional data with equal probabilities.}
 make_model(orig_model, isignal)
 }
 \arguments{
+\item{orig_model}{Original model of class flowmix or flowcut; a list that contains alpha, beta and TT.}
+
 \item{isignal}{0 to 10, which generates the means.}
 }
 \value{

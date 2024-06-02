@@ -11,8 +11,16 @@ RoxygenNote: 7.2.3
 Depends: 
     tidyverse
 Imports: 
-    clue,
     ggplot2,
-    glmnet
+    magrittr,
+    MASS,
+    matrixsampling,
+    mvnfast,
+    parallel,
+    pgdraw,
+    Rfast,
+    stats,
+    telefit,
+    tmvnsim
 LitrVersionUsed: 0.9.0
-LitrId: 716aa92705189f05263009214696c6d4
+LitrId: 4ddebb0422a98fd5c1abd4f0ce862e1f

@@ -37,10 +37,38 @@ This package will have some dependancies:
 
 ```{r dependencies, message = FALSE}
 library(tidyverse)
-library(ggplot2)
+##library(ggplot2)
 usethis::use_package("tidyverse", type = "depends") 
+## usethis::use_package("ggplot2")
 usethis::use_package("ggplot2")
-usethis::use_package("clue")
-usethis::use_package("glmnet")
+usethis::use_package("MASS")
+usethis::use_package("parallel")
+usethis::use_package("Rfast")
+usethis::use_package("mvnfast")
+usethis::use_package("stats")
+usethis::use_package("matrixsampling")
+usethis::use_package("pgdraw")
+usethis::use_package("telefit")
+usethis::use_package("tmvnsim")
+usethis::use_pipe(export=TRUE)
 ```
 
+
+
+
+
+<!-- library("tmvnsim") ## for tmvnsim -->
+<!-- library("MASS") ## for mvrnorm -->
+<!-- library("scatterplot3d") # for 3d plot  -->
+<!-- library("RColorBrewer") ## distinct colors  -->
+<!-- library("matrixsampling") ## r-inverse Wishart -->
+<!-- library("matrixNormal") ## matrix normal random elements  -->
+<!-- library("pgdraw") ## draw PG r.v.'s  -->
+<!-- library("parallel") ## mc-mapply -->
+<!-- library("svMisc") -->
+<!-- library("mclust") ## for warm start  -->
+<!-- library("plotly") -->
+<!-- library("ggcorrplot") -->
+
+<!-- library("Rfast") -->
+<!-- library("Rfast2") -->

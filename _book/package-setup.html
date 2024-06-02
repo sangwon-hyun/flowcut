@@ -23,7 +23,7 @@
 <meta name="author" content="Sheng Jiang, Sangwon Hyun" />
 
 
-<meta name="date" content="2024-05-15" />
+<meta name="date" content="2024-06-01" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -193,11 +193,34 @@ the console.</p>
 #&#39; @docType package</code></pre>
 <p>This package will have some dependancies:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="package-setup.html#cb5-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb5-2"><a href="package-setup.html#cb5-2" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb5-2"><a href="package-setup.html#cb5-2" tabindex="-1"></a><span class="do">##library(ggplot2)</span></span>
 <span id="cb5-3"><a href="package-setup.html#cb5-3" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">use_package</span>(<span class="st">&quot;tidyverse&quot;</span>, <span class="at">type =</span> <span class="st">&quot;depends&quot;</span>) </span>
-<span id="cb5-4"><a href="package-setup.html#cb5-4" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">use_package</span>(<span class="st">&quot;ggplot2&quot;</span>)</span>
-<span id="cb5-5"><a href="package-setup.html#cb5-5" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">use_package</span>(<span class="st">&quot;clue&quot;</span>)</span>
-<span id="cb5-6"><a href="package-setup.html#cb5-6" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">use_package</span>(<span class="st">&quot;glmnet&quot;</span>)</span></code></pre></div>
+<span id="cb5-4"><a href="package-setup.html#cb5-4" tabindex="-1"></a><span class="do">## usethis::use_package(&quot;ggplot2&quot;)</span></span>
+<span id="cb5-5"><a href="package-setup.html#cb5-5" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">use_package</span>(<span class="st">&quot;ggplot2&quot;</span>)</span>
+<span id="cb5-6"><a href="package-setup.html#cb5-6" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">use_package</span>(<span class="st">&quot;MASS&quot;</span>)</span>
+<span id="cb5-7"><a href="package-setup.html#cb5-7" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">use_package</span>(<span class="st">&quot;parallel&quot;</span>)</span>
+<span id="cb5-8"><a href="package-setup.html#cb5-8" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">use_package</span>(<span class="st">&quot;Rfast&quot;</span>)</span>
+<span id="cb5-9"><a href="package-setup.html#cb5-9" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">use_package</span>(<span class="st">&quot;mvnfast&quot;</span>)</span>
+<span id="cb5-10"><a href="package-setup.html#cb5-10" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">use_package</span>(<span class="st">&quot;stats&quot;</span>)</span>
+<span id="cb5-11"><a href="package-setup.html#cb5-11" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">use_package</span>(<span class="st">&quot;matrixsampling&quot;</span>)</span>
+<span id="cb5-12"><a href="package-setup.html#cb5-12" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">use_package</span>(<span class="st">&quot;pgdraw&quot;</span>)</span>
+<span id="cb5-13"><a href="package-setup.html#cb5-13" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">use_package</span>(<span class="st">&quot;telefit&quot;</span>)</span>
+<span id="cb5-14"><a href="package-setup.html#cb5-14" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">use_package</span>(<span class="st">&quot;tmvnsim&quot;</span>)</span>
+<span id="cb5-15"><a href="package-setup.html#cb5-15" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">use_pipe</span>(<span class="at">export=</span><span class="cn">TRUE</span>)</span></code></pre></div>
+<!-- library("tmvnsim") ## for tmvnsim -->
+<!-- library("MASS") ## for mvrnorm -->
+<!-- library("scatterplot3d") # for 3d plot  -->
+<!-- library("RColorBrewer") ## distinct colors  -->
+<!-- library("matrixsampling") ## r-inverse Wishart -->
+<!-- library("matrixNormal") ## matrix normal random elements  -->
+<!-- library("pgdraw") ## draw PG r.v.'s  -->
+<!-- library("parallel") ## mc-mapply -->
+<!-- library("svMisc") -->
+<!-- library("mclust") ## for warm start  -->
+<!-- library("plotly") -->
+<!-- library("ggcorrplot") -->
+<!-- library("Rfast") -->
+<!-- library("Rfast2") -->
 
 </div>
             </section>

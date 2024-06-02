@@ -4,6 +4,7 @@
 #' containing true model parameters.
 #'
 #' @param true_model List containing beta, alpha, mn, prob, numclust.
+#' @param nt Particles per time point.
 #'
 #' @return Cytograms (a |ylist| object)
 #' @export
@@ -19,7 +20,7 @@ gen_1d <- function(true_model, nt = 1000){
   
     ## Generate memberships Samples |nt| memberships out of (1:numclust)
     ## according to the cluster probabilities in |prob|.
-    nt_by_clust = rmultinom(1, size = nt, true_model$prob[tt,])
+    nt_by_clust = stats::rmultinom(1, size = nt, true_model$prob[tt,])
     ## draws = sample(1:numclust, size = nt, replace = TRUE, prob = true_model$prob[tt,])
     draws = c(rep(1, nt_by_clust[1]), rep(2, nt_by_clust[2]))
   

@@ -4,6 +4,7 @@
 #' generate synthetic 2-cluster 1-dimensional data with equal probabilities.
 #'
 #' @param isignal 0 to 10, which generates the means.
+#' @param orig_model Original model of class flowmix or flowcut; a list that contains alpha, beta and TT.
 #'
 #' @return A list with beta, mn, alpha, prob, X, sigma, TT, numclust.
 #' @export

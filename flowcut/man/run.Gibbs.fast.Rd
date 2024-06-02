@@ -24,7 +24,11 @@ run.Gibbs.fast(
 \arguments{
 \item{ylist}{data.}
 
+\item{countslist}{weights (counts) for data in |ylist|.}
+
 \item{X}{covariates; a (p x T) matrix (TODO: change code so that X is T x p).}
+
+\item{numclust}{NUmber of clusters.}
 
 \item{Nmc}{Number of MCMC iterations}
 
@@ -42,9 +46,7 @@ run.Gibbs.fast(
 
 \item{tol}{NOT USED.}
 
-\item{countlist}{weights (counts) for data in |ylist|.}
-
-\item{n_cores}{Number of cores for multiple cores.}
+\item{n.cores}{Number of cores for multiple cores.}
 }
 \description{
 Runs a gibbs sampler to estimate the posterior distribution of the flowcut

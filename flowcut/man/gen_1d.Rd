@@ -9,6 +9,8 @@ gen_1d(true_model, nt = 1000)
 }
 \arguments{
 \item{true_model}{List containing beta, alpha, mn, prob, numclust.}
+
+\item{nt}{Particles per time point.}
 }
 \value{
 Cytograms (a |ylist| object)

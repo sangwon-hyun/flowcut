@@ -23,7 +23,7 @@
 <meta name="author" content="Sheng Jiang, Sangwon Hyun" />
 
 
-<meta name="date" content="2024-05-15" />
+<meta name="date" content="2024-06-01" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -168,7 +168,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="header">
 <h1 class="title">Creating the <code>flowcut</code> R package</h1>
 <p class="author"><em>Sheng Jiang, Sangwon Hyun</em></p>
-<p class="date"><em>2024-05-15</em></p>
+<p class="date"><em>2024-06-01</em></p>
 </div>
 <div id="introduction" class="section level1 hasAnchor" number="1">
 <h1><span class="header-section-number">1</span> Introduction<a href="index.html#introduction" class="anchor-section" aria-label="Anchor link to header"></a></h1>
@@ -181,7 +181,9 @@ package are both created using one simple command:</p>
 <span id="cb2-2"><a href="index.html#cb2-2" tabindex="-1"></a><span id='my_load'>my_load</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(){</span>
 <span id="cb2-3"><a href="index.html#cb2-3" tabindex="-1"></a>  litr<span class="sc">::</span><span class="fu">render</span>(<span class="st">&quot;~/repos/flowcut/index.Rmd&quot;</span>, <span class="at">output_format =</span> litr<span class="sc">::</span><span class="fu">litr_gitbook</span>(<span class="at">minimal_eval =</span> <span class="cn">TRUE</span>))</span>
 <span id="cb2-4"><a href="index.html#cb2-4" tabindex="-1"></a>  devtools<span class="sc">::</span><span class="fu">load_all</span>(<span class="st">&quot;~/repos/flowcut/flowcut&quot;</span>)</span>
-<span id="cb2-5"><a href="index.html#cb2-5" tabindex="-1"></a>}</span></code></pre></div>
+<span id="cb2-5"><a href="index.html#cb2-5" tabindex="-1"></a>}</span>
+<span id="cb2-6"><a href="index.html#cb2-6" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="index.html#cb2-7" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">check</span>(<span class="st">&quot;~/repos/flowcut/flowcut&quot;</span>, <span class="at">document =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 
 </div>
             </section>
