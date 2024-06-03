@@ -10,7 +10,20 @@ TODO items:
 - We should write a function that makes a Cbox object.
 - We should write what user.prior refers to.
 - We should write what gg refers to, precisely. <-- actually, we should have maxdev as an input.
-- telefit::rmatnorm should potentially be replaced with a function from a more well-known (stable) package?
+
+
+```{r}
+#' Helper function.
+#' 
+#' @param iter Current iteration.
+#' @param Nmc Total number of MCMC iterations.
+#' 
+progress <- function(iter,Nmc){
+    cat("MCMC iteration: ", iter,
+        ".", round(iter/Nmc,3)*100, "% is done", fill = TRUE)
+}
+```
+
 
 ```{r}
 #' Runs a gibbs sampler to estimate the posterior distribution of the flowcut 
@@ -41,6 +54,7 @@ run.Gibbs.fast <- function(ylist, countslist, X,
                            Cbox = NULL,  
                            user.prior = NULL,
                            gg=1,
+                           prior_spec.list = NULL,
                            verbose = FALSE,
                            warm.start = NULL,
                            tol = 1/1e8,
@@ -113,6 +127,12 @@ run.Gibbs.fast <- function(ylist, countslist, X,
         nu1=p+1 
         S0=diag(dimdat)
         S1=diag(p+1)
+        a_gamma <- 3
+        b_gamma <- 3
+        prior.spec.list <- list(nu0 = nu0,
+                                S0 = S0,
+                                a_gamma = a_gamma,
+                                b_gamma = b_gamma)
         ## inv.Omega <- solve(S1)
     }
 
@@ -256,7 +276,7 @@ run.Gibbs.fast <- function(ylist, countslist, X,
           if(dimdat == 1) Sy.ell = rbind(Sy.ell)
           ## if(!is.numeric(Sy.ell[1])) browser()
             Sxy.ell <- Xp %*% t(Sy.ell)  ## (p+1) x d
-            beta.ell[,,ell] <- telefit::rmatnorm(M = t(Sxy.ell) %*% inv.SX.ell, 
+            beta.ell[,,ell] <- matrixNormal::rmatnorm(M = t(Sxy.ell) %*% inv.SX.ell, 
                                         U = Sig.ell[,,ell], 
                                         V = inv.SX.ell, 
                                         tol = .Machine$double.eps^0.95)
@@ -438,7 +458,8 @@ run.Gibbs.fast <- function(ylist, countslist, X,
             pos.beta=pos.beta,pos.Sigma=pos.Sigma,
             pos.gamma=pos.gamma, ## pos.Omega=pos.Omega,
             burn.avgloglik=burn.avgloglik,
-            pos.avgloglik=pos.avgloglik)
+            pos.avgloglik=pos.avgloglik,
+            prior.spec = prior.spec.list)
     }else{
         ret <- list( ## burn.beta0 = burn.beta0,
             burn.beta = burn.beta,
@@ -459,7 +480,8 @@ run.Gibbs.fast <- function(ylist, countslist, X,
             last.gamma = gamma.ell,
             ## last.Omega = Omega,
             last.beta = beta.ell, 
-            last.Sigma = Sig.ell )
+            last.Sigma = Sig.ell,
+            prior.spec = prior.spec.list)
     }
     return(ret)
 }

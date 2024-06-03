@@ -15,6 +15,7 @@ run.Gibbs.fast(
   Cbox = NULL,
   user.prior = NULL,
   gg = 1,
+  prior_spec.list = NULL,
   verbose = FALSE,
   warm.start = NULL,
   tol = 1/1e+08,

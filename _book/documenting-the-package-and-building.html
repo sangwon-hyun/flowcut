@@ -23,7 +23,7 @@
 <meta name="author" content="Sheng Jiang, Sangwon Hyun" />
 
 
-<meta name="date" content="2024-06-01" />
+<meta name="date" content="2024-06-02" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -169,15 +169,109 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h1><span class="header-section-number">8</span> Documenting the package and building<a href="documenting-the-package-and-building.html#documenting-the-package-and-building" class="anchor-section" aria-label="Anchor link to header"></a></h1>
 <p>We finish by running commands that will document, build, and install the
 package. It may also be a good idea to check the package from within this file.</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="documenting-the-package-and-building.html#cb20-1" tabindex="-1"></a>litr<span class="sc">::</span><span class="fu">document</span>() <span class="co"># &lt;-- use instead of devtools::document()</span></span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="documenting-the-package-and-building.html#cb21-1" tabindex="-1"></a>litr<span class="sc">::</span><span class="fu">document</span>() <span class="co"># &lt;-- use instead of devtools::document()</span></span></code></pre></div>
 <pre><code>## ℹ Updating flowcut documentation
-## ℹ Loading flowcut</code></pre>
+## ℹ Loading flowcut
+## Loading required package: MASS
+## 
+## 
+## Attaching package: &#39;MASS&#39;
+## 
+## 
+## The following object is masked from &#39;package:dplyr&#39;:
+## 
+##     select
+## 
+## 
+## Loading required package: matrixNormal
+## 
+## 
+## Attaching package: &#39;matrixNormal&#39;
+## 
+## 
+## The following object is masked from &#39;package:base&#39;:
+## 
+##     I
+## 
+## 
+## Loading required package: matrixsampling
+## 
+## Loading required package: mvnfast
+## 
+## 
+## Attaching package: &#39;mvnfast&#39;
+## 
+## 
+## The following object is masked from &#39;package:lubridate&#39;:
+## 
+##     ms
+## 
+## 
+## Loading required package: parallel
+## 
+## Loading required package: pgdraw
+## 
+## Loading required package: Rfast
+## 
+## Loading required package: Rcpp
+## 
+## Loading required package: RcppZiggurat
+## 
+## Loading required package: RcppParallel
+## 
+## 
+## Attaching package: &#39;RcppParallel&#39;
+## 
+## 
+## The following object is masked from &#39;package:Rcpp&#39;:
+## 
+##     LdFlags
+## 
+## 
+## 
+## Rfast: 2.1.0
+## 
+##  ___ __ __ __ __    __ __ __ __ __ _             _               __ __ __ __ __     __ __ __ __ __ __   
+## |  __ __ __ __  |  |  __ __ __ __ _/            / \             |  __ __ __ __ /   /__ __ _   _ __ __\  
+## | |           | |  | |                         / _ \            | |                        / /          
+## | |           | |  | |                        / / \ \           | |                       / /          
+## | |           | |  | |                       / /   \ \          | |                      / /          
+## | |__ __ __ __| |  | |__ __ __ __           / /     \ \         | |__ __ __ __ _        / /__/\          
+## |    __ __ __ __|  |  __ __ __ __|         / /__ _ __\ \        |_ __ __ __ _   |      / ___  /           
+## |   \              | |                    / _ _ _ _ _ _ \                     | |      \/  / /       
+## | |\ \             | |                   / /           \ \                    | |         / /          
+## | | \ \            | |                  / /             \ \                   | |        / /          
+## | |  \ \           | |                 / /               \ \                  | |       / /          
+## | |   \ \__ __ _   | |                / /                 \ \     _ __ __ __ _| |      / /          
+## |_|    \__ __ __\  |_|               /_/                   \_\   /_ __ __ __ ___|      \/             team
+## 
+## 
+## Attaching package: &#39;Rfast&#39;
+## 
+## 
+## The following objects are masked from &#39;package:mvnfast&#39;:
+## 
+##     dmvt, rmvt
+## 
+## 
+## The following object is masked from &#39;package:dplyr&#39;:
+## 
+##     nth
+## 
+## 
+## The following objects are masked from &#39;package:purrr&#39;:
+## 
+##     is_integer, transpose
+## 
+## 
+## Loading required package: tmvnsim</code></pre>
 <pre><code>## Warning: [run.Gibbs.fast.R:21] @return requires a value</code></pre>
 <pre><code>## Writing &#39;NAMESPACE&#39;
 ## Writing &#39;NAMESPACE&#39;
 ## Writing &#39;flowcut-package.Rd&#39;
 ## Writing &#39;gen_1d.Rd&#39;
 ## Writing &#39;make_model.Rd&#39;
+## Writing &#39;progress.Rd&#39;
 ## Writing &#39;run.Gibbs.fast.Rd&#39;
 ## Writing &#39;pipe.Rd&#39;</code></pre>
 

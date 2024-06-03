@@ -28,6 +28,7 @@ run.Gibbs.fast <- function(ylist, countslist, X,
                            Cbox = NULL,  
                            user.prior = NULL,
                            gg=1,
+                           prior_spec.list = NULL,
                            verbose = FALSE,
                            warm.start = NULL,
                            tol = 1/1e8,
@@ -100,6 +101,12 @@ run.Gibbs.fast <- function(ylist, countslist, X,
         nu1=p+1 
         S0=diag(dimdat)
         S1=diag(p+1)
+        a_gamma <- 3
+        b_gamma <- 3
+        prior.spec.list <- list(nu0 = nu0,
+                                S0 = S0,
+                                a_gamma = a_gamma,
+                                b_gamma = b_gamma)
         ## inv.Omega <- solve(S1)
     }
 
@@ -243,7 +250,7 @@ run.Gibbs.fast <- function(ylist, countslist, X,
           if(dimdat == 1) Sy.ell = rbind(Sy.ell)
           ## if(!is.numeric(Sy.ell[1])) browser()
             Sxy.ell <- Xp %*% t(Sy.ell)  ## (p+1) x d
-            beta.ell[,,ell] <- telefit::rmatnorm(M = t(Sxy.ell) %*% inv.SX.ell, 
+            beta.ell[,,ell] <- matrixNormal::rmatnorm(M = t(Sxy.ell) %*% inv.SX.ell, 
                                         U = Sig.ell[,,ell], 
                                         V = inv.SX.ell, 
                                         tol = .Machine$double.eps^0.95)
@@ -425,7 +432,8 @@ run.Gibbs.fast <- function(ylist, countslist, X,
             pos.beta=pos.beta,pos.Sigma=pos.Sigma,
             pos.gamma=pos.gamma, ## pos.Omega=pos.Omega,
             burn.avgloglik=burn.avgloglik,
-            pos.avgloglik=pos.avgloglik)
+            pos.avgloglik=pos.avgloglik,
+            prior.spec = prior.spec.list)
     }else{
         ret <- list( ## burn.beta0 = burn.beta0,
             burn.beta = burn.beta,
@@ -446,7 +454,8 @@ run.Gibbs.fast <- function(ylist, countslist, X,
             last.gamma = gamma.ell,
             ## last.Omega = Omega,
             last.beta = beta.ell, 
-            last.Sigma = Sig.ell )
+            last.Sigma = Sig.ell,
+            prior.spec = prior.spec.list)
     }
     return(ret)
 }
