@@ -29,6 +29,7 @@ my_load <- function(){
   litr::render("~/repos/flowcut/index.Rmd", output_format = litr::litr_gitbook(minimal_eval = TRUE))
   devtools::load_all("~/repos/flowcut/flowcut")
 }
+my_load()
 
 devtools::check("~/repos/flowcut/flowcut", document = FALSE)
 ```

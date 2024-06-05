@@ -23,7 +23,7 @@
 <meta name="author" content="Sheng Jiang, Sangwon Hyun" />
 
 
-<meta name="date" content="2024-06-02" />
+<meta name="date" content="2024-06-04" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -170,135 +170,140 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Refer back to the data generation in @ref{syntheticdata}. We will be
 top-censoring the data at 0.5. Before censoring, this is what the data looks
 like.</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="simulations.html#cb15-1" tabindex="-1"></a><span class="do">## Load the &quot;original&quot; model</span></span>
-<span id="cb15-2"><a href="simulations.html#cb15-2" tabindex="-1"></a>orig_model <span class="ot">=</span> <span class="fu">readRDS</span>(<span class="at">file=</span><span class="fu">file.path</span>(<span class="st">&quot;~/repos/flowcut/inst/output&quot;</span>, <span class="st">&quot;orig_model.RDS&quot;</span>))</span>
-<span id="cb15-3"><a href="simulations.html#cb15-3" tabindex="-1"></a></span>
-<span id="cb15-4"><a href="simulations.html#cb15-4" tabindex="-1"></a><span class="do">## Generate data</span></span>
-<span id="cb15-5"><a href="simulations.html#cb15-5" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">100</span>)</span>
-<span id="cb15-6"><a href="simulations.html#cb15-6" tabindex="-1"></a>isignal <span class="ot">=</span> <span class="dv">8</span></span>
-<span id="cb15-7"><a href="simulations.html#cb15-7" tabindex="-1"></a>new_model <span class="ot">=</span> flowcut<span class="sc">::</span><a href='syntheticdata.html#make_model'>make_model</a>(orig_model, isignal)</span>
-<span id="cb15-8"><a href="simulations.html#cb15-8" tabindex="-1"></a>ylist <span class="ot">=</span> flowcut<span class="sc">::</span><a href='syntheticdata.html#gen_1d'>gen_1d</a>(new_model, <span class="at">nt =</span> <span class="dv">100</span>)</span>
-<span id="cb15-9"><a href="simulations.html#cb15-9" tabindex="-1"></a>flowtrend<span class="sc">::</span><span class="fu">plot_1d</span>(ylist, <span class="at">obj =</span> new_model)</span></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-9-1.png" width="576" /></p>
-<p>After censoring, this is it.</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="simulations.html#cb16-1" tabindex="-1"></a><span class="do">## Censor it</span></span>
-<span id="cb16-2"><a href="simulations.html#cb16-2" tabindex="-1"></a>ylist <span class="ot">=</span> <span class="fu">lapply</span>(ylist, <span class="cf">function</span>(y){</span>
-<span id="cb16-3"><a href="simulations.html#cb16-3" tabindex="-1"></a>  y <span class="ot">=</span> <span class="fu">pmin</span>(y, <span class="fl">0.5</span>)</span>
-<span id="cb16-4"><a href="simulations.html#cb16-4" tabindex="-1"></a>})</span>
-<span id="cb16-5"><a href="simulations.html#cb16-5" tabindex="-1"></a>flowtrend<span class="sc">::</span><span class="fu">plot_1d</span>(ylist, <span class="at">obj =</span> new_model)</span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="simulations.html#cb16-1" tabindex="-1"></a><span class="do">## Load the &quot;original&quot; model</span></span>
+<span id="cb16-2"><a href="simulations.html#cb16-2" tabindex="-1"></a>orig_model <span class="ot">=</span> <span class="fu">readRDS</span>(<span class="at">file=</span><span class="fu">file.path</span>(<span class="st">&quot;~/repos/flowcut/inst/output&quot;</span>, <span class="st">&quot;orig_model.RDS&quot;</span>))</span>
+<span id="cb16-3"><a href="simulations.html#cb16-3" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="simulations.html#cb16-4" tabindex="-1"></a><span class="do">## Generate data</span></span>
+<span id="cb16-5"><a href="simulations.html#cb16-5" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">100</span>)</span>
+<span id="cb16-6"><a href="simulations.html#cb16-6" tabindex="-1"></a>isignal <span class="ot">=</span> <span class="dv">8</span></span>
+<span id="cb16-7"><a href="simulations.html#cb16-7" tabindex="-1"></a>new_model <span class="ot">=</span> flowcut<span class="sc">::</span><a href='syntheticdata.html#make_model'>make_model</a>(orig_model, isignal)</span>
+<span id="cb16-8"><a href="simulations.html#cb16-8" tabindex="-1"></a>ylist <span class="ot">=</span> flowcut<span class="sc">::</span><a href='syntheticdata.html#gen_1d'>gen_1d</a>(new_model, <span class="at">nt =</span> <span class="dv">100</span>)</span>
+<span id="cb16-9"><a href="simulations.html#cb16-9" tabindex="-1"></a>flowtrend<span class="sc">::</span><span class="fu">plot_1d</span>(ylist, <span class="at">obj =</span> new_model)</span></code></pre></div>
 <p><img src="_main_files/figure-html/unnamed-chunk-10-1.png" width="576" /></p>
+<p>After censoring, this is it.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="simulations.html#cb17-1" tabindex="-1"></a><span class="do">## Censor it</span></span>
+<span id="cb17-2"><a href="simulations.html#cb17-2" tabindex="-1"></a>ylist <span class="ot">=</span> <span class="fu">lapply</span>(ylist, <span class="cf">function</span>(y){</span>
+<span id="cb17-3"><a href="simulations.html#cb17-3" tabindex="-1"></a>  y <span class="ot">=</span> <span class="fu">pmin</span>(y, <span class="fl">0.5</span>)</span>
+<span id="cb17-4"><a href="simulations.html#cb17-4" tabindex="-1"></a>})</span>
+<span id="cb17-5"><a href="simulations.html#cb17-5" tabindex="-1"></a>flowtrend<span class="sc">::</span><span class="fu">plot_1d</span>(ylist, <span class="at">obj =</span> new_model)</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-11-1.png" width="576" /></p>
 <p>We need to specify a few things (1) like the censoring limits <code>Cbox</code> and (2)
 <code>countslist</code> before running the MCMC.</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="simulations.html#cb17-1" tabindex="-1"></a><span class="do">## Form the censoring &quot;box&quot;</span></span>
-<span id="cb17-2"><a href="simulations.html#cb17-2" tabindex="-1"></a>Cbox <span class="ot">=</span> <span class="fu">rbind</span>(<span class="fu">c</span>(<span class="sc">-</span><span class="cn">Inf</span>, <span class="fl">0.5</span>)) </span>
-<span id="cb17-3"><a href="simulations.html#cb17-3" tabindex="-1"></a></span>
-<span id="cb17-4"><a href="simulations.html#cb17-4" tabindex="-1"></a><span class="do">## Counts are all equal for now</span></span>
-<span id="cb17-5"><a href="simulations.html#cb17-5" tabindex="-1"></a>countslist <span class="ot">=</span> <span class="fu">lapply</span>(ylist, <span class="cf">function</span>(y){ <span class="fu">rep</span>(<span class="dv">1</span>, <span class="fu">nrow</span>(y)) })</span>
-<span id="cb17-6"><a href="simulations.html#cb17-6" tabindex="-1"></a></span>
-<span id="cb17-7"><a href="simulations.html#cb17-7" tabindex="-1"></a><span class="do">## Save the metadata</span></span>
-<span id="cb17-8"><a href="simulations.html#cb17-8" tabindex="-1"></a>datobj <span class="ot">=</span> <span class="fu">list</span>(<span class="at">ylist=</span>ylist, <span class="at">countslist=</span>countslist, <span class="at">Cbox=</span>Cbox, <span class="at">X=</span>orig_model<span class="sc">$</span>X)</span>
-<span id="cb17-9"><a href="simulations.html#cb17-9" tabindex="-1"></a><span class="fu">saveRDS</span>(datobj,</span>
-<span id="cb17-10"><a href="simulations.html#cb17-10" tabindex="-1"></a>        <span class="fu">file.path</span>(<span class="st">&quot;~/repos/flowcut/inst/output&quot;</span>,</span>
-<span id="cb17-11"><a href="simulations.html#cb17-11" tabindex="-1"></a>                  <span class="fu">paste0</span>(<span class="st">&quot;isignal-&quot;</span>, isignal, <span class="st">&quot;-datobj.RDS&quot;</span>)))</span></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="simulations.html#cb18-1" tabindex="-1"></a><span class="do">## Form the censoring &quot;box&quot;</span></span>
+<span id="cb18-2"><a href="simulations.html#cb18-2" tabindex="-1"></a>Cbox <span class="ot">=</span> <span class="fu">rbind</span>(<span class="fu">c</span>(<span class="sc">-</span><span class="cn">Inf</span>, <span class="fl">0.5</span>)) </span>
+<span id="cb18-3"><a href="simulations.html#cb18-3" tabindex="-1"></a></span>
+<span id="cb18-4"><a href="simulations.html#cb18-4" tabindex="-1"></a><span class="do">## Counts are all equal for now</span></span>
+<span id="cb18-5"><a href="simulations.html#cb18-5" tabindex="-1"></a>countslist <span class="ot">=</span> <span class="fu">lapply</span>(ylist, <span class="cf">function</span>(y){ <span class="fu">rep</span>(<span class="dv">1</span>, <span class="fu">nrow</span>(y)) })</span>
+<span id="cb18-6"><a href="simulations.html#cb18-6" tabindex="-1"></a></span>
+<span id="cb18-7"><a href="simulations.html#cb18-7" tabindex="-1"></a><span class="do">## Save the metadata</span></span>
+<span id="cb18-8"><a href="simulations.html#cb18-8" tabindex="-1"></a>datobj <span class="ot">=</span> <span class="fu">list</span>(<span class="at">ylist=</span>ylist, <span class="at">countslist=</span>countslist, <span class="at">Cbox=</span>Cbox, <span class="at">X=</span>orig_model<span class="sc">$</span>X)</span>
+<span id="cb18-9"><a href="simulations.html#cb18-9" tabindex="-1"></a><span class="fu">saveRDS</span>(datobj,</span>
+<span id="cb18-10"><a href="simulations.html#cb18-10" tabindex="-1"></a>        <span class="fu">file.path</span>(<span class="st">&quot;~/repos/flowcut/inst/output&quot;</span>,</span>
+<span id="cb18-11"><a href="simulations.html#cb18-11" tabindex="-1"></a>                  <span class="fu">paste0</span>(<span class="st">&quot;isignal-&quot;</span>, isignal, <span class="st">&quot;-datobj.RDS&quot;</span>)))</span></code></pre></div>
 <p>We also need some <em>prior elicitation</em> to prevent the cluster means from changing
 too much across time.</p>
 <p>(code copy-pasted as-is for now, not meant to be run)</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="simulations.html#cb18-1" tabindex="-1"></a><span class="do">##############################</span></span>
-<span id="cb18-2"><a href="simulations.html#cb18-2" tabindex="-1"></a><span class="do">###### prior elicitation</span></span>
-<span id="cb18-3"><a href="simulations.html#cb18-3" tabindex="-1"></a><span class="do">##############################</span></span>
-<span id="cb18-4"><a href="simulations.html#cb18-4" tabindex="-1"></a></span>
-<span id="cb18-5"><a href="simulations.html#cb18-5" tabindex="-1"></a>d <span class="ot">&lt;-</span> <span class="dv">3</span></span>
-<span id="cb18-6"><a href="simulations.html#cb18-6" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="dv">39</span> </span>
-<span id="cb18-7"><a href="simulations.html#cb18-7" tabindex="-1"></a>X <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">readRDS</span>(<span class="st">&quot;pre-censor-datobj.RDS&quot;</span>)<span class="sc">$</span>X)</span>
-<span id="cb18-8"><a href="simulations.html#cb18-8" tabindex="-1"></a>    </span>
-<span id="cb18-9"><a href="simulations.html#cb18-9" tabindex="-1"></a>nu0<span class="ot">=</span>d</span>
-<span id="cb18-10"><a href="simulations.html#cb18-10" tabindex="-1"></a>nu1<span class="ot">=</span>p<span class="sc">+</span><span class="dv">1</span> </span>
-<span id="cb18-11"><a href="simulations.html#cb18-11" tabindex="-1"></a>S0<span class="ot">=</span><span class="fu">diag</span>(d)</span>
-<span id="cb18-12"><a href="simulations.html#cb18-12" tabindex="-1"></a>S1<span class="ot">=</span><span class="fu">diag</span>(p<span class="sc">+</span><span class="dv">1</span>)</span>
-<span id="cb18-13"><a href="simulations.html#cb18-13" tabindex="-1"></a>inv.XTX  <span class="ot">&lt;-</span> <span class="fu">solve</span>(<span class="fu">tcrossprod</span>(X))</span>
-<span id="cb18-14"><a href="simulations.html#cb18-14" tabindex="-1"></a><span class="fu">dim</span>(inv.XTX)</span>
-<span id="cb18-15"><a href="simulations.html#cb18-15" tabindex="-1"></a></span>
-<span id="cb18-16"><a href="simulations.html#cb18-16" tabindex="-1"></a><span class="do">## Sig.ell &lt;- rinvwishart(1,nu0+d,S0)[,,1]</span></span>
-<span id="cb18-17"><a href="simulations.html#cb18-17" tabindex="-1"></a><span class="do">## gg &lt;- 1 </span></span>
-<span id="cb18-18"><a href="simulations.html#cb18-18" tabindex="-1"></a><span class="do">## beta.ell &lt;- rmatnorm(M = matrix(0,d,p), </span></span>
-<span id="cb18-19"><a href="simulations.html#cb18-19" tabindex="-1"></a><span class="do">##                      U = Sig.ell, </span></span>
-<span id="cb18-20"><a href="simulations.html#cb18-20" tabindex="-1"></a><span class="do">##                      V = inv.XTX*gg, </span></span>
-<span id="cb18-21"><a href="simulations.html#cb18-21" tabindex="-1"></a><span class="do">##                      tol = .Machine$double.eps^0.5)</span></span>
-<span id="cb18-22"><a href="simulations.html#cb18-22" tabindex="-1"></a><span class="do">## mean.vec &lt;- apply(beta.ell%*% X,1,mean)</span></span>
-<span id="cb18-23"><a href="simulations.html#cb18-23" tabindex="-1"></a><span class="do">## l2.norm &lt;- mean(apply(beta.ell%*% X,2,function(xx)</span></span>
-<span id="cb18-24"><a href="simulations.html#cb18-24" tabindex="-1"></a><span class="do">##     crossprod(xx-mean.vec)))</span></span>
-<span id="cb18-25"><a href="simulations.html#cb18-25" tabindex="-1"></a><span class="do">## hist(apply(beta.ell%*% X,2,function(xx)</span></span>
-<span id="cb18-26"><a href="simulations.html#cb18-26" tabindex="-1"></a><span class="do">##     crossprod(xx-mean.vec)),breaks = &quot;FD&quot;)</span></span>
-<span id="cb18-27"><a href="simulations.html#cb18-27" tabindex="-1"></a></span>
-<span id="cb18-28"><a href="simulations.html#cb18-28" tabindex="-1"></a><span id='ball.deviance'>ball.deviance</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(gg,rr,X, <span class="at">Nmc=</span><span class="dv">5000</span>,</span>
-<span id="cb18-29"><a href="simulations.html#cb18-29" tabindex="-1"></a>                          <span class="at">nu0=</span>d, <span class="at">nu1=</span>p<span class="sc">+</span><span class="dv">1</span>,</span>
-<span id="cb18-30"><a href="simulations.html#cb18-30" tabindex="-1"></a>                          <span class="at">S0=</span><span class="fu">diag</span>(d), <span class="at">S1=</span><span class="fu">diag</span>(p<span class="sc">+</span><span class="dv">1</span>),</span>
-<span id="cb18-31"><a href="simulations.html#cb18-31" tabindex="-1"></a>                          <span class="at">simple=</span> <span class="cn">TRUE</span>){</span>
-<span id="cb18-32"><a href="simulations.html#cb18-32" tabindex="-1"></a>    inv.XTX  <span class="ot">&lt;-</span> <span class="fu">solve</span>(<span class="fu">tcrossprod</span>(X))</span>
-<span id="cb18-33"><a href="simulations.html#cb18-33" tabindex="-1"></a>    ms.deviance <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="cn">NA</span>,Nmc) </span>
-<span id="cb18-34"><a href="simulations.html#cb18-34" tabindex="-1"></a></span>
-<span id="cb18-35"><a href="simulations.html#cb18-35" tabindex="-1"></a>    Sig.ell <span class="ot">&lt;-</span> <span class="fu">rinvwishart</span>(Nmc,nu0<span class="sc">+</span>d,S0)</span>
-<span id="cb18-36"><a href="simulations.html#cb18-36" tabindex="-1"></a>    beta.ell <span class="ot">&lt;-</span> <span class="fu">apply</span>(Sig.ell,<span class="dv">3</span>,<span class="cf">function</span>(xx)</span>
-<span id="cb18-37"><a href="simulations.html#cb18-37" tabindex="-1"></a>        <span class="fu">as.matrix</span>(<span class="fu">rmatnorm</span>(<span class="at">M =</span> <span class="fu">matrix</span>(<span class="dv">0</span>,d,p), </span>
-<span id="cb18-38"><a href="simulations.html#cb18-38" tabindex="-1"></a>                 <span class="at">U =</span> xx, </span>
-<span id="cb18-39"><a href="simulations.html#cb18-39" tabindex="-1"></a>                 <span class="at">V =</span> inv.XTX<span class="sc">*</span>gg, </span>
-<span id="cb18-40"><a href="simulations.html#cb18-40" tabindex="-1"></a>                 <span class="at">tol =</span> .Machine<span class="sc">$</span>double.eps<span class="sc">^</span><span class="fl">0.5</span>)),</span>
-<span id="cb18-41"><a href="simulations.html#cb18-41" tabindex="-1"></a>        <span class="at">simplify =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb18-42"><a href="simulations.html#cb18-42" tabindex="-1"></a>    xb <span class="ot">&lt;-</span> <span class="fu">lapply</span>(beta.ell, <span class="cf">function</span>(bb) bb<span class="sc">%*%</span> X)  </span>
-<span id="cb18-43"><a href="simulations.html#cb18-43" tabindex="-1"></a>    mean.vec <span class="ot">&lt;-</span> <span class="fu">lapply</span>(xb, <span class="cf">function</span>(bb)</span>
-<span id="cb18-44"><a href="simulations.html#cb18-44" tabindex="-1"></a>        <span class="fu">apply</span>(bb,<span class="dv">1</span>,mean))</span>
-<span id="cb18-45"><a href="simulations.html#cb18-45" tabindex="-1"></a>    ms.deviance <span class="ot">&lt;-</span> <span class="fu">mapply</span>(<span class="cf">function</span>(xx,mm){</span>
-<span id="cb18-46"><a href="simulations.html#cb18-46" tabindex="-1"></a>        <span class="fu">mean</span>(<span class="fu">apply</span>(xx,<span class="dv">2</span>,<span class="cf">function</span>(cols) <span class="fu">crossprod</span>(cols<span class="sc">-</span>mm)))</span>
-<span id="cb18-47"><a href="simulations.html#cb18-47" tabindex="-1"></a>    }, <span class="at">xx=</span>xb,<span class="at">mm=</span>mean.vec)</span>
-<span id="cb18-48"><a href="simulations.html#cb18-48" tabindex="-1"></a>    prob <span class="ot">&lt;-</span> <span class="fu">mean</span>(ms.deviance <span class="sc">&gt;</span> rr<span class="sc">^</span><span class="dv">2</span>)</span>
-<span id="cb18-49"><a href="simulations.html#cb18-49" tabindex="-1"></a>    <span class="cf">if</span>(simple){</span>
-<span id="cb18-50"><a href="simulations.html#cb18-50" tabindex="-1"></a>        <span class="fu">return</span>(<span class="fu">list</span>(<span class="at">gg=</span>gg,<span class="at">rr=</span>rr,<span class="at">prob=</span>prob))</span>
-<span id="cb18-51"><a href="simulations.html#cb18-51" tabindex="-1"></a>    }<span class="cf">else</span>{</span>
-<span id="cb18-52"><a href="simulations.html#cb18-52" tabindex="-1"></a>        <span class="fu">return</span>(<span class="fu">list</span>(<span class="at">gg =</span> gg, <span class="at">rr =</span> rr,</span>
-<span id="cb18-53"><a href="simulations.html#cb18-53" tabindex="-1"></a>                    <span class="at">prob=</span>prob,</span>
-<span id="cb18-54"><a href="simulations.html#cb18-54" tabindex="-1"></a>                    <span class="at">msd =</span> ms.deviance)) </span>
-<span id="cb18-55"><a href="simulations.html#cb18-55" tabindex="-1"></a>    }</span>
-<span id="cb18-56"><a href="simulations.html#cb18-56" tabindex="-1"></a>}</span>
-<span id="cb18-57"><a href="simulations.html#cb18-57" tabindex="-1"></a></span>
-<span id="cb18-58"><a href="simulations.html#cb18-58" tabindex="-1"></a>gglist <span class="ot">&lt;-</span> <span class="fu">as.list</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">100</span><span class="sc">/</span><span class="dv">100</span>)</span>
-<span id="cb18-59"><a href="simulations.html#cb18-59" tabindex="-1"></a>plist <span class="ot">&lt;-</span> <span class="fu">mclapply</span>(gglist,<span class="cf">function</span>(gg)</span>
-<span id="cb18-60"><a href="simulations.html#cb18-60" tabindex="-1"></a>    <a href='simulations.html#ball.deviance'>ball.deviance</a>(gg,<span class="fl">0.5</span>,X,<span class="at">Nmc=</span><span class="fl">1e4</span>)<span class="sc">$</span>prob,</span>
-<span id="cb18-61"><a href="simulations.html#cb18-61" tabindex="-1"></a>    <span class="at">mc.cores =</span> <span class="fu">min</span>(n.cores, <span class="fu">length</span>(gglist)))</span>
-<span id="cb18-62"><a href="simulations.html#cb18-62" tabindex="-1"></a><span class="fu">plot</span>(gglist,plist,<span class="at">type =</span> <span class="st">&quot;l&quot;</span>) </span>
-<span id="cb18-63"><a href="simulations.html#cb18-63" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">h=</span><span class="fl">0.05</span>,<span class="at">lwd=</span><span class="dv">2</span>,<span class="at">col =</span> <span class="st">&quot;red&quot;</span>)</span>
-<span id="cb18-64"><a href="simulations.html#cb18-64" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">h=</span><span class="fl">0.01</span>,<span class="at">lwd=</span><span class="dv">2</span>,<span class="at">col =</span> <span class="st">&quot;red&quot;</span>)</span>
-<span id="cb18-65"><a href="simulations.html#cb18-65" tabindex="-1"></a><span class="fu">lines</span>(gglist,<span class="fu">lowess</span>(plist<span class="sc">~</span>gglist,<span class="at">f=</span><span class="fl">0.3</span>)<span class="sc">$</span>y,<span class="at">lwd=</span><span class="dv">2</span>,<span class="at">col=</span><span class="st">&quot;blue&quot;</span>)</span>
-<span id="cb18-66"><a href="simulations.html#cb18-66" tabindex="-1"></a></span>
-<span id="cb18-67"><a href="simulations.html#cb18-67" tabindex="-1"></a></span>
-<span id="cb18-68"><a href="simulations.html#cb18-68" tabindex="-1"></a></span>
-<span id="cb18-69"><a href="simulations.html#cb18-69" tabindex="-1"></a></span>
-<span id="cb18-70"><a href="simulations.html#cb18-70" tabindex="-1"></a><span class="fu">hist</span>(<a href='simulations.html#ball.deviance'>ball.deviance</a>(<span class="fl">0.01</span>,<span class="fl">0.5</span>,X)<span class="sc">$</span>msd, <span class="at">breaks =</span> <span class="st">&quot;FD&quot;</span>)</span>
-<span id="cb18-71"><a href="simulations.html#cb18-71" tabindex="-1"></a><span class="fu">hist</span>(<a href='simulations.html#ball.deviance'>ball.deviance</a>(<span class="fl">0.1</span>,<span class="fl">0.5</span>,X)<span class="sc">$</span>msd, <span class="at">breaks =</span> <span class="st">&quot;FD&quot;</span>)</span>
-<span id="cb18-72"><a href="simulations.html#cb18-72" tabindex="-1"></a><span class="fu">hist</span>(<a href='simulations.html#ball.deviance'>ball.deviance</a>(<span class="fl">0.2</span>,<span class="fl">0.5</span>,X)<span class="sc">$</span>msd, <span class="at">breaks =</span> <span class="st">&quot;FD&quot;</span>)</span>
-<span id="cb18-73"><a href="simulations.html#cb18-73" tabindex="-1"></a><span class="fu">hist</span>(<a href='simulations.html#ball.deviance'>ball.deviance</a>(<span class="fl">0.5</span>,<span class="fl">0.5</span>,X)<span class="sc">$</span>msd, <span class="at">breaks =</span> <span class="st">&quot;FD&quot;</span>)</span>
-<span id="cb18-74"><a href="simulations.html#cb18-74" tabindex="-1"></a><span class="fu">hist</span>(<a href='simulations.html#ball.deviance'>ball.deviance</a>(<span class="dv">1</span>,<span class="fl">0.5</span>,X)<span class="sc">$</span>msd, <span class="at">breaks =</span> <span class="st">&quot;FD&quot;</span>)</span>
-<span id="cb18-75"><a href="simulations.html#cb18-75" tabindex="-1"></a><span class="fu">hist</span>(<a href='simulations.html#ball.deviance'>ball.deviance</a>(<span class="dv">2</span>,<span class="fl">0.5</span>,X)<span class="sc">$</span>msd, <span class="at">breaks =</span> <span class="st">&quot;FD&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="simulations.html#cb19-1" tabindex="-1"></a><span class="co">#&#39; X is a (T x p) covariate matrix (that doesn&#39;t include the intercept)</span></span>
+<span id="cb19-2"><a href="simulations.html#cb19-2" tabindex="-1"></a><span class="co">#&#39; </span></span>
+<span id="cb19-3"><a href="simulations.html#cb19-3" tabindex="-1"></a><span class="co">#&#39; @param X (T x p) matrix.</span></span>
+<span id="cb19-4"><a href="simulations.html#cb19-4" tabindex="-1"></a><span class="co">#&#39; @param dimdat Dimension of cytogram data.</span></span>
+<span id="cb19-5"><a href="simulations.html#cb19-5" tabindex="-1"></a><span class="co">#&#39; @param maxdev Maximum deviation of cluster means away from its grand mean.</span></span>
+<span id="cb19-6"><a href="simulations.html#cb19-6" tabindex="-1"></a><span class="co">#&#39; @param viz Whether to produce a plot.</span></span>
+<span id="cb19-7"><a href="simulations.html#cb19-7" tabindex="-1"></a><span class="co">#&#39; @param n.cores Number of cores.</span></span>
+<span id="cb19-8"><a href="simulations.html#cb19-8" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb19-9"><a href="simulations.html#cb19-9" tabindex="-1"></a><span class="co">#&#39; </span></span>
+<span id="cb19-10"><a href="simulations.html#cb19-10" tabindex="-1"></a><span id='maxdev_to_gg'>maxdev_to_gg</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(X, dimdat, maxdev, <span class="at">viz =</span> <span class="cn">FALSE</span>, <span class="at">n.cores =</span> <span class="dv">1</span>){</span>
+<span id="cb19-11"><a href="simulations.html#cb19-11" tabindex="-1"></a></span>
+<span id="cb19-12"><a href="simulations.html#cb19-12" tabindex="-1"></a>  <span class="do">## Basic setup</span></span>
+<span id="cb19-13"><a href="simulations.html#cb19-13" tabindex="-1"></a>  p <span class="ot">=</span> <span class="fu">ncol</span>(X) <span class="do">## 39</span></span>
+<span id="cb19-14"><a href="simulations.html#cb19-14" tabindex="-1"></a>  d <span class="ot">=</span> dimdat</span>
+<span id="cb19-15"><a href="simulations.html#cb19-15" tabindex="-1"></a></span>
+<span id="cb19-16"><a href="simulations.html#cb19-16" tabindex="-1"></a>  <span class="co"># Helper function</span></span>
+<span id="cb19-17"><a href="simulations.html#cb19-17" tabindex="-1"></a>  <span class="co"># @param tX is the transpose of X</span></span>
+<span id="cb19-18"><a href="simulations.html#cb19-18" tabindex="-1"></a>  <span id='ball.deviance'>ball.deviance</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(gg, rr, tX, <span class="at">Nmc=</span><span class="dv">5000</span>,</span>
+<span id="cb19-19"><a href="simulations.html#cb19-19" tabindex="-1"></a>                            <span class="at">nu0=</span>d, <span class="at">nu1=</span>p<span class="sc">+</span><span class="dv">1</span>,</span>
+<span id="cb19-20"><a href="simulations.html#cb19-20" tabindex="-1"></a>                            <span class="at">S0=</span><span class="fu">diag</span>(d), <span class="at">S1=</span><span class="fu">diag</span>(p<span class="sc">+</span><span class="dv">1</span>),</span>
+<span id="cb19-21"><a href="simulations.html#cb19-21" tabindex="-1"></a>                            <span class="at">simple=</span> <span class="cn">TRUE</span>){</span>
+<span id="cb19-22"><a href="simulations.html#cb19-22" tabindex="-1"></a>    inv.XTX  <span class="ot">&lt;-</span> <span class="fu">solve</span>(<span class="fu">tcrossprod</span>(tX))</span>
+<span id="cb19-23"><a href="simulations.html#cb19-23" tabindex="-1"></a>    ms.deviance <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="cn">NA</span>,Nmc) </span>
+<span id="cb19-24"><a href="simulations.html#cb19-24" tabindex="-1"></a></span>
+<span id="cb19-25"><a href="simulations.html#cb19-25" tabindex="-1"></a>    Sig.ell <span class="ot">&lt;-</span> matrixsampling<span class="sc">::</span><span class="fu">rinvwishart</span>(Nmc,nu0<span class="sc">+</span>d,S0)</span>
+<span id="cb19-26"><a href="simulations.html#cb19-26" tabindex="-1"></a>    beta.ell <span class="ot">&lt;-</span> <span class="fu">apply</span>(Sig.ell,<span class="dv">3</span>,<span class="cf">function</span>(xx)</span>
+<span id="cb19-27"><a href="simulations.html#cb19-27" tabindex="-1"></a>        <span class="fu">as.matrix</span>(matrixNormal<span class="sc">::</span><span class="fu">rmatnorm</span>(<span class="at">M =</span> <span class="fu">matrix</span>(<span class="dv">0</span>,d,p), </span>
+<span id="cb19-28"><a href="simulations.html#cb19-28" tabindex="-1"></a>                 <span class="at">U =</span> xx, </span>
+<span id="cb19-29"><a href="simulations.html#cb19-29" tabindex="-1"></a>                 <span class="at">V =</span> inv.XTX<span class="sc">*</span>gg, </span>
+<span id="cb19-30"><a href="simulations.html#cb19-30" tabindex="-1"></a>                 <span class="at">tol =</span> .Machine<span class="sc">$</span>double.eps<span class="sc">^</span><span class="fl">0.5</span>)),</span>
+<span id="cb19-31"><a href="simulations.html#cb19-31" tabindex="-1"></a>        <span class="at">simplify =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb19-32"><a href="simulations.html#cb19-32" tabindex="-1"></a>    xb <span class="ot">&lt;-</span> <span class="fu">lapply</span>(beta.ell, <span class="cf">function</span>(bb) bb<span class="sc">%*%</span> tX)  </span>
+<span id="cb19-33"><a href="simulations.html#cb19-33" tabindex="-1"></a>    mean.vec <span class="ot">&lt;-</span> <span class="fu">lapply</span>(xb, <span class="cf">function</span>(bb)</span>
+<span id="cb19-34"><a href="simulations.html#cb19-34" tabindex="-1"></a>        <span class="fu">apply</span>(bb,<span class="dv">1</span>,mean))</span>
+<span id="cb19-35"><a href="simulations.html#cb19-35" tabindex="-1"></a>    ms.deviance <span class="ot">&lt;-</span> <span class="fu">mapply</span>(<span class="cf">function</span>(xx,mm){</span>
+<span id="cb19-36"><a href="simulations.html#cb19-36" tabindex="-1"></a>        <span class="fu">mean</span>(<span class="fu">apply</span>(xx,<span class="dv">2</span>,<span class="cf">function</span>(cols) <span class="fu">crossprod</span>(cols<span class="sc">-</span>mm)))</span>
+<span id="cb19-37"><a href="simulations.html#cb19-37" tabindex="-1"></a>    }, <span class="at">xx=</span>xb,<span class="at">mm=</span>mean.vec)</span>
+<span id="cb19-38"><a href="simulations.html#cb19-38" tabindex="-1"></a>    prob <span class="ot">&lt;-</span> <span class="fu">mean</span>(ms.deviance <span class="sc">&gt;</span> rr<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb19-39"><a href="simulations.html#cb19-39" tabindex="-1"></a>    <span class="cf">if</span>(simple){</span>
+<span id="cb19-40"><a href="simulations.html#cb19-40" tabindex="-1"></a>      <span class="fu">return</span>(<span class="fu">list</span>(<span class="at">gg=</span>gg,<span class="at">rr=</span>rr,<span class="at">prob=</span>prob))</span>
+<span id="cb19-41"><a href="simulations.html#cb19-41" tabindex="-1"></a>    }<span class="cf">else</span>{</span>
+<span id="cb19-42"><a href="simulations.html#cb19-42" tabindex="-1"></a>      <span class="fu">return</span>(<span class="fu">list</span>(<span class="at">gg =</span> gg, <span class="at">rr =</span> rr,</span>
+<span id="cb19-43"><a href="simulations.html#cb19-43" tabindex="-1"></a>                  <span class="at">prob=</span>prob,</span>
+<span id="cb19-44"><a href="simulations.html#cb19-44" tabindex="-1"></a>                  <span class="at">msd =</span> ms.deviance)) </span>
+<span id="cb19-45"><a href="simulations.html#cb19-45" tabindex="-1"></a>    }</span>
+<span id="cb19-46"><a href="simulations.html#cb19-46" tabindex="-1"></a>  }</span>
+<span id="cb19-47"><a href="simulations.html#cb19-47" tabindex="-1"></a></span>
+<span id="cb19-48"><a href="simulations.html#cb19-48" tabindex="-1"></a>  gglist <span class="ot">&lt;-</span> <span class="fu">as.list</span>((<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>)<span class="sc">/</span><span class="dv">10</span>)<span class="do">##as.list(1:40/100)</span></span>
+<span id="cb19-49"><a href="simulations.html#cb19-49" tabindex="-1"></a>  plist <span class="ot">&lt;-</span> parallel<span class="sc">::</span><span class="fu">mclapply</span>(gglist, <span class="cf">function</span>(gg){</span>
+<span id="cb19-50"><a href="simulations.html#cb19-50" tabindex="-1"></a>    <span class="fu">print</span>(<span class="st">&#39;here&#39;</span>)</span>
+<span id="cb19-51"><a href="simulations.html#cb19-51" tabindex="-1"></a>      <a href='simulations.html#ball.deviance'>ball.deviance</a>(gg, maxdev, <span class="fu">t</span>(X), <span class="at">Nmc =</span> <span class="fl">1e4</span>)<span class="sc">$</span>prob},</span>
+<span id="cb19-52"><a href="simulations.html#cb19-52" tabindex="-1"></a>      <span class="at">mc.cores =</span> <span class="fu">min</span>(n.cores, <span class="fu">length</span>(gglist)))</span>
+<span id="cb19-53"><a href="simulations.html#cb19-53" tabindex="-1"></a></span>
+<span id="cb19-54"><a href="simulations.html#cb19-54" tabindex="-1"></a>  <span class="do">## Make linear interpolation at a fine grid</span></span>
+<span id="cb19-55"><a href="simulations.html#cb19-55" tabindex="-1"></a>  res <span class="ot">=</span> stats<span class="sc">::</span><span class="fu">approx</span>(<span class="at">x =</span> <span class="fu">unlist</span>(gglist), <span class="at">y =</span> <span class="fu">unlist</span>(plist), <span class="at">method=</span><span class="st">&quot;linear&quot;</span>, <span class="at">n =</span> <span class="dv">100</span>)</span>
+<span id="cb19-56"><a href="simulations.html#cb19-56" tabindex="-1"></a>  newx <span class="ot">=</span>  res<span class="sc">$</span>x</span>
+<span id="cb19-57"><a href="simulations.html#cb19-57" tabindex="-1"></a>  newy <span class="ot">=</span> res<span class="sc">$</span>y</span>
+<span id="cb19-58"><a href="simulations.html#cb19-58" tabindex="-1"></a></span>
+<span id="cb19-59"><a href="simulations.html#cb19-59" tabindex="-1"></a>  <span class="do">## Get closest point</span></span>
+<span id="cb19-60"><a href="simulations.html#cb19-60" tabindex="-1"></a>  imin <span class="ot">=</span>  <span class="fu">which.min</span>(<span class="fu">abs</span>(newy <span class="sc">-</span> <span class="fl">0.05</span>))</span>
+<span id="cb19-61"><a href="simulations.html#cb19-61" tabindex="-1"></a></span>
+<span id="cb19-62"><a href="simulations.html#cb19-62" tabindex="-1"></a>  <span class="co"># Make some plots to confirm</span></span>
+<span id="cb19-63"><a href="simulations.html#cb19-63" tabindex="-1"></a>  <span class="cf">if</span>(viz){</span>
+<span id="cb19-64"><a href="simulations.html#cb19-64" tabindex="-1"></a>    <span class="fu">plot</span>(gglist,plist,<span class="at">type =</span> <span class="st">&quot;l&quot;</span>,</span>
+<span id="cb19-65"><a href="simulations.html#cb19-65" tabindex="-1"></a>         <span class="at">ylab =</span> <span class="st">&quot;Prob outside of </span><span class="sc">\n</span><span class="st"> radius r&quot;</span>, <span class="at">xlab =</span> <span class="st">&quot;Value of |gg|&quot;</span>)</span>
+<span id="cb19-66"><a href="simulations.html#cb19-66" tabindex="-1"></a>    graphics<span class="sc">::</span><span class="fu">abline</span>(<span class="at">h=</span><span class="fl">0.05</span>,<span class="at">lwd=</span><span class="dv">2</span>,<span class="at">col =</span> <span class="st">&quot;red&quot;</span>)</span>
+<span id="cb19-67"><a href="simulations.html#cb19-67" tabindex="-1"></a>    graphics<span class="sc">::</span><span class="fu">abline</span>(<span class="at">h=</span><span class="fl">0.01</span>,<span class="at">lwd=</span><span class="dv">2</span>,<span class="at">col =</span> <span class="st">&quot;red&quot;</span>)</span>
+<span id="cb19-68"><a href="simulations.html#cb19-68" tabindex="-1"></a>    <span class="do">## lines(y=newy, x=newx,lwd=2,col=&quot;blue&quot;)</span></span>
+<span id="cb19-69"><a href="simulations.html#cb19-69" tabindex="-1"></a>    <span class="do">## abline(v=newx[imin])</span></span>
+<span id="cb19-70"><a href="simulations.html#cb19-70" tabindex="-1"></a>  }</span>
+<span id="cb19-71"><a href="simulations.html#cb19-71" tabindex="-1"></a></span>
+<span id="cb19-72"><a href="simulations.html#cb19-72" tabindex="-1"></a>  <span class="fu">return</span>(newx[imin])</span>
+<span id="cb19-73"><a href="simulations.html#cb19-73" tabindex="-1"></a>}</span>
+<span id="cb19-74"><a href="simulations.html#cb19-74" tabindex="-1"></a></span>
+<span id="cb19-75"><a href="simulations.html#cb19-75" tabindex="-1"></a><span class="do">## hist(<a href='simulations.html#ball.deviance'>ball.deviance</a>(0.01,0.5,t(X))$msd, breaks = &quot;FD&quot;)</span></span>
+<span id="cb19-76"><a href="simulations.html#cb19-76" tabindex="-1"></a><span class="do">## hist(<a href='simulations.html#ball.deviance'>ball.deviance</a>(0.1,0.5,X)$msd, breaks = &quot;FD&quot;)</span></span>
+<span id="cb19-77"><a href="simulations.html#cb19-77" tabindex="-1"></a><span class="do">## hist(<a href='simulations.html#ball.deviance'>ball.deviance</a>(0.2,0.5,X)$msd, breaks = &quot;FD&quot;)</span></span>
+<span id="cb19-78"><a href="simulations.html#cb19-78" tabindex="-1"></a><span class="do">## hist(<a href='simulations.html#ball.deviance'>ball.deviance</a>(0.5,0.5,X)$msd, breaks = &quot;FD&quot;)</span></span>
+<span id="cb19-79"><a href="simulations.html#cb19-79" tabindex="-1"></a><span class="do">## hist(<a href='simulations.html#ball.deviance'>ball.deviance</a>(1,0.5,X)$msd, breaks = &quot;FD&quot;)</span></span>
+<span id="cb19-80"><a href="simulations.html#cb19-80" tabindex="-1"></a><span class="do">## hist(<a href='simulations.html#ball.deviance'>ball.deviance</a>(2,0.5,X)$msd, breaks = &quot;FD&quot;)</span></span></code></pre></div>
 <p>Next, we run the MCMC.</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="simulations.html#cb19-1" tabindex="-1"></a><span class="do">## Run the MCMC</span></span>
-<span id="cb19-2"><a href="simulations.html#cb19-2" tabindex="-1"></a>Nmc <span class="ot">&lt;-</span> <span class="fl">1e3</span> <span class="sc">*</span> <span class="dv">5</span></span>
-<span id="cb19-3"><a href="simulations.html#cb19-3" tabindex="-1"></a>Nburn <span class="ot">&lt;-</span> <span class="dv">500</span></span>
-<span id="cb19-4"><a href="simulations.html#cb19-4" tabindex="-1"></a></span>
-<span id="cb19-5"><a href="simulations.html#cb19-5" tabindex="-1"></a>Nmc <span class="ot">&lt;-</span> <span class="dv">20</span></span>
-<span id="cb19-6"><a href="simulations.html#cb19-6" tabindex="-1"></a>Nburn <span class="ot">&lt;-</span> <span class="dv">10</span></span>
-<span id="cb19-7"><a href="simulations.html#cb19-7" tabindex="-1"></a></span>
-<span id="cb19-8"><a href="simulations.html#cb19-8" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
-<span id="cb19-9"><a href="simulations.html#cb19-9" tabindex="-1"></a>Gibbs.res <span class="ot">&lt;-</span> <a href='gibbs-sampler.html#run.Gibbs.fast'>run.Gibbs.fast</a>(<span class="at">ylist =</span> datobj<span class="sc">$</span>ylist,</span>
-<span id="cb19-10"><a href="simulations.html#cb19-10" tabindex="-1"></a>                            <span class="at">countslist =</span> datobj<span class="sc">$</span>countslist,</span>
-<span id="cb19-11"><a href="simulations.html#cb19-11" tabindex="-1"></a>                            <span class="at">numclust =</span> <span class="dv">2</span>,</span>
-<span id="cb19-12"><a href="simulations.html#cb19-12" tabindex="-1"></a>                            <span class="at">Nmc =</span> Nmc, <span class="at">Nburn =</span> Nburn,</span>
-<span id="cb19-13"><a href="simulations.html#cb19-13" tabindex="-1"></a>                            <span class="at">gg =</span> <span class="fl">0.1</span>, </span>
-<span id="cb19-14"><a href="simulations.html#cb19-14" tabindex="-1"></a>                            <span class="at">X =</span> <span class="fu">t</span>(datobj<span class="sc">$</span>X),</span>
-<span id="cb19-15"><a href="simulations.html#cb19-15" tabindex="-1"></a>                            <span class="at">Cbox =</span> datobj<span class="sc">$</span>Cbox, <span class="at">verbose =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb19-16"><a href="simulations.html#cb19-16" tabindex="-1"></a></span>
-<span id="cb19-17"><a href="simulations.html#cb19-17" tabindex="-1"></a><span class="do">## Save the results</span></span>
-<span id="cb19-18"><a href="simulations.html#cb19-18" tabindex="-1"></a><span class="fu">saveRDS</span>(Gibbs.res,</span>
-<span id="cb19-19"><a href="simulations.html#cb19-19" tabindex="-1"></a>        <span class="fu">file.path</span>(<span class="st">&quot;~/repos/flowcut/inst/output&quot;</span>,</span>
-<span id="cb19-20"><a href="simulations.html#cb19-20" tabindex="-1"></a>                  <span class="fu">paste0</span>(<span class="st">&quot;isignal-&quot;</span>, isignal, <span class="st">&quot;-gibbs.RDS&quot;</span>)))</span></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="simulations.html#cb20-1" tabindex="-1"></a><span class="do">## Run the MCMC</span></span>
+<span id="cb20-2"><a href="simulations.html#cb20-2" tabindex="-1"></a>Nmc <span class="ot">&lt;-</span> <span class="fl">1e3</span> <span class="sc">*</span> <span class="dv">5</span></span>
+<span id="cb20-3"><a href="simulations.html#cb20-3" tabindex="-1"></a>Nburn <span class="ot">&lt;-</span> <span class="dv">500</span></span>
+<span id="cb20-4"><a href="simulations.html#cb20-4" tabindex="-1"></a></span>
+<span id="cb20-5"><a href="simulations.html#cb20-5" tabindex="-1"></a>Nmc <span class="ot">&lt;-</span> <span class="dv">20</span></span>
+<span id="cb20-6"><a href="simulations.html#cb20-6" tabindex="-1"></a>Nburn <span class="ot">&lt;-</span> <span class="dv">10</span></span>
+<span id="cb20-7"><a href="simulations.html#cb20-7" tabindex="-1"></a></span>
+<span id="cb20-8"><a href="simulations.html#cb20-8" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb20-9"><a href="simulations.html#cb20-9" tabindex="-1"></a>Gibbs.res <span class="ot">&lt;-</span> <a href='gibbs-sampler.html#run.Gibbs.fast'>run.Gibbs.fast</a>(<span class="at">ylist =</span> datobj<span class="sc">$</span>ylist,</span>
+<span id="cb20-10"><a href="simulations.html#cb20-10" tabindex="-1"></a>                            <span class="at">countslist =</span> datobj<span class="sc">$</span>countslist,</span>
+<span id="cb20-11"><a href="simulations.html#cb20-11" tabindex="-1"></a>                            <span class="at">numclust =</span> <span class="dv">2</span>,</span>
+<span id="cb20-12"><a href="simulations.html#cb20-12" tabindex="-1"></a>                            <span class="at">Nmc =</span> Nmc, <span class="at">Nburn =</span> Nburn,</span>
+<span id="cb20-13"><a href="simulations.html#cb20-13" tabindex="-1"></a>                            <span class="at">gg =</span> <span class="fl">0.1</span>, </span>
+<span id="cb20-14"><a href="simulations.html#cb20-14" tabindex="-1"></a>                            <span class="at">X =</span> <span class="fu">t</span>(datobj<span class="sc">$</span>X),</span>
+<span id="cb20-15"><a href="simulations.html#cb20-15" tabindex="-1"></a>                            <span class="at">Cbox =</span> datobj<span class="sc">$</span>Cbox, <span class="at">verbose =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb20-16"><a href="simulations.html#cb20-16" tabindex="-1"></a></span>
+<span id="cb20-17"><a href="simulations.html#cb20-17" tabindex="-1"></a><span class="do">## Save the results</span></span>
+<span id="cb20-18"><a href="simulations.html#cb20-18" tabindex="-1"></a><span class="fu">saveRDS</span>(Gibbs.res,</span>
+<span id="cb20-19"><a href="simulations.html#cb20-19" tabindex="-1"></a>        <span class="fu">file.path</span>(<span class="st">&quot;~/repos/flowcut/inst/output&quot;</span>,</span>
+<span id="cb20-20"><a href="simulations.html#cb20-20" tabindex="-1"></a>                  <span class="fu">paste0</span>(<span class="st">&quot;isignal-&quot;</span>, isignal, <span class="st">&quot;-gibbs.RDS&quot;</span>)))</span></code></pre></div>
 
 </div>
             </section>

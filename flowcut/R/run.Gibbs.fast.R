@@ -261,7 +261,7 @@ run.Gibbs.fast <- function(ylist, countslist, X,
                                 ww[zz==ell], weighting = TRUE)},
                 xx = Xp.list, yy = ylist, zz=Z.list, ww = W.sq.list, 
                 SIMPLIFY = FALSE,
-                mc.cores = n.cores) 
+                    mc.cores = n.cores) 
           if(dimdat == 1) Sn.ell = sum(unlist(sse))
           if(dimdat > 1) Sn.ell <- Reduce('+',sse)
             Sig.ell[,,ell] <- matrixsampling::rinvwishart(1,nu0+dimdat + m.ell[ell], S0 + Sn.ell)[,,1]
@@ -309,7 +309,7 @@ run.Gibbs.fast <- function(ylist, countslist, X,
 
         }        
 
-        invNugget <- 1 / rgamma(1, (numclust-1+a_gamma)/2, (apply(gamma.ell,2,crossprod)%>%sum() + b_gamma)/2)
+        invNugget <- 1 / stats::rgamma(1, (numclust-1+a_gamma)/2, (apply(gamma.ell,2,crossprod)%>%sum() + b_gamma)/2)
 
         XpGamma <- t(gamma.ell) %*% Xp ## K-1 x TT 
         pi.sb <- 1/(1+exp(-XpGamma))
@@ -322,7 +322,8 @@ run.Gibbs.fast <- function(ylist, countslist, X,
         chol.Sig.list <- lapply(1:numclust,function(kk) matrix(chol.Sig.ell[,kk],nrow = dimdat))
         mu.list <- lapply(1:TT, function(tt){
           one_mu = sapply(1:numclust, function(kk){
-            beta.ell[,,kk,drop=FALSE] %*% Xp[,tt,drop=FALSE]
+            if(dimdat == 1) beta.ell[,,kk,drop=FALSE] %*% Xp[,tt,drop=FALSE]
+            if(dimdat > 1) beta.ell[,,kk] %*% Xp[,tt,drop=FALSE]
           })
           if(dimdat==1) one_mu = rbind(one_mu)
           return(one_mu)

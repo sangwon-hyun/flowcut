@@ -1,11 +1,10 @@
 # Generated from _main.Rmd: do not edit by hand
 
-#'
 wcrossprod.fast <- function(x, w.sqrt, weighting = TRUE){
     if(weighting){
         x <- x * w.sqrt
     }
-    if(min(dim(x))==1){
+    if(ncol(x) == 1){
         ret <- x %*% t(x)
     }else{
         ret <- Rfast::Crossprod(x,x)
@@ -15,7 +14,7 @@ wcrossprod.fast <- function(x, w.sqrt, weighting = TRUE){
 
 #' 
 self.crossprod <- function(x){
-    if(min(dim(x))==1){
+    if(ncol(x) == 1){
         ret <- x %*% t(x)
     }else{
         ret <- crossprod(x)
@@ -156,7 +155,7 @@ samp.trunc.normal <- function(yy, zz, cc.info, bounds.info, mu.mat, Sigma.ell, d
       ## Sample from this conditional truncated normal
       if(dimdat==1) cond.sig = as.matrix(cond.sig)
       stopifnot("matrix" %in% class(cond.sig))
-      imputed_y = tmvnsim(nsamp = 1, length(cond.m),
+      imputed_y = tmvnsim::tmvnsim(nsamp = 1, length(cond.m),
               lower=lower.info[cc], upper = upper.info[cc],
               mean= cond.m, sigma = cond.sig)$samp
         yy[cc] <- imputed_y
