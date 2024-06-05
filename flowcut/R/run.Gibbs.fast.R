@@ -82,10 +82,10 @@ run.Gibbs.fast <- function(ylist, countslist, X,
       samp.region.list <- lapply(1:TT, function(tt){
           c01 <- censor.01.list[[tt]]
           cc <- Censor.list[[tt]]
-          if(verbose){
-              print(paste("Time=",tt,", censored obs.= ",sum(c01==TRUE),
-                          ", censored ratio =", round(sum(c01==TRUE)/ntlist[tt],2), sep=" ")) 
-          }
+          ## if(verbose){
+          ##    print(paste("Time=",tt,", censored obs.= ",sum(c01==TRUE),
+                          ## ", censored ratio =", round(sum(c01==TRUE)/ntlist[tt],2), sep=" ")) 
+          ##}
           if(sum(c01==TRUE)>1){
               apply(cc[c01==TRUE,,drop=FALSE],1,function(xx) sample.region(xx,Cbox))
           }else if(sum(c01==TRUE)==1){
@@ -177,19 +177,6 @@ run.Gibbs.fast <- function(ylist, countslist, X,
                 ptm <- proc.time()
             }
             if(jj ==Nburn+1 & Nburn > 0){
-                ## burn.in.last.draw <- list(Z.list=Z.list,ylist=ylist)
-                ## save(burn.in.last.draw, file = "Burn-in-last-draw.Rdata")
-                ## try(dev.off(),silent = TRUE)
-                ## par(mfrow = c(dimdat,numclust))
-                ## par(mar = c(numclust,dimdat,numclust,dimdat)/1.5)
-                ## try(for(dd in 1:dimdat){
-                ##         for(kk in 1:numclust){
-                ##             title <- paste("beta0 traceplot", "dim = ", dd, ", clust = ", kk, sep = " ")
-                ##             plot(floor(Nburn/2):Nburn,  
-                ##                  burn.beta0[dd,kk,floor(Nburn/2):Nburn],
-                ##                  type="l", main=title, lwd = 2)
-                ##         }    
-                ##     },silent = TRUE)
                 plot(burn.avgloglik[(tt.impute+1):Nburn],
                      type="l",lwd=2)
                 print(paste("Burn-in sample size: ", Nburn, sep = " "))
@@ -197,9 +184,7 @@ run.Gibbs.fast <- function(ylist, countslist, X,
                 print("Burn-in time cost per iteration, in seconds")
                 burn.tc <- (proc.time()-ptm)/(Nburn - tt.impute) 
                 print(round(burn.tc,2))
-
                 print(Sys.time())
-                
                 print("Collecting posterior samples......")
                 print(paste("Expected time to draw", Nmc, "posterior samples: ", 
                             round(burn.tc[3]*Nmc/60/60,2), " hours", sep=" "))
@@ -360,7 +345,6 @@ run.Gibbs.fast <- function(ylist, countslist, X,
                                         c01 = censor.01.list, zz=Z.list,
                                         mc.cores = n.cores)  
             imputed.ylist <- parallel::mclapply(1:TT, function(tt) {
-            ## imputed.ylist <- lapply(1:TT, function(tt){
               yy =
                 impute.censored(ww = censored.countslist[[tt]], 
                                 yy = censored.ylist[[tt]],
@@ -369,12 +353,14 @@ run.Gibbs.fast <- function(ylist, countslist, X,
                                 bounds.mat = samp.region.list[[tt]],
                                 mu.mat = mu.list[[tt]], Sigma.ell = Sig.ell,
                                 dimdat = dimdat)
-              if(dimdat==1 & !is.null(yy)) yy= t(yy)
-            ## })             
-            },mc.cores = n.cores, mc.preschedule = FALSE)             
+              if(dimdat==1 & !is.null(yy)) yy = t(yy)
+              return(yy)
+            }, mc.cores = n.cores, mc.preschedule = FALSE)             
             for(tt in 1:TT){
-                ylist[[tt]][censor.01.list[[tt]]==TRUE,] <- imputed.ylist[[tt]]
-            }            
+              censored_particles = which(censor.01.list[[tt]])
+              ##stopifnot(nrow(imputed.ylist[[tt]]) == length(censored_particles))
+              ylist[[tt]][censored_particles,] <- imputed.ylist[[tt]]
+            }
         }
 
         loglik <- loglik_eval(mu.list, chol.Sig.list, 

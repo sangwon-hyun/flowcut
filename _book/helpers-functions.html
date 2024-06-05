@@ -23,7 +23,7 @@
 <meta name="author" content="Sheng Jiang, Sangwon Hyun" />
 
 
-<meta name="date" content="2024-06-04" />
+<meta name="date" content="2024-06-05" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -440,6 +440,16 @@ first column is the lower cutoff, and the second column is the upper cutoff).</p
 <span id="cb7-16"><a href="helpers-functions.html#cb7-16" tabindex="-1"></a>  <span class="do">## Modify censorship slightly</span></span>
 <span id="cb7-17"><a href="helpers-functions.html#cb7-17" tabindex="-1"></a>  Cbox <span class="ot">&lt;-</span> <span class="fu">cbind</span>(bounds.lower, bounds.upper)</span>
 <span id="cb7-18"><a href="helpers-functions.html#cb7-18" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="helpers-functions.html#cb8-1" tabindex="-1"></a><span class="co">#&#39; Helper function to print progress.</span></span>
+<span id="cb8-2"><a href="helpers-functions.html#cb8-2" tabindex="-1"></a><span class="co">#&#39; </span></span>
+<span id="cb8-3"><a href="helpers-functions.html#cb8-3" tabindex="-1"></a><span class="co">#&#39; @param iter Current iteration.</span></span>
+<span id="cb8-4"><a href="helpers-functions.html#cb8-4" tabindex="-1"></a><span class="co">#&#39; @param Nmc Total number of MCMC iterations.</span></span>
+<span id="cb8-5"><a href="helpers-functions.html#cb8-5" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb8-6"><a href="helpers-functions.html#cb8-6" tabindex="-1"></a><span class="co">#&#39; @export</span></span>
+<span id="cb8-7"><a href="helpers-functions.html#cb8-7" tabindex="-1"></a><span id='progress'>progress</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(iter, Nmc){</span>
+<span id="cb8-8"><a href="helpers-functions.html#cb8-8" tabindex="-1"></a>    <span class="fu">cat</span>(<span class="st">&quot;MCMC iteration: &quot;</span>, iter,</span>
+<span id="cb8-9"><a href="helpers-functions.html#cb8-9" tabindex="-1"></a>        <span class="st">&quot;.&quot;</span>, <span class="fu">round</span>(iter<span class="sc">/</span>Nmc,<span class="dv">3</span>)<span class="sc">*</span><span class="dv">100</span>, <span class="st">&quot;% is done&quot;</span>, <span class="at">fill =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb8-10"><a href="helpers-functions.html#cb8-10" tabindex="-1"></a>}</span></code></pre></div>
 
 </div>
             </section>

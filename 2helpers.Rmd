@@ -286,3 +286,20 @@ get_Cbox <- function(ylist){
   Cbox <- cbind(bounds.lower, bounds.upper)
 }
 ```
+
+
+
+
+
+```{r}
+#' Helper function to print progress.
+#' 
+#' @param iter Current iteration.
+#' @param Nmc Total number of MCMC iterations.
+#'
+#' @export
+progress <- function(iter, Nmc){
+    cat("MCMC iteration: ", iter,
+        ".", round(iter/Nmc,3)*100, "% is done", fill = TRUE)
+}
+```
