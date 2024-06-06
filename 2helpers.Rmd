@@ -132,7 +132,7 @@ sample.region <- function(cc,Cbox){
 
 #'
 
-rmatnorm.fast <- function(M,U,V){
+rmatnorm.fast <- function(M,U,V){ 
     ## M is d x p
     ## U is d x d
     ## V is p x p 
@@ -306,7 +306,7 @@ get_Cbox <- function(ylist){
 
 
 
-```{r}
+```{r, send_to = 'R/all-helpers.R'}
 #' Helper function to print progress.
 #' 
 #' @param iter Current iteration.
