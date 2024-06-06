@@ -11,16 +11,11 @@ wcrossprod.fast <- function(x, w.sqrt, weighting = TRUE){
     if(weighting){
         x <- x * w.sqrt
     }
-    if(ncol(x) == 1){
-        ret <- x %*% t(x)
-    }else{
-        ret <- Rfast::Crossprod(x,x)
-    }
-  return(ret)
+  return(Rfast::Crossprod(x,x))
 }
 
 #' 
-self.crossprod <- function(x){
+self.crossprod <- function(x){ ## this function can be deleted. 
     if(ncol(x) == 1){
         ret <- x %*% t(x)
     }else{
@@ -48,7 +43,7 @@ softmax2 <- function(x){
 #'
 logMNdensity <- function(y,invSig,logdet){
     ## The term "-log(2*pi)*d/2" is omitted
-    return(-t(y)%*%invSig%*%y /2-logdet/2)
+    return(- Rfast::Crossprod(y, invSig) %*% y /2 - logdet/2)
 }
 
 #'
@@ -91,7 +86,7 @@ MN2SB <- function(pi.mn){
 
 #'
 gamma2pi <- function(gamma,Xp){
-    XpGamma <- t(gamma) %*% Xp ## K-1 x T
+    XpGamma <- Rfast::Crossprod(gamma, Xp) ## K-1 x T
     pi.sb <- 1/(1+exp(-XpGamma))
     return(pi.sb)
 }
@@ -133,6 +128,25 @@ sample.region <- function(cc,Cbox){
     colnames(limits) <- c("lower","upper")
     return(limits)
 }
+
+
+#'
+
+rmatnorm.fast <- function(M,U,V){
+    ## M is d x p
+    ## U is d x d
+    ## V is p x p 
+    M <- as.matrix(M)
+    U <- as.matrix(U)
+    V <- as.matrix(V)
+    d <- nrow(M) ## dim of U 
+    p <- ncol(M) ## dim of V 
+    chol.U <- Rfast::cholesky(U) ## upper triangular matrix 
+    chol.V <- Rfast::cholesky(V)
+    x <- Rfast::matrnorm(d, p)
+    return(Rfast::Crossprod(chol.U, x) %*% chol.V + M)
+}
+    
 
 
 
@@ -194,6 +208,7 @@ impute.censored <- function(ww, yy, zz, cc.info.mat, bounds.mat,
 
 #'
 gen.syn.dta <- function(T, K, p, d=3, Cbox=NULL, Pi =NULL, avg.clust.size=100){
+    ## this function can be deleted 
     ### by default, d = 3
     nt <- stats::rpois(n=T,lambda=avg.clust.size*K)
     X <- t(sapply(1:p, function(pp) stats::arima.sim(list(order=c(1,0,0), ar=pp/(pp+1)/2), n=T)))
