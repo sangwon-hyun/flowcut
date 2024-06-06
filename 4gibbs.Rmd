@@ -59,13 +59,18 @@ run.Gibbs.fast <- function(ylist, countslist, X,
   n.cores = min(n.cores, TT)
 
   ##### pre computed quantities
-  X.list <- as.list(as.data.frame(X))
-  Xp <- rbind(1,X) 
-  Xp.list <- as.list(as.data.frame(Xp))
-  W.sq.list <- lapply(countslist, function(xx) sqrt(xx))
-  mt <- lapply(countslist, sum)%>%unlist()
-  MM <- sum(mt) 
-      
+    X.list <- as.list(as.data.frame(X))
+    Xp <- rbind(1,X) 
+    Xp.list <- as.list(as.data.frame(Xp))
+    
+    countsTotal <- sapply(countslist,sum) %>% sum() 
+    alpha.factor <- NN/countsTotal  
+    W.list <- lapply(countslist, function(xx) xx*alpha.factor) 
+    W.sq.list <- lapply(W.list, function(xx) sqrt(xx))
+    
+    mt <- lapply(W.list, sum)%>%unlist()
+    MM <- sum(mt) 
+    
   XtXtT <- lapply(X.list,function(x) x%*%t(x))
   XtXtTp <- lapply(Xp.list, function(x) x%*%t(x))
   ggXtXtTp <- lapply(Xp.list, function(x) x%*%t(x)/gg)
@@ -88,8 +93,8 @@ run.Gibbs.fast <- function(ylist, countslist, X,
       censored.C.list <- parallel::mcmapply(function(c01,cc){cc[c01==TRUE,,drop=FALSE]},
                                   c01 = censor.01.list, cc=Censor.list,
                                   mc.cores = n.cores)
-      censored.countslist <- parallel::mcmapply(function(c01,ww){ww[c01==TRUE]},
-                                  c01 = censor.01.list, w=countslist,
+      censored.W.list <- parallel::mcmapply(function(c01,ww){ww[c01==TRUE]},
+                                  c01 = censor.01.list, w=W.list,
                                   mc.cores = n.cores)  
       ntlist.censor <- sapply(1:TT,function(tt) sum(censor.01.list[[tt]])) 
       samp.region.list <- lapply(1:TT, function(tt){
@@ -216,7 +221,7 @@ run.Gibbs.fast <- function(ylist, countslist, X,
         
         mt.ell <- parallel::mcmapply(function(ww,zz){
             sapply(1:numclust, function(kk) sum(ww[zz==kk]))},
-            ww = countslist, zz = Z.list, SIMPLIFY = TRUE,
+            ww = W.list, zz = Z.list, SIMPLIFY = TRUE,
             mc.cores = n.cores)
         m.ell <-  Rfast::rowsums(mt.ell)
 
@@ -244,7 +249,7 @@ run.Gibbs.fast <- function(ylist, countslist, X,
             inv.SX.ell <- Rfast::spdinv(SX.ell) ## (p+1) x (p+1)
             Sy.ell <- mapply(function(ww, yy, zz){
                 t(as.matrix(ww[zz==ell])) %*% yy[zz==ell,,drop=FALSE]},
-                ww = countslist, yy = ylist, zz = Z.list, SIMPLIFY = TRUE)
+                ww = W.list, yy = ylist, zz = Z.list, SIMPLIFY = TRUE)
           if(dimdat == 1) Sy.ell = rbind(Sy.ell)
           ## if(!is.numeric(Sy.ell[1])) browser()
             Sxy.ell <- Xp %*% t(Sy.ell)  ## (p+1) x d
@@ -270,7 +275,7 @@ run.Gibbs.fast <- function(ylist, countslist, X,
 ################################################
         ## mt.ell <- mcmapply(function(ww,zz){
         ##     sapply(1:numclust, function(kk) sum(ww[zz==kk]))},
-        ##     ww = countslist, zz = Z.list, SIMPLIFY = TRUE,
+        ##     ww = W.list, zz = Z.list, SIMPLIFY = TRUE,
         ##     mc.cores = n.cores)
         ## m.ell <-  Rfast::rowsums(mt.ell)
 
@@ -328,11 +333,11 @@ run.Gibbs.fast <- function(ylist, countslist, X,
         })
 #            beta0.ell[,kk] + beta.ell[,,kk] %*% X[,tt])) 
         
-        logPiZ <- parallel::mcmapply(function(ww, xx, yy, mm, pp){
+            logPiZ <- parallel::mcmapply(function(xx, yy, mm, pp){
             sapply(1:numclust, function(kk)
                 mvnfast::dmvn(yy, mm[,kk], chol.Sig.list[[kk]],
                               log=TRUE, isChol = TRUE) + pp[kk])}, ## mod here 
-            ww = countslist, xx =X.list, yy = ylist, mm = mu.list, pp=logpi.list,
+            xx =X.list, yy = ylist, mm = mu.list, pp=logpi.list,
             mc.cores = n.cores, SIMPLIFY = FALSE)
 
         Z.list <- parallel::mclapply(logPiZ, function(pp) apply(pp,1, function(lpi)
@@ -341,7 +346,7 @@ run.Gibbs.fast <- function(ylist, countslist, X,
 
         ## mt.ell <- mcmapply(function(ww,zz){
         ##     sapply(1:numclust, function(kk) sum(ww[zz==kk]))},
-        ##     ww = countslist, zz = Z.list, SIMPLIFY = TRUE,
+        ##     ww = W.list, zz = Z.list, SIMPLIFY = TRUE,
         ##     mc.cores = n.cores)
         ## m.ell <-  Rfast::rowsums(mt.ell)
 
@@ -359,7 +364,7 @@ run.Gibbs.fast <- function(ylist, countslist, X,
                                         mc.cores = n.cores)  
             imputed.ylist <- parallel::mclapply(1:TT, function(tt) {
               yy =
-                impute.censored(ww = censored.countslist[[tt]], 
+                impute.censored(ww = censored.W.list[[tt]], 
                                 yy = censored.ylist[[tt]],
                                 zz = censored.Z.list[[tt]],
                                 cc.info.mat =  censored.C.list[[tt]],
@@ -377,7 +382,7 @@ run.Gibbs.fast <- function(ylist, countslist, X,
         }
 
         loglik <- loglik_eval(mu.list, chol.Sig.list, 
-                              countslist, X.list, ylist, Z.list,
+                              W.list, X.list, ylist, Z.list, 
                               as.list(ntlist),
                               simple = TRUE) 
         ## print(sort(round(n.ell/NN,3)))
