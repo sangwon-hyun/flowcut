@@ -17,9 +17,16 @@ There are two scenarios we will test out in our paper:
 
 First load existing cytogram data and flowmix model estimates.
 
+(The two data files
+`MGL1704-hourly-paper-1d-diam.RDS`, `1d-cvres.rds`, which can be downloaded from the 
+[flowmix R package](https://github.com/sangwon-hyun/flowmix/tree/master/paper-data), is assumed to be in `inst/data` from the base directory of the repository.)
+
 ```{r load-data}
-dat_1d = readRDS("~/Downloads/paper-data/MGL1704-hourly-paper-1d-diam.RDS")
-res = readRDS("~/Downloads/paper-data/1d-cvres.rds") %>% .$bestres
+## dat_1d = readRDS("~/Downloads/paper-data/MGL1704-hourly-paper-1d-diam.RDS")
+## res = readRDS("~/Downloads/paper-data/1d-cvres.rds") %>% .$bestres
+datadir = "../inst/data"
+dat_1d = readRDS(file.path(datadir, "MGL1704-hourly-paper-1d-diam.RDS"))
+res = readRDS(file.path(datadir, "1d-cvres.rds")) %>% .$bestres
 
 ## Take two clusters' model parameters (Picoeukaryotes and Prochlorococcus)
 orig_model = list()
