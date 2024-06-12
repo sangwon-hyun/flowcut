@@ -41,7 +41,10 @@ orig_model$TT = res$TT
 orig_model$X = res$X
 
 ## Save the "original model"
-saveRDS(orig_model, file=file.path("~/repos/flowcut/inst/output", "orig_model.RDS"))
+## saveRDS(orig_model, file=file.path("~/repos/flowcut/inst/output", "orig_model.RDS"))
+## outputdir = "~/repos/flowcut/inst/output"
+outputdir = "../inst/data"
+saveRDS(orig_model, file=file.path(outputdir, "orig_model.RDS"))
 ```
 
 Next, we'll make several versions of this model with `isignal` from 0 to 10; (1)

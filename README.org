@@ -1,6 +1,6 @@
 #+title: flowcut: Bayesian mixture of experts for censored flow cytometry data
 
-#+author: Sheng Jiang, Sangwon Hyun
+#+author: [[https://sites.google.com/view/shengjiang/][Sheng Jiang]], [[http://sangwon-hyun.org/][Sangwon Hyun]]
 
 This directory contains code that directly generates a software package called
 ~flowcut~, using [[https://github.com/jacobbien/litr-project][litr]]. Each R Markdown document in this directory contain code

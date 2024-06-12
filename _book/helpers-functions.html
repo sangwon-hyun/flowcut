@@ -23,7 +23,7 @@
 <meta name="author" content="Sheng Jiang, Sangwon Hyun" />
 
 
-<meta name="date" content="2024-06-06" />
+<meta name="date" content="2024-06-12" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -170,256 +170,283 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>These are some helper functions that are needed for the MCMC.</p>
 <p>These functions are not documented for now. (TODO: do this).</p>
 <!-- send_to to put all helper functions into one file.. -->
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="helpers-functions.html#cb6-1" tabindex="-1"></a><span id='wcrossprod.fast'>wcrossprod.fast</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(x, w.sqrt, <span class="at">weighting =</span> <span class="cn">TRUE</span>){</span>
-<span id="cb6-2"><a href="helpers-functions.html#cb6-2" tabindex="-1"></a>    <span class="cf">if</span>(weighting){</span>
-<span id="cb6-3"><a href="helpers-functions.html#cb6-3" tabindex="-1"></a>        x <span class="ot">&lt;-</span> x <span class="sc">*</span> w.sqrt</span>
-<span id="cb6-4"><a href="helpers-functions.html#cb6-4" tabindex="-1"></a>    }</span>
-<span id="cb6-5"><a href="helpers-functions.html#cb6-5" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">ncol</span>(x) <span class="sc">==</span> <span class="dv">1</span>){</span>
-<span id="cb6-6"><a href="helpers-functions.html#cb6-6" tabindex="-1"></a>        ret <span class="ot">&lt;-</span> x <span class="sc">%*%</span> <span class="fu">t</span>(x)</span>
-<span id="cb6-7"><a href="helpers-functions.html#cb6-7" tabindex="-1"></a>    }<span class="cf">else</span>{</span>
-<span id="cb6-8"><a href="helpers-functions.html#cb6-8" tabindex="-1"></a>        ret <span class="ot">&lt;-</span> Rfast<span class="sc">::</span><span class="fu">Crossprod</span>(x,x)</span>
-<span id="cb6-9"><a href="helpers-functions.html#cb6-9" tabindex="-1"></a>    }</span>
-<span id="cb6-10"><a href="helpers-functions.html#cb6-10" tabindex="-1"></a>  <span class="fu">return</span>(ret)</span>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="helpers-functions.html#cb6-1" tabindex="-1"></a></span>
+<span id="cb6-2"><a href="helpers-functions.html#cb6-2" tabindex="-1"></a><span class="co">#&#39; Helper function to print progress.</span></span>
+<span id="cb6-3"><a href="helpers-functions.html#cb6-3" tabindex="-1"></a><span class="co">#&#39; </span></span>
+<span id="cb6-4"><a href="helpers-functions.html#cb6-4" tabindex="-1"></a><span class="co">#&#39; @param iter Current iteration.</span></span>
+<span id="cb6-5"><a href="helpers-functions.html#cb6-5" tabindex="-1"></a><span class="co">#&#39; @param Nmc Total number of MCMC iterations.</span></span>
+<span id="cb6-6"><a href="helpers-functions.html#cb6-6" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb6-7"><a href="helpers-functions.html#cb6-7" tabindex="-1"></a><span class="co">#&#39; @export</span></span>
+<span id="cb6-8"><a href="helpers-functions.html#cb6-8" tabindex="-1"></a><span id='progress'>progress</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(iter, Nmc){</span>
+<span id="cb6-9"><a href="helpers-functions.html#cb6-9" tabindex="-1"></a>    <span class="fu">cat</span>(<span class="st">&quot;MCMC iteration: &quot;</span>, iter,</span>
+<span id="cb6-10"><a href="helpers-functions.html#cb6-10" tabindex="-1"></a>        <span class="st">&quot;.&quot;</span>, <span class="fu">round</span>(iter<span class="sc">/</span>Nmc,<span class="dv">3</span>)<span class="sc">*</span><span class="dv">100</span>, <span class="st">&quot;% is done&quot;</span>, <span class="at">fill =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb6-11"><a href="helpers-functions.html#cb6-11" tabindex="-1"></a>}</span>
 <span id="cb6-12"><a href="helpers-functions.html#cb6-12" tabindex="-1"></a></span>
-<span id="cb6-13"><a href="helpers-functions.html#cb6-13" tabindex="-1"></a><span class="co">#&#39; </span></span>
-<span id="cb6-14"><a href="helpers-functions.html#cb6-14" tabindex="-1"></a><span id='self.crossprod'>self.crossprod</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(x){</span>
-<span id="cb6-15"><a href="helpers-functions.html#cb6-15" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">ncol</span>(x) <span class="sc">==</span> <span class="dv">1</span>){</span>
-<span id="cb6-16"><a href="helpers-functions.html#cb6-16" tabindex="-1"></a>        ret <span class="ot">&lt;-</span> x <span class="sc">%*%</span> <span class="fu">t</span>(x)</span>
-<span id="cb6-17"><a href="helpers-functions.html#cb6-17" tabindex="-1"></a>    }<span class="cf">else</span>{</span>
-<span id="cb6-18"><a href="helpers-functions.html#cb6-18" tabindex="-1"></a>        ret <span class="ot">&lt;-</span> <span class="fu">crossprod</span>(x)</span>
-<span id="cb6-19"><a href="helpers-functions.html#cb6-19" tabindex="-1"></a>    }</span>
-<span id="cb6-20"><a href="helpers-functions.html#cb6-20" tabindex="-1"></a>  <span class="fu">return</span>(ret)</span>
-<span id="cb6-21"><a href="helpers-functions.html#cb6-21" tabindex="-1"></a>}</span>
-<span id="cb6-22"><a href="helpers-functions.html#cb6-22" tabindex="-1"></a></span>
-<span id="cb6-23"><a href="helpers-functions.html#cb6-23" tabindex="-1"></a><span class="co">#&#39; </span></span>
-<span id="cb6-24"><a href="helpers-functions.html#cb6-24" tabindex="-1"></a><span id='logsumexp'>logsumexp</span> <span class="ot">&lt;-</span> <span class="cf">function</span> (x) {</span>
-<span id="cb6-25"><a href="helpers-functions.html#cb6-25" tabindex="-1"></a>  y <span class="ot">=</span> <span class="fu">max</span>(x)</span>
-<span id="cb6-26"><a href="helpers-functions.html#cb6-26" tabindex="-1"></a>  y <span class="sc">+</span> <span class="fu">log</span>(<span class="fu">sum</span>(<span class="fu">exp</span>(x <span class="sc">-</span> y)))</span>
-<span id="cb6-27"><a href="helpers-functions.html#cb6-27" tabindex="-1"></a>}</span>
-<span id="cb6-28"><a href="helpers-functions.html#cb6-28" tabindex="-1"></a></span>
-<span id="cb6-29"><a href="helpers-functions.html#cb6-29" tabindex="-1"></a><span class="co">#&#39; </span></span>
-<span id="cb6-30"><a href="helpers-functions.html#cb6-30" tabindex="-1"></a><span id='softmax'>softmax</span> <span class="ot">&lt;-</span> <span class="cf">function</span> (x) {</span>
-<span id="cb6-31"><a href="helpers-functions.html#cb6-31" tabindex="-1"></a>  <span class="fu">exp</span>(x <span class="sc">-</span> <a href='helpers-functions.html#logsumexp'>logsumexp</a>(x))</span>
-<span id="cb6-32"><a href="helpers-functions.html#cb6-32" tabindex="-1"></a>}</span>
-<span id="cb6-33"><a href="helpers-functions.html#cb6-33" tabindex="-1"></a></span>
-<span id="cb6-34"><a href="helpers-functions.html#cb6-34" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb6-35"><a href="helpers-functions.html#cb6-35" tabindex="-1"></a><span id='softmax2'>softmax2</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(x){</span>
-<span id="cb6-36"><a href="helpers-functions.html#cb6-36" tabindex="-1"></a>    <span class="fu">return</span>(<span class="fu">exp</span>(x)<span class="sc">/</span><span class="fu">sum</span>(<span class="fu">exp</span>(x)))</span>
-<span id="cb6-37"><a href="helpers-functions.html#cb6-37" tabindex="-1"></a>}</span>
-<span id="cb6-38"><a href="helpers-functions.html#cb6-38" tabindex="-1"></a></span>
-<span id="cb6-39"><a href="helpers-functions.html#cb6-39" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb6-40"><a href="helpers-functions.html#cb6-40" tabindex="-1"></a><span id='logMNdensity'>logMNdensity</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(y,invSig,logdet){</span>
-<span id="cb6-41"><a href="helpers-functions.html#cb6-41" tabindex="-1"></a>    <span class="do">## The term &quot;-log(2*pi)*d/2&quot; is omitted</span></span>
-<span id="cb6-42"><a href="helpers-functions.html#cb6-42" tabindex="-1"></a>    <span class="fu">return</span>(<span class="sc">-</span><span class="fu">t</span>(y)<span class="sc">%*%</span>invSig<span class="sc">%*%</span>y <span class="sc">/</span><span class="dv">2</span><span class="sc">-</span>logdet<span class="sc">/</span><span class="dv">2</span>)</span>
-<span id="cb6-43"><a href="helpers-functions.html#cb6-43" tabindex="-1"></a>}</span>
-<span id="cb6-44"><a href="helpers-functions.html#cb6-44" tabindex="-1"></a></span>
-<span id="cb6-45"><a href="helpers-functions.html#cb6-45" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb6-46"><a href="helpers-functions.html#cb6-46" tabindex="-1"></a><span id='KL.MN'>KL.MN</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(p,q){</span>
-<span id="cb6-47"><a href="helpers-functions.html#cb6-47" tabindex="-1"></a>    <span class="fu">sum</span>(p<span class="sc">*</span><span class="fu">log</span>(p<span class="sc">/</span>q))</span>
-<span id="cb6-48"><a href="helpers-functions.html#cb6-48" tabindex="-1"></a>}</span>
-<span id="cb6-49"><a href="helpers-functions.html#cb6-49" tabindex="-1"></a></span>
-<span id="cb6-50"><a href="helpers-functions.html#cb6-50" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb6-51"><a href="helpers-functions.html#cb6-51" tabindex="-1"></a><span id='pgdraw.mod'>pgdraw.mod</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(b,c){</span>
-<span id="cb6-52"><a href="helpers-functions.html#cb6-52" tabindex="-1"></a>    <span class="cf">if</span>(b<span class="sc">&gt;</span><span class="dv">0</span>){</span>
-<span id="cb6-53"><a href="helpers-functions.html#cb6-53" tabindex="-1"></a>        ret <span class="ot">&lt;-</span> pgdraw<span class="sc">::</span><span class="fu">pgdraw</span>(b,c)</span>
-<span id="cb6-54"><a href="helpers-functions.html#cb6-54" tabindex="-1"></a>    }<span class="cf">else</span>{</span>
-<span id="cb6-55"><a href="helpers-functions.html#cb6-55" tabindex="-1"></a><span class="do">##        print(&quot;in pgdraw: b=0&quot;)</span></span>
-<span id="cb6-56"><a href="helpers-functions.html#cb6-56" tabindex="-1"></a>        ret <span class="ot">&lt;-</span> <span class="dv">0</span></span>
-<span id="cb6-57"><a href="helpers-functions.html#cb6-57" tabindex="-1"></a>    }</span>
-<span id="cb6-58"><a href="helpers-functions.html#cb6-58" tabindex="-1"></a>    <span class="fu">return</span>(ret)</span>
-<span id="cb6-59"><a href="helpers-functions.html#cb6-59" tabindex="-1"></a>}</span>
-<span id="cb6-60"><a href="helpers-functions.html#cb6-60" tabindex="-1"></a></span>
-<span id="cb6-61"><a href="helpers-functions.html#cb6-61" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb6-62"><a href="helpers-functions.html#cb6-62" tabindex="-1"></a><span id='SB2MN'>SB2MN</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(pi.sb){</span>
-<span id="cb6-63"><a href="helpers-functions.html#cb6-63" tabindex="-1"></a>    pi.sb <span class="ot">&lt;-</span> <span class="fu">c</span>(pi.sb,<span class="dv">1</span>) <span class="do">## append 1</span></span>
-<span id="cb6-64"><a href="helpers-functions.html#cb6-64" tabindex="-1"></a>    K <span class="ot">&lt;-</span> <span class="fu">length</span>(pi.sb)</span>
-<span id="cb6-65"><a href="helpers-functions.html#cb6-65" tabindex="-1"></a>    pi.mn <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">0</span>,K)</span>
-<span id="cb6-66"><a href="helpers-functions.html#cb6-66" tabindex="-1"></a>    pi.mn[<span class="dv">1</span>] <span class="ot">&lt;-</span> pi.sb[<span class="dv">1</span>]</span>
-<span id="cb6-67"><a href="helpers-functions.html#cb6-67" tabindex="-1"></a>    <span class="cf">for</span>(kk <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span>K){</span>
-<span id="cb6-68"><a href="helpers-functions.html#cb6-68" tabindex="-1"></a>        pi.mn[kk] <span class="ot">&lt;-</span> pi.sb[kk]<span class="sc">*</span>(<span class="dv">1</span><span class="sc">-</span><span class="fu">sum</span>(pi.mn))</span>
-<span id="cb6-69"><a href="helpers-functions.html#cb6-69" tabindex="-1"></a>    }</span>
-<span id="cb6-70"><a href="helpers-functions.html#cb6-70" tabindex="-1"></a>    <span class="fu">return</span>(pi.mn)</span>
-<span id="cb6-71"><a href="helpers-functions.html#cb6-71" tabindex="-1"></a>}</span>
-<span id="cb6-72"><a href="helpers-functions.html#cb6-72" tabindex="-1"></a></span>
-<span id="cb6-73"><a href="helpers-functions.html#cb6-73" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb6-74"><a href="helpers-functions.html#cb6-74" tabindex="-1"></a><span id='MN2SB'>MN2SB</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(pi.mn){</span>
-<span id="cb6-75"><a href="helpers-functions.html#cb6-75" tabindex="-1"></a>    K <span class="ot">&lt;-</span> <span class="fu">length</span>(pi.mn)</span>
-<span id="cb6-76"><a href="helpers-functions.html#cb6-76" tabindex="-1"></a>    pi.sb <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">0</span>,K<span class="dv">-1</span>)</span>
-<span id="cb6-77"><a href="helpers-functions.html#cb6-77" tabindex="-1"></a>    pi.cs <span class="ot">&lt;-</span> <span class="fu">cumsum</span>(pi.mn[<span class="sc">-</span>K])</span>
-<span id="cb6-78"><a href="helpers-functions.html#cb6-78" tabindex="-1"></a>    pi.sb[<span class="dv">1</span>] <span class="ot">&lt;-</span> pi.mn[<span class="dv">1</span>]</span>
-<span id="cb6-79"><a href="helpers-functions.html#cb6-79" tabindex="-1"></a>    pi.sb[<span class="dv">2</span><span class="sc">:</span>(K<span class="dv">-1</span>)] <span class="ot">&lt;-</span> pi.mn[<span class="dv">2</span><span class="sc">:</span>(K<span class="dv">-1</span>)]<span class="sc">/</span>(<span class="dv">1</span><span class="sc">-</span>pi.cs[<span class="sc">-</span>(K<span class="dv">-1</span>)])</span>
-<span id="cb6-80"><a href="helpers-functions.html#cb6-80" tabindex="-1"></a>    <span class="fu">return</span>(pi.sb)</span>
-<span id="cb6-81"><a href="helpers-functions.html#cb6-81" tabindex="-1"></a>}</span>
-<span id="cb6-82"><a href="helpers-functions.html#cb6-82" tabindex="-1"></a></span>
-<span id="cb6-83"><a href="helpers-functions.html#cb6-83" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb6-84"><a href="helpers-functions.html#cb6-84" tabindex="-1"></a><span id='gamma2pi'>gamma2pi</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(gamma,Xp){</span>
-<span id="cb6-85"><a href="helpers-functions.html#cb6-85" tabindex="-1"></a>    XpGamma <span class="ot">&lt;-</span> <span class="fu">t</span>(gamma) <span class="sc">%*%</span> Xp <span class="do">## K-1 x T</span></span>
-<span id="cb6-86"><a href="helpers-functions.html#cb6-86" tabindex="-1"></a>    pi.sb <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span>(<span class="dv">1</span><span class="sc">+</span><span class="fu">exp</span>(<span class="sc">-</span>XpGamma))</span>
+<span id="cb6-13"><a href="helpers-functions.html#cb6-13" tabindex="-1"></a><span id='wcrossprod.fast'>wcrossprod.fast</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(x, w.sqrt, <span class="at">weighting =</span> <span class="cn">TRUE</span>){</span>
+<span id="cb6-14"><a href="helpers-functions.html#cb6-14" tabindex="-1"></a>    <span class="cf">if</span>(weighting){</span>
+<span id="cb6-15"><a href="helpers-functions.html#cb6-15" tabindex="-1"></a>        x <span class="ot">&lt;-</span> x <span class="sc">*</span> w.sqrt</span>
+<span id="cb6-16"><a href="helpers-functions.html#cb6-16" tabindex="-1"></a>    }</span>
+<span id="cb6-17"><a href="helpers-functions.html#cb6-17" tabindex="-1"></a>  <span class="fu">return</span>(Rfast<span class="sc">::</span><span class="fu">Crossprod</span>(x,x))</span>
+<span id="cb6-18"><a href="helpers-functions.html#cb6-18" tabindex="-1"></a>}</span>
+<span id="cb6-19"><a href="helpers-functions.html#cb6-19" tabindex="-1"></a></span>
+<span id="cb6-20"><a href="helpers-functions.html#cb6-20" tabindex="-1"></a><span class="co">#&#39; </span></span>
+<span id="cb6-21"><a href="helpers-functions.html#cb6-21" tabindex="-1"></a><span id='self.crossprod'>self.crossprod</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(x){ <span class="do">## this function can be deleted. </span></span>
+<span id="cb6-22"><a href="helpers-functions.html#cb6-22" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">ncol</span>(x) <span class="sc">==</span> <span class="dv">1</span>){</span>
+<span id="cb6-23"><a href="helpers-functions.html#cb6-23" tabindex="-1"></a>        ret <span class="ot">&lt;-</span> x <span class="sc">%*%</span> <span class="fu">t</span>(x)</span>
+<span id="cb6-24"><a href="helpers-functions.html#cb6-24" tabindex="-1"></a>    }<span class="cf">else</span>{</span>
+<span id="cb6-25"><a href="helpers-functions.html#cb6-25" tabindex="-1"></a>        ret <span class="ot">&lt;-</span> <span class="fu">crossprod</span>(x)</span>
+<span id="cb6-26"><a href="helpers-functions.html#cb6-26" tabindex="-1"></a>    }</span>
+<span id="cb6-27"><a href="helpers-functions.html#cb6-27" tabindex="-1"></a>  <span class="fu">return</span>(ret)</span>
+<span id="cb6-28"><a href="helpers-functions.html#cb6-28" tabindex="-1"></a>}</span>
+<span id="cb6-29"><a href="helpers-functions.html#cb6-29" tabindex="-1"></a></span>
+<span id="cb6-30"><a href="helpers-functions.html#cb6-30" tabindex="-1"></a><span class="co">#&#39; </span></span>
+<span id="cb6-31"><a href="helpers-functions.html#cb6-31" tabindex="-1"></a><span id='logsumexp'>logsumexp</span> <span class="ot">&lt;-</span> <span class="cf">function</span> (x) {</span>
+<span id="cb6-32"><a href="helpers-functions.html#cb6-32" tabindex="-1"></a>  y <span class="ot">=</span> <span class="fu">max</span>(x)</span>
+<span id="cb6-33"><a href="helpers-functions.html#cb6-33" tabindex="-1"></a>  y <span class="sc">+</span> <span class="fu">log</span>(<span class="fu">sum</span>(<span class="fu">exp</span>(x <span class="sc">-</span> y)))</span>
+<span id="cb6-34"><a href="helpers-functions.html#cb6-34" tabindex="-1"></a>}</span>
+<span id="cb6-35"><a href="helpers-functions.html#cb6-35" tabindex="-1"></a></span>
+<span id="cb6-36"><a href="helpers-functions.html#cb6-36" tabindex="-1"></a><span class="co">#&#39; </span></span>
+<span id="cb6-37"><a href="helpers-functions.html#cb6-37" tabindex="-1"></a><span id='softmax'>softmax</span> <span class="ot">&lt;-</span> <span class="cf">function</span> (x) {</span>
+<span id="cb6-38"><a href="helpers-functions.html#cb6-38" tabindex="-1"></a>  <span class="fu">exp</span>(x <span class="sc">-</span> <a href='helpers-functions.html#logsumexp'>logsumexp</a>(x))</span>
+<span id="cb6-39"><a href="helpers-functions.html#cb6-39" tabindex="-1"></a>}</span>
+<span id="cb6-40"><a href="helpers-functions.html#cb6-40" tabindex="-1"></a></span>
+<span id="cb6-41"><a href="helpers-functions.html#cb6-41" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb6-42"><a href="helpers-functions.html#cb6-42" tabindex="-1"></a><span id='softmax2'>softmax2</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(x){</span>
+<span id="cb6-43"><a href="helpers-functions.html#cb6-43" tabindex="-1"></a>    <span class="fu">return</span>(<span class="fu">exp</span>(x)<span class="sc">/</span><span class="fu">sum</span>(<span class="fu">exp</span>(x)))</span>
+<span id="cb6-44"><a href="helpers-functions.html#cb6-44" tabindex="-1"></a>}</span>
+<span id="cb6-45"><a href="helpers-functions.html#cb6-45" tabindex="-1"></a></span>
+<span id="cb6-46"><a href="helpers-functions.html#cb6-46" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb6-47"><a href="helpers-functions.html#cb6-47" tabindex="-1"></a><span id='logMNdensity'>logMNdensity</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(y,invSig,logdet){</span>
+<span id="cb6-48"><a href="helpers-functions.html#cb6-48" tabindex="-1"></a>    <span class="do">## The term &quot;-log(2*pi)*d/2&quot; is omitted</span></span>
+<span id="cb6-49"><a href="helpers-functions.html#cb6-49" tabindex="-1"></a>    <span class="fu">return</span>(<span class="sc">-</span> Rfast<span class="sc">::</span><span class="fu">Crossprod</span>(y, invSig) <span class="sc">%*%</span> y <span class="sc">/</span><span class="dv">2</span> <span class="sc">-</span> logdet<span class="sc">/</span><span class="dv">2</span>)</span>
+<span id="cb6-50"><a href="helpers-functions.html#cb6-50" tabindex="-1"></a>}</span>
+<span id="cb6-51"><a href="helpers-functions.html#cb6-51" tabindex="-1"></a></span>
+<span id="cb6-52"><a href="helpers-functions.html#cb6-52" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb6-53"><a href="helpers-functions.html#cb6-53" tabindex="-1"></a><span id='KL.MN'>KL.MN</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(p,q){</span>
+<span id="cb6-54"><a href="helpers-functions.html#cb6-54" tabindex="-1"></a>    <span class="fu">sum</span>(p<span class="sc">*</span><span class="fu">log</span>(p<span class="sc">/</span>q))</span>
+<span id="cb6-55"><a href="helpers-functions.html#cb6-55" tabindex="-1"></a>}</span>
+<span id="cb6-56"><a href="helpers-functions.html#cb6-56" tabindex="-1"></a></span>
+<span id="cb6-57"><a href="helpers-functions.html#cb6-57" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb6-58"><a href="helpers-functions.html#cb6-58" tabindex="-1"></a><span id='pgdraw.mod'>pgdraw.mod</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(b,c){</span>
+<span id="cb6-59"><a href="helpers-functions.html#cb6-59" tabindex="-1"></a>    <span class="cf">if</span>(b<span class="sc">&gt;</span><span class="dv">0</span>){</span>
+<span id="cb6-60"><a href="helpers-functions.html#cb6-60" tabindex="-1"></a>        ret <span class="ot">&lt;-</span> pgdraw<span class="sc">::</span><span class="fu">pgdraw</span>(b,c)</span>
+<span id="cb6-61"><a href="helpers-functions.html#cb6-61" tabindex="-1"></a>    }<span class="cf">else</span>{</span>
+<span id="cb6-62"><a href="helpers-functions.html#cb6-62" tabindex="-1"></a><span class="do">##        print(&quot;in pgdraw: b=0&quot;)</span></span>
+<span id="cb6-63"><a href="helpers-functions.html#cb6-63" tabindex="-1"></a>        ret <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb6-64"><a href="helpers-functions.html#cb6-64" tabindex="-1"></a>    }</span>
+<span id="cb6-65"><a href="helpers-functions.html#cb6-65" tabindex="-1"></a>    <span class="fu">return</span>(ret)</span>
+<span id="cb6-66"><a href="helpers-functions.html#cb6-66" tabindex="-1"></a>}</span>
+<span id="cb6-67"><a href="helpers-functions.html#cb6-67" tabindex="-1"></a></span>
+<span id="cb6-68"><a href="helpers-functions.html#cb6-68" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb6-69"><a href="helpers-functions.html#cb6-69" tabindex="-1"></a><span id='SB2MN'>SB2MN</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(pi.sb){</span>
+<span id="cb6-70"><a href="helpers-functions.html#cb6-70" tabindex="-1"></a>    pi.sb <span class="ot">&lt;-</span> <span class="fu">c</span>(pi.sb,<span class="dv">1</span>) <span class="do">## append 1</span></span>
+<span id="cb6-71"><a href="helpers-functions.html#cb6-71" tabindex="-1"></a>    K <span class="ot">&lt;-</span> <span class="fu">length</span>(pi.sb)</span>
+<span id="cb6-72"><a href="helpers-functions.html#cb6-72" tabindex="-1"></a>    pi.mn <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">0</span>,K)</span>
+<span id="cb6-73"><a href="helpers-functions.html#cb6-73" tabindex="-1"></a>    pi.mn[<span class="dv">1</span>] <span class="ot">&lt;-</span> pi.sb[<span class="dv">1</span>]</span>
+<span id="cb6-74"><a href="helpers-functions.html#cb6-74" tabindex="-1"></a>    <span class="cf">for</span>(kk <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span>K){</span>
+<span id="cb6-75"><a href="helpers-functions.html#cb6-75" tabindex="-1"></a>        pi.mn[kk] <span class="ot">&lt;-</span> pi.sb[kk]<span class="sc">*</span>(<span class="dv">1</span><span class="sc">-</span><span class="fu">sum</span>(pi.mn))</span>
+<span id="cb6-76"><a href="helpers-functions.html#cb6-76" tabindex="-1"></a>    }</span>
+<span id="cb6-77"><a href="helpers-functions.html#cb6-77" tabindex="-1"></a>    <span class="fu">return</span>(pi.mn)</span>
+<span id="cb6-78"><a href="helpers-functions.html#cb6-78" tabindex="-1"></a>}</span>
+<span id="cb6-79"><a href="helpers-functions.html#cb6-79" tabindex="-1"></a></span>
+<span id="cb6-80"><a href="helpers-functions.html#cb6-80" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb6-81"><a href="helpers-functions.html#cb6-81" tabindex="-1"></a><span id='MN2SB'>MN2SB</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(pi.mn){</span>
+<span id="cb6-82"><a href="helpers-functions.html#cb6-82" tabindex="-1"></a>    K <span class="ot">&lt;-</span> <span class="fu">length</span>(pi.mn)</span>
+<span id="cb6-83"><a href="helpers-functions.html#cb6-83" tabindex="-1"></a>    pi.sb <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">0</span>,K<span class="dv">-1</span>)</span>
+<span id="cb6-84"><a href="helpers-functions.html#cb6-84" tabindex="-1"></a>    pi.cs <span class="ot">&lt;-</span> <span class="fu">cumsum</span>(pi.mn[<span class="sc">-</span>K])</span>
+<span id="cb6-85"><a href="helpers-functions.html#cb6-85" tabindex="-1"></a>    pi.sb[<span class="dv">1</span>] <span class="ot">&lt;-</span> pi.mn[<span class="dv">1</span>]</span>
+<span id="cb6-86"><a href="helpers-functions.html#cb6-86" tabindex="-1"></a>    pi.sb[<span class="dv">2</span><span class="sc">:</span>(K<span class="dv">-1</span>)] <span class="ot">&lt;-</span> pi.mn[<span class="dv">2</span><span class="sc">:</span>(K<span class="dv">-1</span>)]<span class="sc">/</span>(<span class="dv">1</span><span class="sc">-</span>pi.cs[<span class="sc">-</span>(K<span class="dv">-1</span>)])</span>
 <span id="cb6-87"><a href="helpers-functions.html#cb6-87" tabindex="-1"></a>    <span class="fu">return</span>(pi.sb)</span>
 <span id="cb6-88"><a href="helpers-functions.html#cb6-88" tabindex="-1"></a>}</span>
 <span id="cb6-89"><a href="helpers-functions.html#cb6-89" tabindex="-1"></a></span>
 <span id="cb6-90"><a href="helpers-functions.html#cb6-90" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb6-91"><a href="helpers-functions.html#cb6-91" tabindex="-1"></a><span id='dtaMatCensor'>dtaMatCensor</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(x,Cbox){</span>
-<span id="cb6-92"><a href="helpers-functions.html#cb6-92" tabindex="-1"></a>    d <span class="ot">&lt;-</span> <span class="fu">dim</span>(x)[<span class="dv">2</span>]</span>
-<span id="cb6-93"><a href="helpers-functions.html#cb6-93" tabindex="-1"></a>    <span class="cf">for</span>(ii <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>d){</span>
-<span id="cb6-94"><a href="helpers-functions.html#cb6-94" tabindex="-1"></a>        x[,ii] <span class="ot">&lt;-</span> <span class="fu">pmin</span>(<span class="fu">pmax</span>(x[,ii],Cbox[ii,<span class="dv">1</span>]),Cbox[ii,<span class="dv">2</span>])</span>
-<span id="cb6-95"><a href="helpers-functions.html#cb6-95" tabindex="-1"></a>    }</span>
-<span id="cb6-96"><a href="helpers-functions.html#cb6-96" tabindex="-1"></a>    <span class="fu">return</span>(x)</span>
-<span id="cb6-97"><a href="helpers-functions.html#cb6-97" tabindex="-1"></a>}</span>
-<span id="cb6-98"><a href="helpers-functions.html#cb6-98" tabindex="-1"></a></span>
-<span id="cb6-99"><a href="helpers-functions.html#cb6-99" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb6-100"><a href="helpers-functions.html#cb6-100" tabindex="-1"></a><span id='censorIndicator'>censorIndicator</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(x,Cbox){</span>
-<span id="cb6-101"><a href="helpers-functions.html#cb6-101" tabindex="-1"></a>    d <span class="ot">&lt;-</span> <span class="fu">dim</span>(Cbox)[<span class="dv">1</span>]</span>
-<span id="cb6-102"><a href="helpers-functions.html#cb6-102" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">dim</span>(x)[<span class="dv">2</span>]<span class="sc">!=</span>d <span class="sc">&amp;</span> <span class="fu">dim</span>(x)[<span class="dv">1</span>]<span class="sc">==</span>d){</span>
-<span id="cb6-103"><a href="helpers-functions.html#cb6-103" tabindex="-1"></a>        x <span class="ot">&lt;-</span> <span class="fu">t</span>(x)</span>
-<span id="cb6-104"><a href="helpers-functions.html#cb6-104" tabindex="-1"></a>    }</span>
-<span id="cb6-105"><a href="helpers-functions.html#cb6-105" tabindex="-1"></a>    <span class="cf">for</span>(ii <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>d){</span>
-<span id="cb6-106"><a href="helpers-functions.html#cb6-106" tabindex="-1"></a>        x[,ii] <span class="ot">&lt;-</span> (x[,ii]<span class="sc">==</span>Cbox[ii,<span class="dv">2</span>]) <span class="sc">-</span> (x[,ii]<span class="sc">==</span>Cbox[ii,<span class="dv">1</span>])</span>
-<span id="cb6-107"><a href="helpers-functions.html#cb6-107" tabindex="-1"></a>    }</span>
-<span id="cb6-108"><a href="helpers-functions.html#cb6-108" tabindex="-1"></a>    <span class="fu">return</span>(x)</span>
-<span id="cb6-109"><a href="helpers-functions.html#cb6-109" tabindex="-1"></a>}</span>
-<span id="cb6-110"><a href="helpers-functions.html#cb6-110" tabindex="-1"></a></span>
-<span id="cb6-111"><a href="helpers-functions.html#cb6-111" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb6-112"><a href="helpers-functions.html#cb6-112" tabindex="-1"></a><span id='sample.region'>sample.region</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(cc,Cbox){</span>
-<span id="cb6-113"><a href="helpers-functions.html#cb6-113" tabindex="-1"></a>    limits <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
-<span id="cb6-114"><a href="helpers-functions.html#cb6-114" tabindex="-1"></a>    d <span class="ot">&lt;-</span> <span class="fu">length</span>(cc)</span>
-<span id="cb6-115"><a href="helpers-functions.html#cb6-115" tabindex="-1"></a>    <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>d){</span>
-<span id="cb6-116"><a href="helpers-functions.html#cb6-116" tabindex="-1"></a>        <span class="cf">if</span>(cc[i]<span class="sc">==-</span><span class="dv">1</span>){</span>
-<span id="cb6-117"><a href="helpers-functions.html#cb6-117" tabindex="-1"></a>            limits <span class="ot">&lt;-</span> <span class="fu">rbind</span>(limits, <span class="fu">c</span>(<span class="sc">-</span><span class="cn">Inf</span>,Cbox[i,<span class="dv">1</span>]))</span>
-<span id="cb6-118"><a href="helpers-functions.html#cb6-118" tabindex="-1"></a>        }<span class="cf">else</span> <span class="cf">if</span>(cc[i]<span class="sc">==</span><span class="dv">0</span>){</span>
-<span id="cb6-119"><a href="helpers-functions.html#cb6-119" tabindex="-1"></a>            limits <span class="ot">&lt;-</span> <span class="fu">rbind</span>(limits, <span class="fu">c</span>(<span class="sc">-</span><span class="cn">Inf</span>,<span class="cn">Inf</span>))</span>
-<span id="cb6-120"><a href="helpers-functions.html#cb6-120" tabindex="-1"></a>        }<span class="cf">else</span>{</span>
-<span id="cb6-121"><a href="helpers-functions.html#cb6-121" tabindex="-1"></a>            limits <span class="ot">&lt;-</span> <span class="fu">rbind</span>(limits, <span class="fu">c</span>(Cbox[i,<span class="dv">2</span>], <span class="cn">Inf</span>))</span>
-<span id="cb6-122"><a href="helpers-functions.html#cb6-122" tabindex="-1"></a>        }</span>
-<span id="cb6-123"><a href="helpers-functions.html#cb6-123" tabindex="-1"></a>    }</span>
-<span id="cb6-124"><a href="helpers-functions.html#cb6-124" tabindex="-1"></a>    <span class="fu">colnames</span>(limits) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;lower&quot;</span>,<span class="st">&quot;upper&quot;</span>)</span>
-<span id="cb6-125"><a href="helpers-functions.html#cb6-125" tabindex="-1"></a>    <span class="fu">return</span>(limits)</span>
-<span id="cb6-126"><a href="helpers-functions.html#cb6-126" tabindex="-1"></a>}</span>
-<span id="cb6-127"><a href="helpers-functions.html#cb6-127" tabindex="-1"></a></span>
-<span id="cb6-128"><a href="helpers-functions.html#cb6-128" tabindex="-1"></a></span>
-<span id="cb6-129"><a href="helpers-functions.html#cb6-129" tabindex="-1"></a></span>
-<span id="cb6-130"><a href="helpers-functions.html#cb6-130" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb6-131"><a href="helpers-functions.html#cb6-131" tabindex="-1"></a><span id='samp.trunc.normal'>samp.trunc.normal</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(yy, zz, cc.info, bounds.info, mu.mat, Sigma.ell, dimdat){</span>
-<span id="cb6-132"><a href="helpers-functions.html#cb6-132" tabindex="-1"></a>    cc <span class="ot">&lt;-</span> <span class="fu">abs</span>(cc.info)<span class="sc">==</span><span class="dv">1</span></span>
-<span id="cb6-133"><a href="helpers-functions.html#cb6-133" tabindex="-1"></a>    nc <span class="ot">&lt;-</span> cc<span class="sc">==</span><span class="dv">0</span></span>
-<span id="cb6-134"><a href="helpers-functions.html#cb6-134" tabindex="-1"></a>    d <span class="ot">&lt;-</span> <span class="fu">length</span>(cc.info)</span>
-<span id="cb6-135"><a href="helpers-functions.html#cb6-135" tabindex="-1"></a>    lower.info <span class="ot">&lt;-</span> bounds.info[<span class="dv">1</span><span class="sc">:</span>d]</span>
-<span id="cb6-136"><a href="helpers-functions.html#cb6-136" tabindex="-1"></a>    upper.info <span class="ot">&lt;-</span> bounds.info[(d<span class="sc">+</span><span class="dv">1</span>)<span class="sc">:</span>(<span class="dv">2</span><span class="sc">*</span>d)]</span>
-<span id="cb6-137"><a href="helpers-functions.html#cb6-137" tabindex="-1"></a>    mu <span class="ot">&lt;-</span> mu.mat[,zz]</span>
-<span id="cb6-138"><a href="helpers-functions.html#cb6-138" tabindex="-1"></a></span>
-<span id="cb6-139"><a href="helpers-functions.html#cb6-139" tabindex="-1"></a>    <span class="do">## If all dimensions are censored.</span></span>
-<span id="cb6-140"><a href="helpers-functions.html#cb6-140" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">all</span>(cc)){</span>
-<span id="cb6-141"><a href="helpers-functions.html#cb6-141" tabindex="-1"></a>      sig <span class="ot">=</span> Sigma.ell[,,zz]</span>
-<span id="cb6-142"><a href="helpers-functions.html#cb6-142" tabindex="-1"></a>      <span class="cf">if</span>(dimdat<span class="sc">==</span><span class="dv">1</span>) sig <span class="ot">=</span> <span class="fu">as.matrix</span>(sig)</span>
-<span id="cb6-143"><a href="helpers-functions.html#cb6-143" tabindex="-1"></a>        yy <span class="ot">&lt;-</span> tmvnsim<span class="sc">::</span><span class="fu">tmvnsim</span>(<span class="at">nsamp=</span><span class="dv">1</span>,d,<span class="at">lower=</span>lower.info,<span class="at">upper=</span>upper.info,</span>
-<span id="cb6-144"><a href="helpers-functions.html#cb6-144" tabindex="-1"></a>                      <span class="at">mean=</span> mu, <span class="at">sigma =</span> sig)<span class="sc">$</span>samp</span>
-<span id="cb6-145"><a href="helpers-functions.html#cb6-145" tabindex="-1"></a></span>
-<span id="cb6-146"><a href="helpers-functions.html#cb6-146" tabindex="-1"></a>    <span class="do">## If /not/ all dimensions are censored.</span></span>
-<span id="cb6-147"><a href="helpers-functions.html#cb6-147" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
-<span id="cb6-148"><a href="helpers-functions.html#cb6-148" tabindex="-1"></a>      <span class="do">## Conditional mean and variance</span></span>
-<span id="cb6-149"><a href="helpers-functions.html#cb6-149" tabindex="-1"></a>        slope <span class="ot">&lt;-</span> Sigma.ell[cc,nc,zz] <span class="sc">%*%</span> <span class="fu">solve</span>(Sigma.ell[nc,nc,zz])</span>
-<span id="cb6-150"><a href="helpers-functions.html#cb6-150" tabindex="-1"></a>        cond.sig <span class="ot">&lt;-</span> Sigma.ell[cc,cc,zz] <span class="sc">-</span> slope <span class="sc">%*%</span> Sigma.ell[nc,cc,zz]</span>
-<span id="cb6-151"><a href="helpers-functions.html#cb6-151" tabindex="-1"></a>        cond.m <span class="ot">&lt;-</span> mu[cc]<span class="sc">+</span>slope <span class="sc">%*%</span> (yy[nc]<span class="sc">-</span>mu[nc])</span>
-<span id="cb6-152"><a href="helpers-functions.html#cb6-152" tabindex="-1"></a></span>
-<span id="cb6-153"><a href="helpers-functions.html#cb6-153" tabindex="-1"></a>      <span class="do">## Sample from this conditional truncated normal</span></span>
-<span id="cb6-154"><a href="helpers-functions.html#cb6-154" tabindex="-1"></a>      <span class="cf">if</span>(dimdat<span class="sc">==</span><span class="dv">1</span>) cond.sig <span class="ot">=</span> <span class="fu">as.matrix</span>(cond.sig)</span>
-<span id="cb6-155"><a href="helpers-functions.html#cb6-155" tabindex="-1"></a>      <span class="fu">stopifnot</span>(<span class="st">&quot;matrix&quot;</span> <span class="sc">%in%</span> <span class="fu">class</span>(cond.sig))</span>
-<span id="cb6-156"><a href="helpers-functions.html#cb6-156" tabindex="-1"></a>      imputed_y <span class="ot">=</span> tmvnsim<span class="sc">::</span><span class="fu">tmvnsim</span>(<span class="at">nsamp =</span> <span class="dv">1</span>, <span class="fu">length</span>(cond.m),</span>
-<span id="cb6-157"><a href="helpers-functions.html#cb6-157" tabindex="-1"></a>              <span class="at">lower=</span>lower.info[cc], <span class="at">upper =</span> upper.info[cc],</span>
-<span id="cb6-158"><a href="helpers-functions.html#cb6-158" tabindex="-1"></a>              <span class="at">mean=</span> cond.m, <span class="at">sigma =</span> cond.sig)<span class="sc">$</span>samp</span>
-<span id="cb6-159"><a href="helpers-functions.html#cb6-159" tabindex="-1"></a>        yy[cc] <span class="ot">&lt;-</span> imputed_y</span>
-<span id="cb6-160"><a href="helpers-functions.html#cb6-160" tabindex="-1"></a>    }</span>
-<span id="cb6-161"><a href="helpers-functions.html#cb6-161" tabindex="-1"></a>    <span class="cf">if</span>(<span class="sc">!</span><span class="fu">is.numeric</span>(yy)) <span class="fu">browser</span>()</span>
-<span id="cb6-162"><a href="helpers-functions.html#cb6-162" tabindex="-1"></a></span>
-<span id="cb6-163"><a href="helpers-functions.html#cb6-163" tabindex="-1"></a>    <span class="fu">return</span>(yy)</span>
-<span id="cb6-164"><a href="helpers-functions.html#cb6-164" tabindex="-1"></a>}</span>
-<span id="cb6-165"><a href="helpers-functions.html#cb6-165" tabindex="-1"></a></span>
-<span id="cb6-166"><a href="helpers-functions.html#cb6-166" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb6-167"><a href="helpers-functions.html#cb6-167" tabindex="-1"></a><span id='impute.censored'>impute.censored</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(ww, yy, zz, cc.info.mat, bounds.mat,</span>
-<span id="cb6-168"><a href="helpers-functions.html#cb6-168" tabindex="-1"></a>                            mu.mat, Sigma.ell, dimdat){</span>
-<span id="cb6-169"><a href="helpers-functions.html#cb6-169" tabindex="-1"></a>  <span class="do">## Setup</span></span>
-<span id="cb6-170"><a href="helpers-functions.html#cb6-170" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="st">&quot;array&quot;</span> <span class="sc">%in%</span> <span class="fu">class</span>(Sigma.ell))</span>
-<span id="cb6-171"><a href="helpers-functions.html#cb6-171" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">length</span>(zz) <span class="sc">==</span> <span class="dv">0</span>){</span>
-<span id="cb6-172"><a href="helpers-functions.html#cb6-172" tabindex="-1"></a>        ret <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
-<span id="cb6-173"><a href="helpers-functions.html#cb6-173" tabindex="-1"></a>    }<span class="cf">else</span> <span class="cf">if</span> (<span class="fu">length</span>(zz)<span class="sc">==</span><span class="dv">1</span>){</span>
-<span id="cb6-174"><a href="helpers-functions.html#cb6-174" tabindex="-1"></a>        ret <span class="ot">&lt;-</span> <a href='helpers-functions.html#samp.trunc.normal'>samp.trunc.normal</a>(yy, zz, cc.info.mat, bounds.mat,</span>
-<span id="cb6-175"><a href="helpers-functions.html#cb6-175" tabindex="-1"></a>                                 mu.mat, Sigma.ell, dimdat)</span>
-<span id="cb6-176"><a href="helpers-functions.html#cb6-176" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
-<span id="cb6-177"><a href="helpers-functions.html#cb6-177" tabindex="-1"></a>        ret <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">sapply</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(zz), <span class="cf">function</span>(ii)</span>
-<span id="cb6-178"><a href="helpers-functions.html#cb6-178" tabindex="-1"></a>            <a href='helpers-functions.html#samp.trunc.normal'>samp.trunc.normal</a>(yy[ii,], zz[ii],</span>
-<span id="cb6-179"><a href="helpers-functions.html#cb6-179" tabindex="-1"></a>                              cc.info.mat[ii,], bounds.mat[,ii],</span>
-<span id="cb6-180"><a href="helpers-functions.html#cb6-180" tabindex="-1"></a>                              mu.mat, Sigma.ell, dimdat)))</span>
-<span id="cb6-181"><a href="helpers-functions.html#cb6-181" tabindex="-1"></a>    }</span>
-<span id="cb6-182"><a href="helpers-functions.html#cb6-182" tabindex="-1"></a>    <span class="fu">return</span>(ret)</span>
-<span id="cb6-183"><a href="helpers-functions.html#cb6-183" tabindex="-1"></a>}</span>
-<span id="cb6-184"><a href="helpers-functions.html#cb6-184" tabindex="-1"></a></span>
-<span id="cb6-185"><a href="helpers-functions.html#cb6-185" tabindex="-1"></a></span>
-<span id="cb6-186"><a href="helpers-functions.html#cb6-186" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb6-187"><a href="helpers-functions.html#cb6-187" tabindex="-1"></a><span id='gen.syn.dta'>gen.syn.dta</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(T, K, p, <span class="at">d=</span><span class="dv">3</span>, <span class="at">Cbox=</span><span class="cn">NULL</span>, <span class="at">Pi =</span><span class="cn">NULL</span>, <span class="at">avg.clust.size=</span><span class="dv">100</span>){</span>
-<span id="cb6-188"><a href="helpers-functions.html#cb6-188" tabindex="-1"></a>    <span class="do">### by default, d = 3</span></span>
-<span id="cb6-189"><a href="helpers-functions.html#cb6-189" tabindex="-1"></a>    nt <span class="ot">&lt;-</span> stats<span class="sc">::</span><span class="fu">rpois</span>(<span class="at">n=</span>T,<span class="at">lambda=</span>avg.clust.size<span class="sc">*</span>K)</span>
-<span id="cb6-190"><a href="helpers-functions.html#cb6-190" tabindex="-1"></a>    X <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">sapply</span>(<span class="dv">1</span><span class="sc">:</span>p, <span class="cf">function</span>(pp) stats<span class="sc">::</span><span class="fu">arima.sim</span>(<span class="fu">list</span>(<span class="at">order=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>), <span class="at">ar=</span>pp<span class="sc">/</span>(pp<span class="sc">+</span><span class="dv">1</span>)<span class="sc">/</span><span class="dv">2</span>), <span class="at">n=</span>T)))</span>
-<span id="cb6-191"><a href="helpers-functions.html#cb6-191" tabindex="-1"></a>    Beta <span class="ot">&lt;-</span> <span class="fu">array</span>(stats<span class="sc">::</span><span class="fu">rnorm</span>(K<span class="sc">*</span>p<span class="sc">*</span>d), <span class="fu">c</span>(d,p,K))</span>
-<span id="cb6-192"><a href="helpers-functions.html#cb6-192" tabindex="-1"></a>    beta0 <span class="ot">&lt;-</span> <span class="fu">matrix</span>(stats<span class="sc">::</span><span class="fu">rnorm</span>(K<span class="sc">*</span>d), <span class="at">nrow=</span>d,<span class="at">ncol=</span>K)</span>
-<span id="cb6-193"><a href="helpers-functions.html#cb6-193" tabindex="-1"></a></span>
-<span id="cb6-194"><a href="helpers-functions.html#cb6-194" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">is.null</span>(Pi)){</span>
-<span id="cb6-195"><a href="helpers-functions.html#cb6-195" tabindex="-1"></a>        Gamma0 <span class="ot">&lt;-</span> <span class="fu">matrix</span>(stats<span class="sc">::</span><span class="fu">rnorm</span>(K<span class="sc">*</span>p), <span class="at">nrow=</span> p, <span class="at">ncol =</span> K)</span>
-<span id="cb6-196"><a href="helpers-functions.html#cb6-196" tabindex="-1"></a>        Gamma0 <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">apply</span>(Gamma0,<span class="dv">1</span>,<span class="cf">function</span>(x) x<span class="sc">-</span>x[K]))<span class="sc">/</span><span class="dv">10</span></span>
-<span id="cb6-197"><a href="helpers-functions.html#cb6-197" tabindex="-1"></a>        gamma0 <span class="ot">&lt;-</span> (<span class="dv">1</span><span class="sc">:</span>K)<span class="sc">/</span><span class="dv">1</span></span>
-<span id="cb6-198"><a href="helpers-functions.html#cb6-198" tabindex="-1"></a>        Pi <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">apply</span>(<span class="fu">t</span>(X) <span class="sc">%*%</span> Gamma0<span class="sc">+</span>gamma0, <span class="dv">1</span>, <span class="cf">function</span>(x) <span class="fu">exp</span>(x)<span class="sc">/</span><span class="fu">sum</span>(<span class="fu">exp</span>(x))))</span>
-<span id="cb6-199"><a href="helpers-functions.html#cb6-199" tabindex="-1"></a>    }</span>
-<span id="cb6-200"><a href="helpers-functions.html#cb6-200" tabindex="-1"></a></span>
-<span id="cb6-201"><a href="helpers-functions.html#cb6-201" tabindex="-1"></a>    Sigma <span class="ot">&lt;-</span> stats<span class="sc">::</span><span class="fu">rWishart</span>(K, <span class="dv">1</span>, <span class="fu">diag</span>(d))</span>
-<span id="cb6-202"><a href="helpers-functions.html#cb6-202" tabindex="-1"></a></span>
-<span id="cb6-203"><a href="helpers-functions.html#cb6-203" tabindex="-1"></a>    Z.list <span class="ot">&lt;-</span> <span class="fu">lapply</span>(<span class="dv">1</span><span class="sc">:</span>T, <span class="cf">function</span>(tt) <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span>K, nt[[tt]], <span class="at">prob =</span> Pi[tt,],<span class="at">replace =</span> <span class="cn">TRUE</span>))</span>
-<span id="cb6-204"><a href="helpers-functions.html#cb6-204" tabindex="-1"></a></span>
-<span id="cb6-205"><a href="helpers-functions.html#cb6-205" tabindex="-1"></a>    Y.list <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
-<span id="cb6-206"><a href="helpers-functions.html#cb6-206" tabindex="-1"></a>    <span class="cf">for</span>(t <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>T){</span>
-<span id="cb6-207"><a href="helpers-functions.html#cb6-207" tabindex="-1"></a>        Z <span class="ot">&lt;-</span> Z.list[[t]]</span>
-<span id="cb6-208"><a href="helpers-functions.html#cb6-208" tabindex="-1"></a>        Y.list[[t]] <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">sapply</span>(Z,<span class="cf">function</span>(z)</span>
-<span id="cb6-209"><a href="helpers-functions.html#cb6-209" tabindex="-1"></a>          MASS<span class="sc">::</span><span class="fu">mvrnorm</span>(<span class="at">n=</span><span class="dv">1</span>, <span class="at">mu =</span> beta0[,z]<span class="sc">+</span>Beta[,,z]<span class="sc">%*%</span>X[,t],<span class="at">Sigma =</span> Sigma[,,z])))</span>
-<span id="cb6-210"><a href="helpers-functions.html#cb6-210" tabindex="-1"></a>    }</span>
-<span id="cb6-211"><a href="helpers-functions.html#cb6-211" tabindex="-1"></a>    Ytrue.list <span class="ot">&lt;-</span> Y.list</span>
-<span id="cb6-212"><a href="helpers-functions.html#cb6-212" tabindex="-1"></a></span>
-<span id="cb6-213"><a href="helpers-functions.html#cb6-213" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">is.null</span>(Cbox)<span class="sc">==</span><span class="cn">FALSE</span>){</span>
-<span id="cb6-214"><a href="helpers-functions.html#cb6-214" tabindex="-1"></a>        Y.list <span class="ot">&lt;-</span> <span class="fu">lapply</span>(Y.list, <span class="cf">function</span>(x) <a href='helpers-functions.html#dtaMatCensor'>dtaMatCensor</a>(x,Cbox))</span>
-<span id="cb6-215"><a href="helpers-functions.html#cb6-215" tabindex="-1"></a>    }</span>
-<span id="cb6-216"><a href="helpers-functions.html#cb6-216" tabindex="-1"></a>    <span class="fu">return</span>(<span class="fu">list</span>(<span class="at">Y.list=</span>Y.list, <span class="at">X=</span>X, <span class="at">Z.list=</span>Z.list, <span class="at">nt=</span>nt, <span class="at">Cbox=</span>Cbox, <span class="at">K=</span>K,</span>
-<span id="cb6-217"><a href="helpers-functions.html#cb6-217" tabindex="-1"></a>                <span class="at">Ytrue.list =</span> Ytrue.list,</span>
-<span id="cb6-218"><a href="helpers-functions.html#cb6-218" tabindex="-1"></a>                <span class="at">Pi =</span> Pi, <span class="at">beta0 =</span> beta0, <span class="at">Beta =</span> Beta, <span class="at">Sigma =</span> Sigma))</span>
-<span id="cb6-219"><a href="helpers-functions.html#cb6-219" tabindex="-1"></a>}</span>
+<span id="cb6-91"><a href="helpers-functions.html#cb6-91" tabindex="-1"></a><span id='gamma2pi'>gamma2pi</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(gamma,Xp){</span>
+<span id="cb6-92"><a href="helpers-functions.html#cb6-92" tabindex="-1"></a>    XpGamma <span class="ot">&lt;-</span> Rfast<span class="sc">::</span><span class="fu">Crossprod</span>(gamma, Xp) <span class="do">## K-1 x T</span></span>
+<span id="cb6-93"><a href="helpers-functions.html#cb6-93" tabindex="-1"></a>    pi.sb <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span>(<span class="dv">1</span><span class="sc">+</span><span class="fu">exp</span>(<span class="sc">-</span>XpGamma))</span>
+<span id="cb6-94"><a href="helpers-functions.html#cb6-94" tabindex="-1"></a>    <span class="fu">return</span>(pi.sb)</span>
+<span id="cb6-95"><a href="helpers-functions.html#cb6-95" tabindex="-1"></a>}</span>
+<span id="cb6-96"><a href="helpers-functions.html#cb6-96" tabindex="-1"></a></span>
+<span id="cb6-97"><a href="helpers-functions.html#cb6-97" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb6-98"><a href="helpers-functions.html#cb6-98" tabindex="-1"></a><span id='dtaMatCensor'>dtaMatCensor</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(x,Cbox){</span>
+<span id="cb6-99"><a href="helpers-functions.html#cb6-99" tabindex="-1"></a>    d <span class="ot">&lt;-</span> <span class="fu">dim</span>(x)[<span class="dv">2</span>]</span>
+<span id="cb6-100"><a href="helpers-functions.html#cb6-100" tabindex="-1"></a>    <span class="cf">for</span>(ii <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>d){</span>
+<span id="cb6-101"><a href="helpers-functions.html#cb6-101" tabindex="-1"></a>        x[,ii] <span class="ot">&lt;-</span> <span class="fu">pmin</span>(<span class="fu">pmax</span>(x[,ii],Cbox[ii,<span class="dv">1</span>]),Cbox[ii,<span class="dv">2</span>])</span>
+<span id="cb6-102"><a href="helpers-functions.html#cb6-102" tabindex="-1"></a>    }</span>
+<span id="cb6-103"><a href="helpers-functions.html#cb6-103" tabindex="-1"></a>    <span class="fu">return</span>(x)</span>
+<span id="cb6-104"><a href="helpers-functions.html#cb6-104" tabindex="-1"></a>}</span>
+<span id="cb6-105"><a href="helpers-functions.html#cb6-105" tabindex="-1"></a></span>
+<span id="cb6-106"><a href="helpers-functions.html#cb6-106" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb6-107"><a href="helpers-functions.html#cb6-107" tabindex="-1"></a><span id='censorIndicator'>censorIndicator</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(x,Cbox){</span>
+<span id="cb6-108"><a href="helpers-functions.html#cb6-108" tabindex="-1"></a>    d <span class="ot">&lt;-</span> <span class="fu">dim</span>(Cbox)[<span class="dv">1</span>]</span>
+<span id="cb6-109"><a href="helpers-functions.html#cb6-109" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">dim</span>(x)[<span class="dv">2</span>]<span class="sc">!=</span>d <span class="sc">&amp;</span> <span class="fu">dim</span>(x)[<span class="dv">1</span>]<span class="sc">==</span>d){</span>
+<span id="cb6-110"><a href="helpers-functions.html#cb6-110" tabindex="-1"></a>        x <span class="ot">&lt;-</span> <span class="fu">t</span>(x)</span>
+<span id="cb6-111"><a href="helpers-functions.html#cb6-111" tabindex="-1"></a>    }</span>
+<span id="cb6-112"><a href="helpers-functions.html#cb6-112" tabindex="-1"></a>    <span class="cf">for</span>(ii <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>d){</span>
+<span id="cb6-113"><a href="helpers-functions.html#cb6-113" tabindex="-1"></a>        x[,ii] <span class="ot">&lt;-</span> (x[,ii]<span class="sc">==</span>Cbox[ii,<span class="dv">2</span>]) <span class="sc">-</span> (x[,ii]<span class="sc">==</span>Cbox[ii,<span class="dv">1</span>])</span>
+<span id="cb6-114"><a href="helpers-functions.html#cb6-114" tabindex="-1"></a>    }</span>
+<span id="cb6-115"><a href="helpers-functions.html#cb6-115" tabindex="-1"></a>    <span class="fu">return</span>(x)</span>
+<span id="cb6-116"><a href="helpers-functions.html#cb6-116" tabindex="-1"></a>}</span>
+<span id="cb6-117"><a href="helpers-functions.html#cb6-117" tabindex="-1"></a></span>
+<span id="cb6-118"><a href="helpers-functions.html#cb6-118" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb6-119"><a href="helpers-functions.html#cb6-119" tabindex="-1"></a><span id='sample.region'>sample.region</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(cc,Cbox){</span>
+<span id="cb6-120"><a href="helpers-functions.html#cb6-120" tabindex="-1"></a>    limits <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb6-121"><a href="helpers-functions.html#cb6-121" tabindex="-1"></a>    d <span class="ot">&lt;-</span> <span class="fu">length</span>(cc)</span>
+<span id="cb6-122"><a href="helpers-functions.html#cb6-122" tabindex="-1"></a>    <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>d){</span>
+<span id="cb6-123"><a href="helpers-functions.html#cb6-123" tabindex="-1"></a>        <span class="cf">if</span>(cc[i]<span class="sc">==-</span><span class="dv">1</span>){</span>
+<span id="cb6-124"><a href="helpers-functions.html#cb6-124" tabindex="-1"></a>            limits <span class="ot">&lt;-</span> <span class="fu">rbind</span>(limits, <span class="fu">c</span>(<span class="sc">-</span><span class="cn">Inf</span>,Cbox[i,<span class="dv">1</span>]))</span>
+<span id="cb6-125"><a href="helpers-functions.html#cb6-125" tabindex="-1"></a>        }<span class="cf">else</span> <span class="cf">if</span>(cc[i]<span class="sc">==</span><span class="dv">0</span>){</span>
+<span id="cb6-126"><a href="helpers-functions.html#cb6-126" tabindex="-1"></a>            limits <span class="ot">&lt;-</span> <span class="fu">rbind</span>(limits, <span class="fu">c</span>(<span class="sc">-</span><span class="cn">Inf</span>,<span class="cn">Inf</span>))</span>
+<span id="cb6-127"><a href="helpers-functions.html#cb6-127" tabindex="-1"></a>        }<span class="cf">else</span>{</span>
+<span id="cb6-128"><a href="helpers-functions.html#cb6-128" tabindex="-1"></a>            limits <span class="ot">&lt;-</span> <span class="fu">rbind</span>(limits, <span class="fu">c</span>(Cbox[i,<span class="dv">2</span>], <span class="cn">Inf</span>))</span>
+<span id="cb6-129"><a href="helpers-functions.html#cb6-129" tabindex="-1"></a>        }</span>
+<span id="cb6-130"><a href="helpers-functions.html#cb6-130" tabindex="-1"></a>    }</span>
+<span id="cb6-131"><a href="helpers-functions.html#cb6-131" tabindex="-1"></a>    <span class="fu">colnames</span>(limits) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;lower&quot;</span>,<span class="st">&quot;upper&quot;</span>)</span>
+<span id="cb6-132"><a href="helpers-functions.html#cb6-132" tabindex="-1"></a>    <span class="fu">return</span>(limits)</span>
+<span id="cb6-133"><a href="helpers-functions.html#cb6-133" tabindex="-1"></a>}</span>
+<span id="cb6-134"><a href="helpers-functions.html#cb6-134" tabindex="-1"></a></span>
+<span id="cb6-135"><a href="helpers-functions.html#cb6-135" tabindex="-1"></a></span>
+<span id="cb6-136"><a href="helpers-functions.html#cb6-136" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb6-137"><a href="helpers-functions.html#cb6-137" tabindex="-1"></a></span>
+<span id="cb6-138"><a href="helpers-functions.html#cb6-138" tabindex="-1"></a><span id='rmatnorm.fast'>rmatnorm.fast</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(M,U,V){ </span>
+<span id="cb6-139"><a href="helpers-functions.html#cb6-139" tabindex="-1"></a>    <span class="do">## M is d x p</span></span>
+<span id="cb6-140"><a href="helpers-functions.html#cb6-140" tabindex="-1"></a>    <span class="do">## U is d x d</span></span>
+<span id="cb6-141"><a href="helpers-functions.html#cb6-141" tabindex="-1"></a>    <span class="do">## V is p x p </span></span>
+<span id="cb6-142"><a href="helpers-functions.html#cb6-142" tabindex="-1"></a>    M <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(M)</span>
+<span id="cb6-143"><a href="helpers-functions.html#cb6-143" tabindex="-1"></a>    U <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(U)</span>
+<span id="cb6-144"><a href="helpers-functions.html#cb6-144" tabindex="-1"></a>    V <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(V)</span>
+<span id="cb6-145"><a href="helpers-functions.html#cb6-145" tabindex="-1"></a>    d <span class="ot">&lt;-</span> <span class="fu">nrow</span>(M) <span class="do">## dim of U </span></span>
+<span id="cb6-146"><a href="helpers-functions.html#cb6-146" tabindex="-1"></a>    p <span class="ot">&lt;-</span> <span class="fu">ncol</span>(M) <span class="do">## dim of V </span></span>
+<span id="cb6-147"><a href="helpers-functions.html#cb6-147" tabindex="-1"></a>    chol.U <span class="ot">&lt;-</span> Rfast<span class="sc">::</span><span class="fu">cholesky</span>(U) <span class="do">## upper triangular matrix </span></span>
+<span id="cb6-148"><a href="helpers-functions.html#cb6-148" tabindex="-1"></a>    chol.V <span class="ot">&lt;-</span> Rfast<span class="sc">::</span><span class="fu">cholesky</span>(V)</span>
+<span id="cb6-149"><a href="helpers-functions.html#cb6-149" tabindex="-1"></a>    x <span class="ot">&lt;-</span> Rfast<span class="sc">::</span><span class="fu">matrnorm</span>(d, p)</span>
+<span id="cb6-150"><a href="helpers-functions.html#cb6-150" tabindex="-1"></a>    <span class="fu">return</span>(Rfast<span class="sc">::</span><span class="fu">Crossprod</span>(chol.U, x) <span class="sc">%*%</span> chol.V <span class="sc">+</span> M)</span>
+<span id="cb6-151"><a href="helpers-functions.html#cb6-151" tabindex="-1"></a>}</span>
+<span id="cb6-152"><a href="helpers-functions.html#cb6-152" tabindex="-1"></a>    </span>
+<span id="cb6-153"><a href="helpers-functions.html#cb6-153" tabindex="-1"></a></span>
+<span id="cb6-154"><a href="helpers-functions.html#cb6-154" tabindex="-1"></a></span>
+<span id="cb6-155"><a href="helpers-functions.html#cb6-155" tabindex="-1"></a></span>
+<span id="cb6-156"><a href="helpers-functions.html#cb6-156" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb6-157"><a href="helpers-functions.html#cb6-157" tabindex="-1"></a><span id='samp.trunc.normal'>samp.trunc.normal</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(yy, zz, cc.info, bounds.info, mu.mat, Sigma.ell, dimdat){</span>
+<span id="cb6-158"><a href="helpers-functions.html#cb6-158" tabindex="-1"></a>    cc <span class="ot">&lt;-</span> <span class="fu">abs</span>(cc.info)<span class="sc">==</span><span class="dv">1</span></span>
+<span id="cb6-159"><a href="helpers-functions.html#cb6-159" tabindex="-1"></a>    nc <span class="ot">&lt;-</span> cc<span class="sc">==</span><span class="dv">0</span></span>
+<span id="cb6-160"><a href="helpers-functions.html#cb6-160" tabindex="-1"></a>    d <span class="ot">&lt;-</span> <span class="fu">length</span>(cc.info)</span>
+<span id="cb6-161"><a href="helpers-functions.html#cb6-161" tabindex="-1"></a>    lower.info <span class="ot">&lt;-</span> bounds.info[<span class="dv">1</span><span class="sc">:</span>d]</span>
+<span id="cb6-162"><a href="helpers-functions.html#cb6-162" tabindex="-1"></a>    upper.info <span class="ot">&lt;-</span> bounds.info[(d<span class="sc">+</span><span class="dv">1</span>)<span class="sc">:</span>(<span class="dv">2</span><span class="sc">*</span>d)]</span>
+<span id="cb6-163"><a href="helpers-functions.html#cb6-163" tabindex="-1"></a>    mu <span class="ot">&lt;-</span> mu.mat[,zz]</span>
+<span id="cb6-164"><a href="helpers-functions.html#cb6-164" tabindex="-1"></a></span>
+<span id="cb6-165"><a href="helpers-functions.html#cb6-165" tabindex="-1"></a>    <span class="do">## If all dimensions are censored.</span></span>
+<span id="cb6-166"><a href="helpers-functions.html#cb6-166" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">all</span>(cc)){</span>
+<span id="cb6-167"><a href="helpers-functions.html#cb6-167" tabindex="-1"></a>      sig <span class="ot">=</span> Sigma.ell[,,zz]</span>
+<span id="cb6-168"><a href="helpers-functions.html#cb6-168" tabindex="-1"></a>      <span class="cf">if</span>(dimdat<span class="sc">==</span><span class="dv">1</span>) sig <span class="ot">=</span> <span class="fu">as.matrix</span>(sig)</span>
+<span id="cb6-169"><a href="helpers-functions.html#cb6-169" tabindex="-1"></a>        yy <span class="ot">&lt;-</span> tmvnsim<span class="sc">::</span><span class="fu">tmvnsim</span>(<span class="at">nsamp=</span><span class="dv">1</span>,d,<span class="at">lower=</span>lower.info,<span class="at">upper=</span>upper.info,</span>
+<span id="cb6-170"><a href="helpers-functions.html#cb6-170" tabindex="-1"></a>                      <span class="at">mean=</span> mu, <span class="at">sigma =</span> sig)<span class="sc">$</span>samp</span>
+<span id="cb6-171"><a href="helpers-functions.html#cb6-171" tabindex="-1"></a></span>
+<span id="cb6-172"><a href="helpers-functions.html#cb6-172" tabindex="-1"></a>    <span class="do">## If /not/ all dimensions are censored.</span></span>
+<span id="cb6-173"><a href="helpers-functions.html#cb6-173" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb6-174"><a href="helpers-functions.html#cb6-174" tabindex="-1"></a>      <span class="do">## Conditional mean and variance</span></span>
+<span id="cb6-175"><a href="helpers-functions.html#cb6-175" tabindex="-1"></a>        slope <span class="ot">&lt;-</span> Sigma.ell[cc,nc,zz] <span class="sc">%*%</span> <span class="fu">solve</span>(Sigma.ell[nc,nc,zz])</span>
+<span id="cb6-176"><a href="helpers-functions.html#cb6-176" tabindex="-1"></a>        cond.sig <span class="ot">&lt;-</span> Sigma.ell[cc,cc,zz] <span class="sc">-</span> slope <span class="sc">%*%</span> Sigma.ell[nc,cc,zz]</span>
+<span id="cb6-177"><a href="helpers-functions.html#cb6-177" tabindex="-1"></a>        cond.m <span class="ot">&lt;-</span> mu[cc]<span class="sc">+</span>slope <span class="sc">%*%</span> (yy[nc]<span class="sc">-</span>mu[nc])</span>
+<span id="cb6-178"><a href="helpers-functions.html#cb6-178" tabindex="-1"></a></span>
+<span id="cb6-179"><a href="helpers-functions.html#cb6-179" tabindex="-1"></a>      <span class="do">## Sample from this conditional truncated normal</span></span>
+<span id="cb6-180"><a href="helpers-functions.html#cb6-180" tabindex="-1"></a>      <span class="cf">if</span>(dimdat<span class="sc">==</span><span class="dv">1</span>) cond.sig <span class="ot">=</span> <span class="fu">as.matrix</span>(cond.sig)</span>
+<span id="cb6-181"><a href="helpers-functions.html#cb6-181" tabindex="-1"></a>      <span class="fu">stopifnot</span>(<span class="st">&quot;matrix&quot;</span> <span class="sc">%in%</span> <span class="fu">class</span>(cond.sig))</span>
+<span id="cb6-182"><a href="helpers-functions.html#cb6-182" tabindex="-1"></a>      imputed_y <span class="ot">=</span> tmvnsim<span class="sc">::</span><span class="fu">tmvnsim</span>(<span class="at">nsamp =</span> <span class="dv">1</span>, <span class="fu">length</span>(cond.m),</span>
+<span id="cb6-183"><a href="helpers-functions.html#cb6-183" tabindex="-1"></a>              <span class="at">lower=</span>lower.info[cc], <span class="at">upper =</span> upper.info[cc],</span>
+<span id="cb6-184"><a href="helpers-functions.html#cb6-184" tabindex="-1"></a>              <span class="at">mean=</span> cond.m, <span class="at">sigma =</span> cond.sig)<span class="sc">$</span>samp</span>
+<span id="cb6-185"><a href="helpers-functions.html#cb6-185" tabindex="-1"></a>        yy[cc] <span class="ot">&lt;-</span> imputed_y</span>
+<span id="cb6-186"><a href="helpers-functions.html#cb6-186" tabindex="-1"></a>    }</span>
+<span id="cb6-187"><a href="helpers-functions.html#cb6-187" tabindex="-1"></a>    <span class="cf">if</span>(<span class="sc">!</span><span class="fu">is.numeric</span>(yy)) <span class="fu">browser</span>()</span>
+<span id="cb6-188"><a href="helpers-functions.html#cb6-188" tabindex="-1"></a></span>
+<span id="cb6-189"><a href="helpers-functions.html#cb6-189" tabindex="-1"></a>    <span class="fu">return</span>(yy)</span>
+<span id="cb6-190"><a href="helpers-functions.html#cb6-190" tabindex="-1"></a>}</span>
+<span id="cb6-191"><a href="helpers-functions.html#cb6-191" tabindex="-1"></a></span>
+<span id="cb6-192"><a href="helpers-functions.html#cb6-192" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb6-193"><a href="helpers-functions.html#cb6-193" tabindex="-1"></a><span id='impute.censored'>impute.censored</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(ww, yy, zz, cc.info.mat, bounds.mat,</span>
+<span id="cb6-194"><a href="helpers-functions.html#cb6-194" tabindex="-1"></a>                            mu.mat, Sigma.ell, dimdat){</span>
+<span id="cb6-195"><a href="helpers-functions.html#cb6-195" tabindex="-1"></a>  <span class="do">## Setup</span></span>
+<span id="cb6-196"><a href="helpers-functions.html#cb6-196" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="st">&quot;array&quot;</span> <span class="sc">%in%</span> <span class="fu">class</span>(Sigma.ell))</span>
+<span id="cb6-197"><a href="helpers-functions.html#cb6-197" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">length</span>(zz) <span class="sc">==</span> <span class="dv">0</span>){</span>
+<span id="cb6-198"><a href="helpers-functions.html#cb6-198" tabindex="-1"></a>        ret <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb6-199"><a href="helpers-functions.html#cb6-199" tabindex="-1"></a>    }<span class="cf">else</span> <span class="cf">if</span> (<span class="fu">length</span>(zz)<span class="sc">==</span><span class="dv">1</span>){</span>
+<span id="cb6-200"><a href="helpers-functions.html#cb6-200" tabindex="-1"></a>        ret <span class="ot">&lt;-</span> <a href='helpers-functions.html#samp.trunc.normal'>samp.trunc.normal</a>(yy, zz, cc.info.mat, bounds.mat,</span>
+<span id="cb6-201"><a href="helpers-functions.html#cb6-201" tabindex="-1"></a>                                 mu.mat, Sigma.ell, dimdat)</span>
+<span id="cb6-202"><a href="helpers-functions.html#cb6-202" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb6-203"><a href="helpers-functions.html#cb6-203" tabindex="-1"></a>        ret <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">sapply</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(zz), <span class="cf">function</span>(ii)</span>
+<span id="cb6-204"><a href="helpers-functions.html#cb6-204" tabindex="-1"></a>            <a href='helpers-functions.html#samp.trunc.normal'>samp.trunc.normal</a>(yy[ii,], zz[ii],</span>
+<span id="cb6-205"><a href="helpers-functions.html#cb6-205" tabindex="-1"></a>                              cc.info.mat[ii,], bounds.mat[,ii],</span>
+<span id="cb6-206"><a href="helpers-functions.html#cb6-206" tabindex="-1"></a>                              mu.mat, Sigma.ell, dimdat)))</span>
+<span id="cb6-207"><a href="helpers-functions.html#cb6-207" tabindex="-1"></a>    }</span>
+<span id="cb6-208"><a href="helpers-functions.html#cb6-208" tabindex="-1"></a>    <span class="fu">return</span>(ret)</span>
+<span id="cb6-209"><a href="helpers-functions.html#cb6-209" tabindex="-1"></a>}</span>
+<span id="cb6-210"><a href="helpers-functions.html#cb6-210" tabindex="-1"></a></span>
+<span id="cb6-211"><a href="helpers-functions.html#cb6-211" tabindex="-1"></a></span>
+<span id="cb6-212"><a href="helpers-functions.html#cb6-212" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb6-213"><a href="helpers-functions.html#cb6-213" tabindex="-1"></a><span id='gen.syn.dta'>gen.syn.dta</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(T, K, p, <span class="at">d=</span><span class="dv">3</span>, <span class="at">Cbox=</span><span class="cn">NULL</span>, <span class="at">Pi =</span><span class="cn">NULL</span>, <span class="at">avg.clust.size=</span><span class="dv">100</span>){</span>
+<span id="cb6-214"><a href="helpers-functions.html#cb6-214" tabindex="-1"></a>    <span class="do">## this function can be deleted </span></span>
+<span id="cb6-215"><a href="helpers-functions.html#cb6-215" tabindex="-1"></a>    <span class="do">### by default, d = 3</span></span>
+<span id="cb6-216"><a href="helpers-functions.html#cb6-216" tabindex="-1"></a>    nt <span class="ot">&lt;-</span> stats<span class="sc">::</span><span class="fu">rpois</span>(<span class="at">n=</span>T,<span class="at">lambda=</span>avg.clust.size<span class="sc">*</span>K)</span>
+<span id="cb6-217"><a href="helpers-functions.html#cb6-217" tabindex="-1"></a>    X <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">sapply</span>(<span class="dv">1</span><span class="sc">:</span>p, <span class="cf">function</span>(pp) stats<span class="sc">::</span><span class="fu">arima.sim</span>(<span class="fu">list</span>(<span class="at">order=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>), <span class="at">ar=</span>pp<span class="sc">/</span>(pp<span class="sc">+</span><span class="dv">1</span>)<span class="sc">/</span><span class="dv">2</span>), <span class="at">n=</span>T)))</span>
+<span id="cb6-218"><a href="helpers-functions.html#cb6-218" tabindex="-1"></a>    Beta <span class="ot">&lt;-</span> <span class="fu">array</span>(stats<span class="sc">::</span><span class="fu">rnorm</span>(K<span class="sc">*</span>p<span class="sc">*</span>d), <span class="fu">c</span>(d,p,K))</span>
+<span id="cb6-219"><a href="helpers-functions.html#cb6-219" tabindex="-1"></a>    beta0 <span class="ot">&lt;-</span> <span class="fu">matrix</span>(stats<span class="sc">::</span><span class="fu">rnorm</span>(K<span class="sc">*</span>d), <span class="at">nrow=</span>d,<span class="at">ncol=</span>K)</span>
 <span id="cb6-220"><a href="helpers-functions.html#cb6-220" tabindex="-1"></a></span>
-<span id="cb6-221"><a href="helpers-functions.html#cb6-221" tabindex="-1"></a></span>
-<span id="cb6-222"><a href="helpers-functions.html#cb6-222" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb6-223"><a href="helpers-functions.html#cb6-223" tabindex="-1"></a><span id='loglik_eval'>loglik_eval</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(mu.list, chol.Sig.list,</span>
-<span id="cb6-224"><a href="helpers-functions.html#cb6-224" tabindex="-1"></a>                        W.list, X.list, Y.list, Z.list,</span>
-<span id="cb6-225"><a href="helpers-functions.html#cb6-225" tabindex="-1"></a>                        nt.list, <span class="at">simple =</span> <span class="cn">FALSE</span>, <span class="at">n.cores =</span> <span class="dv">1</span>){</span>
-<span id="cb6-226"><a href="helpers-functions.html#cb6-226" tabindex="-1"></a></span>
-<span id="cb6-227"><a href="helpers-functions.html#cb6-227" tabindex="-1"></a>    <span class="do">## logPiZ &lt;- mcmapply(function(xx,yy,mm){sapply(1:K, function(kk)</span></span>
-<span id="cb6-228"><a href="helpers-functions.html#cb6-228" tabindex="-1"></a>    <span class="do">##     mvnfast::dmvn(yy, mm[,kk], chol.Sig.list[[kk]],log=TRUE,isChol = TRUE)) },</span></span>
-<span id="cb6-229"><a href="helpers-functions.html#cb6-229" tabindex="-1"></a>    <span class="do">##     xx=X.list, yy = Y.list, mm=mu.list, mc.cores = min(n.cores, T),</span></span>
-<span id="cb6-230"><a href="helpers-functions.html#cb6-230" tabindex="-1"></a>    <span class="do">##     SIMPLIFY = FALSE)</span></span>
+<span id="cb6-221"><a href="helpers-functions.html#cb6-221" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">is.null</span>(Pi)){</span>
+<span id="cb6-222"><a href="helpers-functions.html#cb6-222" tabindex="-1"></a>        Gamma0 <span class="ot">&lt;-</span> <span class="fu">matrix</span>(stats<span class="sc">::</span><span class="fu">rnorm</span>(K<span class="sc">*</span>p), <span class="at">nrow=</span> p, <span class="at">ncol =</span> K)</span>
+<span id="cb6-223"><a href="helpers-functions.html#cb6-223" tabindex="-1"></a>        Gamma0 <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">apply</span>(Gamma0,<span class="dv">1</span>,<span class="cf">function</span>(x) x<span class="sc">-</span>x[K]))<span class="sc">/</span><span class="dv">10</span></span>
+<span id="cb6-224"><a href="helpers-functions.html#cb6-224" tabindex="-1"></a>        gamma0 <span class="ot">&lt;-</span> (<span class="dv">1</span><span class="sc">:</span>K)<span class="sc">/</span><span class="dv">1</span></span>
+<span id="cb6-225"><a href="helpers-functions.html#cb6-225" tabindex="-1"></a>        Pi <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">apply</span>(<span class="fu">t</span>(X) <span class="sc">%*%</span> Gamma0<span class="sc">+</span>gamma0, <span class="dv">1</span>, <span class="cf">function</span>(x) <span class="fu">exp</span>(x)<span class="sc">/</span><span class="fu">sum</span>(<span class="fu">exp</span>(x))))</span>
+<span id="cb6-226"><a href="helpers-functions.html#cb6-226" tabindex="-1"></a>    }</span>
+<span id="cb6-227"><a href="helpers-functions.html#cb6-227" tabindex="-1"></a></span>
+<span id="cb6-228"><a href="helpers-functions.html#cb6-228" tabindex="-1"></a>    Sigma <span class="ot">&lt;-</span> stats<span class="sc">::</span><span class="fu">rWishart</span>(K, <span class="dv">1</span>, <span class="fu">diag</span>(d))</span>
+<span id="cb6-229"><a href="helpers-functions.html#cb6-229" tabindex="-1"></a></span>
+<span id="cb6-230"><a href="helpers-functions.html#cb6-230" tabindex="-1"></a>    Z.list <span class="ot">&lt;-</span> <span class="fu">lapply</span>(<span class="dv">1</span><span class="sc">:</span>T, <span class="cf">function</span>(tt) <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span>K, nt[[tt]], <span class="at">prob =</span> Pi[tt,],<span class="at">replace =</span> <span class="cn">TRUE</span>))</span>
 <span id="cb6-231"><a href="helpers-functions.html#cb6-231" tabindex="-1"></a></span>
-<span id="cb6-232"><a href="helpers-functions.html#cb6-232" tabindex="-1"></a>    <span class="cf">if</span>(simple <span class="sc">==</span> <span class="cn">TRUE</span>){</span>
-<span id="cb6-233"><a href="helpers-functions.html#cb6-233" tabindex="-1"></a>        ll.vec <span class="ot">&lt;-</span> <span class="fu">sapply</span>(<span class="dv">1</span><span class="sc">:</span>nt.list[[<span class="dv">1</span>]], <span class="cf">function</span>(id)</span>
-<span id="cb6-234"><a href="helpers-functions.html#cb6-234" tabindex="-1"></a>            mvnfast<span class="sc">::</span><span class="fu">dmvn</span>(Y.list[[<span class="dv">1</span>]][id,],</span>
-<span id="cb6-235"><a href="helpers-functions.html#cb6-235" tabindex="-1"></a>                          mu.list[[<span class="dv">1</span>]][,Z.list[[<span class="dv">1</span>]][id]],</span>
-<span id="cb6-236"><a href="helpers-functions.html#cb6-236" tabindex="-1"></a>                          chol.Sig.list[[Z.list[[<span class="dv">1</span>]][id]]],</span>
-<span id="cb6-237"><a href="helpers-functions.html#cb6-237" tabindex="-1"></a>                          <span class="at">log=</span><span class="cn">TRUE</span>, <span class="at">isChol =</span> <span class="cn">TRUE</span>))</span>
-<span id="cb6-238"><a href="helpers-functions.html#cb6-238" tabindex="-1"></a>        out <span class="ot">&lt;-</span> <span class="fu">sum</span>(ll.vec <span class="sc">*</span> W.list[[<span class="dv">1</span>]]) <span class="sc">/</span> nt.list[[<span class="dv">1</span>]]</span>
-<span id="cb6-239"><a href="helpers-functions.html#cb6-239" tabindex="-1"></a>    }<span class="cf">else</span>{</span>
-<span id="cb6-240"><a href="helpers-functions.html#cb6-240" tabindex="-1"></a>        ll.sums  <span class="ot">&lt;-</span>  parallel<span class="sc">::</span><span class="fu">mcmapply</span>(<span class="cf">function</span>(ww, xx,yy,mm,zz,nt){</span>
-<span id="cb6-241"><a href="helpers-functions.html#cb6-241" tabindex="-1"></a>            <span class="fu">sum</span>(ww <span class="sc">*</span> <span class="fu">sapply</span>(<span class="dv">1</span><span class="sc">:</span>nt,<span class="cf">function</span>(id)</span>
-<span id="cb6-242"><a href="helpers-functions.html#cb6-242" tabindex="-1"></a>                mvnfast<span class="sc">::</span><span class="fu">dmvn</span>(yy[id,], mm[,zz[id]], chol.Sig.list[[zz[id]]],</span>
-<span id="cb6-243"><a href="helpers-functions.html#cb6-243" tabindex="-1"></a>                              <span class="at">log=</span><span class="cn">TRUE</span>,<span class="at">isChol =</span> <span class="cn">TRUE</span>)) )},</span>
-<span id="cb6-244"><a href="helpers-functions.html#cb6-244" tabindex="-1"></a>            <span class="at">ww =</span> W.list, <span class="at">xx =</span> X.list, <span class="at">yy =</span> Y.list,</span>
-<span id="cb6-245"><a href="helpers-functions.html#cb6-245" tabindex="-1"></a>            <span class="at">mm=</span>mu.list, <span class="at">zz =</span> Z.list, <span class="at">nt =</span> nt.list,</span>
-<span id="cb6-246"><a href="helpers-functions.html#cb6-246" tabindex="-1"></a>            <span class="at">mc.cores =</span> <span class="fu">min</span>(n.cores, T), <span class="at">SIMPLIFY =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb6-247"><a href="helpers-functions.html#cb6-247" tabindex="-1"></a>        out <span class="ot">&lt;-</span> <span class="fu">Reduce</span>(<span class="st">&quot;+&quot;</span>,ll.sums)<span class="sc">/</span><span class="fu">sum</span>(<span class="fu">unlist</span>(nt.list))</span>
-<span id="cb6-248"><a href="helpers-functions.html#cb6-248" tabindex="-1"></a>    }</span>
-<span id="cb6-249"><a href="helpers-functions.html#cb6-249" tabindex="-1"></a>    <span class="fu">return</span>(out)</span>
-<span id="cb6-250"><a href="helpers-functions.html#cb6-250" tabindex="-1"></a>}</span></code></pre></div>
+<span id="cb6-232"><a href="helpers-functions.html#cb6-232" tabindex="-1"></a>    Y.list <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb6-233"><a href="helpers-functions.html#cb6-233" tabindex="-1"></a>    <span class="cf">for</span>(t <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>T){</span>
+<span id="cb6-234"><a href="helpers-functions.html#cb6-234" tabindex="-1"></a>        Z <span class="ot">&lt;-</span> Z.list[[t]]</span>
+<span id="cb6-235"><a href="helpers-functions.html#cb6-235" tabindex="-1"></a>        Y.list[[t]] <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">sapply</span>(Z,<span class="cf">function</span>(z)</span>
+<span id="cb6-236"><a href="helpers-functions.html#cb6-236" tabindex="-1"></a>          MASS<span class="sc">::</span><span class="fu">mvrnorm</span>(<span class="at">n=</span><span class="dv">1</span>, <span class="at">mu =</span> beta0[,z]<span class="sc">+</span>Beta[,,z]<span class="sc">%*%</span>X[,t],<span class="at">Sigma =</span> Sigma[,,z])))</span>
+<span id="cb6-237"><a href="helpers-functions.html#cb6-237" tabindex="-1"></a>    }</span>
+<span id="cb6-238"><a href="helpers-functions.html#cb6-238" tabindex="-1"></a>    Ytrue.list <span class="ot">&lt;-</span> Y.list</span>
+<span id="cb6-239"><a href="helpers-functions.html#cb6-239" tabindex="-1"></a></span>
+<span id="cb6-240"><a href="helpers-functions.html#cb6-240" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">is.null</span>(Cbox)<span class="sc">==</span><span class="cn">FALSE</span>){</span>
+<span id="cb6-241"><a href="helpers-functions.html#cb6-241" tabindex="-1"></a>        Y.list <span class="ot">&lt;-</span> <span class="fu">lapply</span>(Y.list, <span class="cf">function</span>(x) <a href='helpers-functions.html#dtaMatCensor'>dtaMatCensor</a>(x,Cbox))</span>
+<span id="cb6-242"><a href="helpers-functions.html#cb6-242" tabindex="-1"></a>    }</span>
+<span id="cb6-243"><a href="helpers-functions.html#cb6-243" tabindex="-1"></a>    <span class="fu">return</span>(<span class="fu">list</span>(<span class="at">Y.list=</span>Y.list, <span class="at">X=</span>X, <span class="at">Z.list=</span>Z.list, <span class="at">nt=</span>nt, <span class="at">Cbox=</span>Cbox, <span class="at">K=</span>K,</span>
+<span id="cb6-244"><a href="helpers-functions.html#cb6-244" tabindex="-1"></a>                <span class="at">Ytrue.list =</span> Ytrue.list,</span>
+<span id="cb6-245"><a href="helpers-functions.html#cb6-245" tabindex="-1"></a>                <span class="at">Pi =</span> Pi, <span class="at">beta0 =</span> beta0, <span class="at">Beta =</span> Beta, <span class="at">Sigma =</span> Sigma))</span>
+<span id="cb6-246"><a href="helpers-functions.html#cb6-246" tabindex="-1"></a>}</span>
+<span id="cb6-247"><a href="helpers-functions.html#cb6-247" tabindex="-1"></a></span>
+<span id="cb6-248"><a href="helpers-functions.html#cb6-248" tabindex="-1"></a></span>
+<span id="cb6-249"><a href="helpers-functions.html#cb6-249" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb6-250"><a href="helpers-functions.html#cb6-250" tabindex="-1"></a><span id='loglik_eval'>loglik_eval</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(mu.list, chol.Sig.list,</span>
+<span id="cb6-251"><a href="helpers-functions.html#cb6-251" tabindex="-1"></a>                        W.list, X.list, Y.list, Z.list,</span>
+<span id="cb6-252"><a href="helpers-functions.html#cb6-252" tabindex="-1"></a>                        nt.list, <span class="at">simple =</span> <span class="cn">FALSE</span>, <span class="at">n.cores =</span> <span class="dv">1</span>){</span>
+<span id="cb6-253"><a href="helpers-functions.html#cb6-253" tabindex="-1"></a></span>
+<span id="cb6-254"><a href="helpers-functions.html#cb6-254" tabindex="-1"></a>    <span class="do">## logPiZ &lt;- mcmapply(function(xx,yy,mm){sapply(1:K, function(kk)</span></span>
+<span id="cb6-255"><a href="helpers-functions.html#cb6-255" tabindex="-1"></a>    <span class="do">##     mvnfast::dmvn(yy, mm[,kk], chol.Sig.list[[kk]],log=TRUE,isChol = TRUE)) },</span></span>
+<span id="cb6-256"><a href="helpers-functions.html#cb6-256" tabindex="-1"></a>    <span class="do">##     xx=X.list, yy = Y.list, mm=mu.list, mc.cores = min(n.cores, T),</span></span>
+<span id="cb6-257"><a href="helpers-functions.html#cb6-257" tabindex="-1"></a>    <span class="do">##     SIMPLIFY = FALSE)</span></span>
+<span id="cb6-258"><a href="helpers-functions.html#cb6-258" tabindex="-1"></a></span>
+<span id="cb6-259"><a href="helpers-functions.html#cb6-259" tabindex="-1"></a>    <span class="cf">if</span>(simple <span class="sc">==</span> <span class="cn">TRUE</span>){</span>
+<span id="cb6-260"><a href="helpers-functions.html#cb6-260" tabindex="-1"></a>        ll.vec <span class="ot">&lt;-</span> <span class="fu">sapply</span>(<span class="dv">1</span><span class="sc">:</span>nt.list[[<span class="dv">1</span>]], <span class="cf">function</span>(id)</span>
+<span id="cb6-261"><a href="helpers-functions.html#cb6-261" tabindex="-1"></a>            mvnfast<span class="sc">::</span><span class="fu">dmvn</span>(Y.list[[<span class="dv">1</span>]][id,],</span>
+<span id="cb6-262"><a href="helpers-functions.html#cb6-262" tabindex="-1"></a>                          mu.list[[<span class="dv">1</span>]][,Z.list[[<span class="dv">1</span>]][id]],</span>
+<span id="cb6-263"><a href="helpers-functions.html#cb6-263" tabindex="-1"></a>                          chol.Sig.list[[Z.list[[<span class="dv">1</span>]][id]]],</span>
+<span id="cb6-264"><a href="helpers-functions.html#cb6-264" tabindex="-1"></a>                          <span class="at">log=</span><span class="cn">TRUE</span>, <span class="at">isChol =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb6-265"><a href="helpers-functions.html#cb6-265" tabindex="-1"></a>        out <span class="ot">&lt;-</span> <span class="fu">sum</span>(ll.vec <span class="sc">*</span> W.list[[<span class="dv">1</span>]]) <span class="sc">/</span> nt.list[[<span class="dv">1</span>]]</span>
+<span id="cb6-266"><a href="helpers-functions.html#cb6-266" tabindex="-1"></a>    }<span class="cf">else</span>{</span>
+<span id="cb6-267"><a href="helpers-functions.html#cb6-267" tabindex="-1"></a>        ll.sums  <span class="ot">&lt;-</span>  parallel<span class="sc">::</span><span class="fu">mcmapply</span>(<span class="cf">function</span>(ww, xx,yy,mm,zz,nt){</span>
+<span id="cb6-268"><a href="helpers-functions.html#cb6-268" tabindex="-1"></a>            <span class="fu">sum</span>(ww <span class="sc">*</span> <span class="fu">sapply</span>(<span class="dv">1</span><span class="sc">:</span>nt,<span class="cf">function</span>(id)</span>
+<span id="cb6-269"><a href="helpers-functions.html#cb6-269" tabindex="-1"></a>                mvnfast<span class="sc">::</span><span class="fu">dmvn</span>(yy[id,], mm[,zz[id]], chol.Sig.list[[zz[id]]],</span>
+<span id="cb6-270"><a href="helpers-functions.html#cb6-270" tabindex="-1"></a>                              <span class="at">log=</span><span class="cn">TRUE</span>,<span class="at">isChol =</span> <span class="cn">TRUE</span>)) )},</span>
+<span id="cb6-271"><a href="helpers-functions.html#cb6-271" tabindex="-1"></a>            <span class="at">ww =</span> W.list, <span class="at">xx =</span> X.list, <span class="at">yy =</span> Y.list,</span>
+<span id="cb6-272"><a href="helpers-functions.html#cb6-272" tabindex="-1"></a>            <span class="at">mm=</span>mu.list, <span class="at">zz =</span> Z.list, <span class="at">nt =</span> nt.list,</span>
+<span id="cb6-273"><a href="helpers-functions.html#cb6-273" tabindex="-1"></a>            <span class="at">mc.cores =</span> <span class="fu">min</span>(n.cores, T), <span class="at">SIMPLIFY =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb6-274"><a href="helpers-functions.html#cb6-274" tabindex="-1"></a>        out <span class="ot">&lt;-</span> <span class="fu">Reduce</span>(<span class="st">&quot;+&quot;</span>,ll.sums)<span class="sc">/</span><span class="fu">sum</span>(<span class="fu">unlist</span>(nt.list))</span>
+<span id="cb6-275"><a href="helpers-functions.html#cb6-275" tabindex="-1"></a>    }</span>
+<span id="cb6-276"><a href="helpers-functions.html#cb6-276" tabindex="-1"></a>    <span class="fu">return</span>(out)</span>
+<span id="cb6-277"><a href="helpers-functions.html#cb6-277" tabindex="-1"></a>}</span></code></pre></div>
 <p>Here’s a function that makes a censoring box (dimdat by 2 matrix, where the
 first column is the lower cutoff, and the second column is the upper cutoff).</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="helpers-functions.html#cb7-1" tabindex="-1"></a><span class="co">#&#39;</span></span>
@@ -440,16 +467,6 @@ first column is the lower cutoff, and the second column is the upper cutoff).</p
 <span id="cb7-16"><a href="helpers-functions.html#cb7-16" tabindex="-1"></a>  <span class="do">## Modify censorship slightly</span></span>
 <span id="cb7-17"><a href="helpers-functions.html#cb7-17" tabindex="-1"></a>  Cbox <span class="ot">&lt;-</span> <span class="fu">cbind</span>(bounds.lower, bounds.upper)</span>
 <span id="cb7-18"><a href="helpers-functions.html#cb7-18" tabindex="-1"></a>}</span></code></pre></div>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="helpers-functions.html#cb8-1" tabindex="-1"></a><span class="co">#&#39; Helper function to print progress.</span></span>
-<span id="cb8-2"><a href="helpers-functions.html#cb8-2" tabindex="-1"></a><span class="co">#&#39; </span></span>
-<span id="cb8-3"><a href="helpers-functions.html#cb8-3" tabindex="-1"></a><span class="co">#&#39; @param iter Current iteration.</span></span>
-<span id="cb8-4"><a href="helpers-functions.html#cb8-4" tabindex="-1"></a><span class="co">#&#39; @param Nmc Total number of MCMC iterations.</span></span>
-<span id="cb8-5"><a href="helpers-functions.html#cb8-5" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb8-6"><a href="helpers-functions.html#cb8-6" tabindex="-1"></a><span class="co">#&#39; @export</span></span>
-<span id="cb8-7"><a href="helpers-functions.html#cb8-7" tabindex="-1"></a><span id='progress'>progress</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(iter, Nmc){</span>
-<span id="cb8-8"><a href="helpers-functions.html#cb8-8" tabindex="-1"></a>    <span class="fu">cat</span>(<span class="st">&quot;MCMC iteration: &quot;</span>, iter,</span>
-<span id="cb8-9"><a href="helpers-functions.html#cb8-9" tabindex="-1"></a>        <span class="st">&quot;.&quot;</span>, <span class="fu">round</span>(iter<span class="sc">/</span>Nmc,<span class="dv">3</span>)<span class="sc">*</span><span class="dv">100</span>, <span class="st">&quot;% is done&quot;</span>, <span class="at">fill =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb8-10"><a href="helpers-functions.html#cb8-10" tabindex="-1"></a>}</span></code></pre></div>
 
 </div>
             </section>
