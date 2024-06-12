@@ -324,14 +324,6 @@ flowtrend) model objects.)</p>
 <span id="cb12-13"><a href="syntheticdata.html#cb12-13" tabindex="-1"></a></span>
 <span id="cb12-14"><a href="syntheticdata.html#cb12-14" tabindex="-1"></a><span class="do">## Form the censored &quot;box&quot;</span></span>
 <span id="cb12-15"><a href="syntheticdata.html#cb12-15" tabindex="-1"></a>Cbox <span class="ot">=</span> <span class="fu">rbind</span>(<span class="fu">c</span>(<span class="sc">-</span><span class="cn">Inf</span>, <span class="fl">0.5</span>)) </span></code></pre></div>
-<pre><code>## Warning: The `x` argument of `as_tibble.matrix()` must have unique column names if `.name_repair` is omitted as of tibble 2.0.0.
-## ℹ Using compatibility `.name_repair`.
-## ℹ The deprecated feature was likely used in the flowtrend package.
-##   Please report the issue to the authors.
-## This warning is displayed once every 8 hours.
-## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated.</code></pre>
-<p><img src="_main_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
-<p><img src="_main_files/figure-html/unnamed-chunk-7-2.png" width="672" /></p>
 <p>(TODO: Maybe we will use fewer than 40 coefficients. Let’s get the top 10
 coefficients by importance, and only use them.)</p>
 

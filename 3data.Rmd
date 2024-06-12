@@ -166,7 +166,7 @@ gen_1d <- function(true_model, nt = 1000){
 
 Testing this function out.
 
-```{r}
+```{r, eval = FALSE}
 ## Generate data
 set.seed(100)
 

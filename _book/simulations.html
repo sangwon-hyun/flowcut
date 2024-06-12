@@ -170,15 +170,21 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Refer back to the data generation in @ref{syntheticdata}. We will be
 top-censoring the data at 0.5. Before censoring, this is what the data looks
 like.</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="simulations.html#cb15-1" tabindex="-1"></a><span class="do">## Load the &quot;original&quot; model</span></span>
-<span id="cb15-2"><a href="simulations.html#cb15-2" tabindex="-1"></a>orig_model <span class="ot">=</span> <span class="fu">readRDS</span>(<span class="at">file=</span><span class="fu">file.path</span>(<span class="st">&quot;~/repos/flowcut/inst/output&quot;</span>, <span class="st">&quot;orig_model.RDS&quot;</span>))</span>
-<span id="cb15-3"><a href="simulations.html#cb15-3" tabindex="-1"></a></span>
-<span id="cb15-4"><a href="simulations.html#cb15-4" tabindex="-1"></a><span class="do">## Generate data</span></span>
-<span id="cb15-5"><a href="simulations.html#cb15-5" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">100</span>)</span>
-<span id="cb15-6"><a href="simulations.html#cb15-6" tabindex="-1"></a>isignal <span class="ot">=</span> <span class="dv">8</span></span>
-<span id="cb15-7"><a href="simulations.html#cb15-7" tabindex="-1"></a>new_model <span class="ot">=</span> flowcut<span class="sc">::</span><a href='syntheticdata.html#make_model'>make_model</a>(orig_model, isignal)</span>
-<span id="cb15-8"><a href="simulations.html#cb15-8" tabindex="-1"></a>ylist <span class="ot">=</span> flowcut<span class="sc">::</span><a href='syntheticdata.html#gen_1d'>gen_1d</a>(new_model, <span class="at">nt =</span> <span class="dv">100</span>)</span>
-<span id="cb15-9"><a href="simulations.html#cb15-9" tabindex="-1"></a>flowtrend<span class="sc">::</span><span class="fu">plot_1d</span>(ylist, <span class="at">obj =</span> new_model)</span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="simulations.html#cb14-1" tabindex="-1"></a><span class="do">## Load the &quot;original&quot; model</span></span>
+<span id="cb14-2"><a href="simulations.html#cb14-2" tabindex="-1"></a>orig_model <span class="ot">=</span> <span class="fu">readRDS</span>(<span class="at">file=</span><span class="fu">file.path</span>(<span class="st">&quot;~/repos/flowcut/inst/output&quot;</span>, <span class="st">&quot;orig_model.RDS&quot;</span>))</span>
+<span id="cb14-3"><a href="simulations.html#cb14-3" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="simulations.html#cb14-4" tabindex="-1"></a><span class="do">## Generate data</span></span>
+<span id="cb14-5"><a href="simulations.html#cb14-5" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">100</span>)</span>
+<span id="cb14-6"><a href="simulations.html#cb14-6" tabindex="-1"></a>isignal <span class="ot">=</span> <span class="dv">8</span></span>
+<span id="cb14-7"><a href="simulations.html#cb14-7" tabindex="-1"></a>new_model <span class="ot">=</span> flowcut<span class="sc">::</span><a href='syntheticdata.html#make_model'>make_model</a>(orig_model, isignal)</span>
+<span id="cb14-8"><a href="simulations.html#cb14-8" tabindex="-1"></a>ylist <span class="ot">=</span> flowcut<span class="sc">::</span><a href='syntheticdata.html#gen_1d'>gen_1d</a>(new_model, <span class="at">nt =</span> <span class="dv">100</span>)</span>
+<span id="cb14-9"><a href="simulations.html#cb14-9" tabindex="-1"></a>flowtrend<span class="sc">::</span><span class="fu">plot_1d</span>(ylist, <span class="at">obj =</span> new_model)</span></code></pre></div>
+<pre><code>## Warning: The `x` argument of `as_tibble.matrix()` must have unique column names if `.name_repair` is omitted as of tibble 2.0.0.
+## ℹ Using compatibility `.name_repair`.
+## ℹ The deprecated feature was likely used in the flowtrend package.
+##   Please report the issue to the authors.
+## This warning is displayed once every 8 hours.
+## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated.</code></pre>
 <p><img src="_main_files/figure-html/unnamed-chunk-9-1.png" width="576" /></p>
 <p>After censoring, this is it.</p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="simulations.html#cb16-1" tabindex="-1"></a><span class="do">## Censor it</span></span>
