@@ -218,40 +218,27 @@ run.Gibbs.fast <- function(ylist, countslist, X,
         ## n.ell <- Rfast::rowsums(nt.ell)
         
         for(ell in 1:numclust){ 
-            mm0t <- parallel::mcmapply(function(xx,yy,zz,ww){
-                Rfast::Crossprod(as.matrix(ww[zz==ell]),
-                                 Rfast::eachrow(yy[zz==ell,,drop=FALSE],
-                                                beta.ell[,-1,ell] %*% xx,"-"))},
-                xx=X.list, yy = ylist, zz = Z.list, ww = W.list,
-                SIMPLIFY = TRUE,
-                mc.cores = n.cores)
-            if(dimdat==1){
-                mm0 <- sum(mm0t)/m.ell[ell] 
-            }else{
-                mm0 <- Rfast::rowsums(mm0t)/m.ell[ell] 
-            }
-            beta.ell[,1,ell] <- MASS::mvrnorm(1, mm0, Sig.ell[,,ell]/m.ell[ell])
-            
-            SX.ell <- XTX/gg + Reduce('+', Map(`*`, XtXtT, mt.ell[ell,]))  
-            inv.SX.ell <- Rfast::spdinv(SX.ell) ## p x p
+
+            ### sample beta (including the intercept) jointly
+            SX.ell <- XTX0/gg + Reduce('+', Map(`*`, XtXtTp, mt.ell[ell,]))
+            inv.SX.ell <- Rfast::spdinv(SX.ell) ## (p+1) x (p+1)
             Sy.ell <- parallel::mcmapply(function(yy,zz,ww){
                 Rfast::Crossprod(as.matrix(ww[zz==ell]),
-                                 Rfast::eachrow(yy[zz==ell,,drop=FALSE],
-                                                beta.ell[,1,ell],"-"))},
+                                 yy[zz==ell,,drop=FALSE])},
                 ww = W.list, yy = ylist, zz = Z.list, SIMPLIFY = TRUE,
                 mc.cores = n.cores)
             if(dimdat==1){
-                Sxy.ell <-  X %*% as.matrix(Sy.ell)  ## p x d
+                Sxy.ell <-  Xp %*% as.matrix(Sy.ell)  ## (p+1) x d
             }else{
-                Sxy.ell <-  Rfast::Tcrossprod(X, Sy.ell)  ## p x d
+                Sxy.ell <-  Rfast::Tcrossprod(Xp, Sy.ell)  ## (p+1) x d
             }
-            beta.ell[,-1,ell] <- rmatnorm.fast(M = crossprod(Sxy.ell,inv.SX.ell), 
+            beta.ell[,,ell] <- rmatnorm.fast(M = crossprod(Sxy.ell,inv.SX.ell), 
                                                U = Sig.ell[,,ell], 
                                                V = inv.SX.ell)
-            
+
             sse <- parallel::mcmapply(function(ww,xx,yy,zz) {
                 wcrossprod.fast(Rfast::eachrow(as.matrix(yy[zz==ell,,drop=FALSE]),
-                                               beta.ell[,,ell]%*%xx, '-'),
+                                                beta.ell[,,ell]%*%xx, '-'),
                                 ww[zz==ell], weighting = TRUE)},
                 xx = Xp.list, yy = ylist, zz=Z.list, ww = W.sq.list, 
                 SIMPLIFY = FALSE,
