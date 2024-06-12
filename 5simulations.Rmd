@@ -4,7 +4,7 @@ Refer back to the data generation in \@ref{syntheticdata}. We will be
 top-censoring the data at 0.5. Before censoring, this is what the data looks
 like.
 
-```{r, fig.width = 6, fig.height = 4}
+```{r, fig.width = 6, fig.height = 4, eval = FALSE}
 ## Load the "original" model
 orig_model = readRDS(file=file.path("~/repos/flowcut/inst/output", "orig_model.RDS"))
 
@@ -19,7 +19,7 @@ flowtrend::plot_1d(ylist, obj = new_model)
 After censoring, this is it.
 
 
-```{r, fig.width = 6, fig.height = 4}
+```{r, fig.width = 6, fig.height = 4, eval = FALSE}
 ## Censor it
 ylist = lapply(ylist, function(y){
   y = pmin(y, 0.5)
@@ -30,7 +30,7 @@ flowtrend::plot_1d(ylist, obj = new_model)
 We need to specify a few things (1) like the censoring limits `Cbox` and (2)
 `countslist` before running the MCMC.
 
-```{r}
+```{r, eval = FALSE}
 ## Form the censoring "box"
 Cbox = rbind(c(-Inf, 0.5)) 
 
