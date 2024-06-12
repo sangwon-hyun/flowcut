@@ -65,6 +65,8 @@ run.Gibbs.fast <- function(ylist, countslist, X,
   XTXp <- Xp%*%t(Xp)
   inv.XTX <- Rfast::spdinv(XTX)
   inv.XTXp <- Rfast::spdinv(XTXp)
+  X0 <- rbind(0, X) 
+  XTX0 <- X0%*%t(X0)
   ##    Y.grand.mean <- Rfast::colmeans(do.call(rbind,ylist))
 
   ## Build censored box
