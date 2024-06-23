@@ -47,18 +47,22 @@ run.Gibbs.fast <- function(ylist, countslist, X,
                            tol = 1/1e8,
                            n.cores = 1){
 
-  ## Basic setup
-  TT <- length(ylist)
-  p <- dim(X)[1]
-  dimdat = ncol(ylist[[1]])
-  ntlist = sapply(ylist, nrow)
-  NN <- sum(ntlist)
-  tt.impute <- min(20,floor(Nburn/5))
-  ylist.raw <- ylist ## store raw ylist 
-  ## n.cores <- detectCores()
-  n.cores = min(n.cores, TT)
-
-  ##### pre computed quantities
+    ## Basic setup
+    TT <- length(ylist)
+    p <- dim(X)[1]
+    dimdat = ncol(ylist[[1]])
+    ntlist = sapply(ylist, nrow)
+    NN <- sum(ntlist)
+    tt.impute <- min(20,floor(Nburn/5))
+    n.cores = min(n.cores, TT)
+    
+    dat.info <- list(ylist = ylist, 
+                     X= X,
+                     countslist = countslist,
+                     numclust = numclust,
+                     Cbox = Cbox,
+                     gg = gg) ## store raw data 
+   ##### pre computed quantities
     X.list <- as.list(as.data.frame(X))
     Xp <- rbind(1,X) 
     Xp.list <- as.list(as.data.frame(Xp))
@@ -71,49 +75,48 @@ run.Gibbs.fast <- function(ylist, countslist, X,
     mt <- lapply(W.list, sum)%>%unlist()
     MM <- sum(mt) 
     
-  XtXtT <- lapply(X.list,function(x) x%*%t(x))
-  XtXtTp <- lapply(Xp.list, function(x) x%*%t(x))
-  ggXtXtTp <- lapply(Xp.list, function(x) x%*%t(x)/gg)
-  XTX <- X%*%t(X)
-  XTXp <- Xp%*%t(Xp)
-  inv.XTX <- Rfast::spdinv(XTX)
-  inv.XTXp <- Rfast::spdinv(XTXp)
-  X0 <- rbind(0, X) 
-  XTX0 <- X0%*%t(X0)
-  ##    Y.grand.mean <- Rfast::colmeans(do.call(rbind,ylist))
-
+    XtXtT <- lapply(X.list,function(x) x%*%t(x))
+    XtXtTp <- lapply(Xp.list, function(x) x%*%t(x))
+    ggXtXtTp <- lapply(Xp.list, function(x) x%*%t(x)/gg)
+    XTX <- X%*%t(X)
+    XTXp <- Xp%*%t(Xp)
+    inv.XTX <- Rfast::spdinv(XTX)
+    inv.XTXp <- Rfast::spdinv(XTXp)
+    X0 <- rbind(0, X) 
+    XTX0 <- X0%*%t(X0)
+    
   ## Build censored box
-  if(!is.null(Cbox)){
-      Censor.list <- parallel::mclapply(ylist, function(x) censorIndicator(x,Cbox),
-                              mc.cores = n.cores)
-      censor.01.list <- parallel::mclapply(Censor.list, function(x)
-          apply(x,1, function(xx)
-              sum(abs(xx))>0), mc.cores = n.cores)
-      censored.ylist <- parallel::mcmapply(function(yy,c01) {yy[c01==TRUE,,drop=FALSE]},
-                                  yy = ylist, c01 = censor.01.list,
-                                  mc.cores = n.cores)
-      censored.C.list <- parallel::mcmapply(function(c01,cc){cc[c01==TRUE,,drop=FALSE]},
-                                  c01 = censor.01.list, cc=Censor.list,
-                                  mc.cores = n.cores)
-      censored.W.list <- parallel::mcmapply(function(c01,ww){ww[c01==TRUE]},
-                                  c01 = censor.01.list, w=W.list,
-                                  mc.cores = n.cores)  
-      ntlist.censor <- sapply(1:TT,function(tt) sum(censor.01.list[[tt]])) 
-      samp.region.list <- lapply(1:TT, function(tt){
-          c01 <- censor.01.list[[tt]]
-          cc <- Censor.list[[tt]]
-          ## if(verbose){
-          ##    print(paste("Time=",tt,", censored obs.= ",sum(c01==TRUE),
-                          ## ", censored ratio =", round(sum(c01==TRUE)/ntlist[tt],2), sep=" ")) 
-          ##}
-          if(sum(c01==TRUE)>1){
-              apply(cc[c01==TRUE,,drop=FALSE],1,function(xx) sample.region(xx,Cbox))
-          }else if(sum(c01==TRUE)==1){
-              matrix(sample.region(cc[c01==TRUE,,drop=FALSE],Cbox),ncol=1)
-          }else{
-              NULL
-          }}) 
-  }
+    if(!is.null(Cbox)){
+        Censor.list <- parallel::mclapply(ylist, function(x) censorIndicator(x,Cbox),
+                                          mc.cores = n.cores)
+        censor.01.list <- parallel::mclapply(Censor.list, function(x)
+            apply(x,1, function(xx)
+                sum(abs(xx))>0), mc.cores = n.cores)
+        censored.ylist <- parallel::mcmapply(function(yy,c01) {yy[c01==TRUE,,drop=FALSE]},
+                                             yy = ylist, c01 = censor.01.list,
+                                             mc.cores = n.cores)
+        censored.C.list <- parallel::mcmapply(function(c01,cc){cc[c01==TRUE,,drop=FALSE]},
+                                              c01 = censor.01.list, cc=Censor.list,
+                                              mc.cores = n.cores)
+        censored.W.list <- parallel::mcmapply(function(c01,ww){ww[c01==TRUE]},
+                                              c01 = censor.01.list, w=W.list,
+                                              mc.cores = n.cores)  
+        ntlist.censor <- sapply(censor.01.list, sum) 
+        samp.region.list <- lapply(1:TT, function(tt){
+            c01 <- censor.01.list[[tt]]
+            cc <- Censor.list[[tt]]
+            ## if(verbose){
+            ##    print(paste("Time=",tt,", censored obs.= ",sum(c01==TRUE),
+            ## ", censored ratio =", round(sum(c01==TRUE)/ntlist[tt],2), sep=" ")) 
+            ##}
+            if(sum(c01==TRUE)>1){
+                apply(cc[c01==TRUE,,drop=FALSE],1,function(xx) sample.region(xx,Cbox))
+            }else if(sum(c01==TRUE)==1){
+                matrix(sample.region(cc[c01==TRUE,,drop=FALSE],Cbox),ncol=1)
+            }else{
+                NULL
+            }}) 
+    }
 
 ##### prior specifications
     if(is.null(user.prior)){
@@ -139,7 +142,8 @@ run.Gibbs.fast <- function(ylist, countslist, X,
         beta.ell <-  warm.start$beta 
         gamma.ell <- warm.start$gamma
         Sig.ell <- warm.start$Sigma  
-        
+        invNugget <- warm.start$invNugget
+
         Nburn <- 0 ## no need of burn-in 
         tt.impute <- min(25,floor(Nburn/5)) 
     }else{
@@ -165,6 +169,7 @@ run.Gibbs.fast <- function(ylist, countslist, X,
     burn.beta <- array(0,c(dimdat,p+1,numclust,Nburn))
     burn.Sigma <- array(0,c(dimdat,dimdat,numclust,Nburn)) 
     burn.gamma <- array(0,c(p+1,numclust-1,Nburn))
+    burn.invNugget  <- rep(NA, Nburn) 
     ## burn.Omega <- array(0,c(p+1,p+1,Nburn))
     burn.avgloglik <- rep(NA, Nburn)
     
@@ -174,6 +179,7 @@ run.Gibbs.fast <- function(ylist, countslist, X,
     pos.Sigma <- array(0,c(dimdat,dimdat,numclust,Nmc)) 
     pos.gamma <- array(0,c(p+1,numclust-1,Nmc))
     ##pos.Omega <- array(0,c(p+1,p+1,Nmc))
+    pos.invNugget <- rep(NA, Nmc) 
     pos.avgloglik <- rep(NA, Nmc) 
     ## if(is.null(Cbox)==FALSE){
     ##     pos.imputedimdat.Y <- array(0,c(dimdat,sum(nt.censor),Nmc))
@@ -389,24 +395,20 @@ run.Gibbs.fast <- function(ylist, countslist, X,
             ## collecting posterior samples 
 ################################################ 
         
-        if(jj >Nburn){
-###            pos.beta0[,,jj-Nburn] <- beta0.ell
-            pos.beta[,,,jj-Nburn] <- beta.ell
-            pos.Sigma[,,,jj-Nburn] <- Sig.ell
-            pos.gamma[,,jj-Nburn] <- gamma.ell 
-##            pos.Omega[,,,jj-Nburn] <- Omega.ell
-##            pos.Omega[,,jj-Nburn] <- Omega
-            pos.avgloglik[jj-Nburn] <- loglik
+            if(jj >Nburn){
+                pos.beta[,,,jj-Nburn] <- beta.ell
+                pos.Sigma[,,,jj-Nburn] <- Sig.ell
+                pos.gamma[,,jj-Nburn] <- gamma.ell
+                pos.invNugget[ jj-Nburn ]  <- invNugget       
+                pos.avgloglik[jj-Nburn] <- loglik
             ## if(is.null(Cbox)==FALSE){
             ##     pos.imputed.Y[,,jj-Nburn] <- matrix(unlist(imputed.ylist),nrow = d) 
             ## }
         } else{
-###            burn.beta0[,,jj] <- beta0.ell
             burn.beta[,,,jj] <- beta.ell
             burn.Sigma[,,,jj] <- Sig.ell
-            burn.gamma[,,jj] <- gamma.ell 
-##            burn.Omega[,,,jj] <- Omega.ell   
-##            burn.Omega[,,jj] <- Omega 
+            burn.gamma[,,jj] <- gamma.ell
+            burn.invNugget[jj]  <- invNugget 
             burn.avgloglik[jj] <- loglik
         }    
     }
@@ -422,17 +424,28 @@ run.Gibbs.fast <- function(ylist, countslist, X,
         print("time cost per iteration, in seconds") 
         print((proc.time()-ptm)/(Nburn+Nmc - tt.impute))
     }
-  
 
+    last.draw <- list(last.ylist = ylist, 
+                      last.Z.list = Z.list,
+                      last.gamma = gamma.ell,
+                      ## last.Omega = Omega,  
+                      last.beta = beta.ell, 
+                      last.Sigma = Sig.ell,
+                      last.invNugget = invNugget)
+    
     if(is.null(Cbox)){
         ret <- list( ## burn.beta0=burn.beta0,
             burn.beta=burn.beta,burn.Sigma=burn.Sigma,
             burn.gamma=burn.gamma, ## burn.Omega=burn.Omega,
             ## pos.beta0=pos.beta0,
-            pos.beta=pos.beta,pos.Sigma=pos.Sigma,
+            pos.beta=pos.beta, pos.Sigma=pos.Sigma,
             pos.gamma=pos.gamma, ## pos.Omega=pos.Omega,
             burn.avgloglik=burn.avgloglik,
             pos.avgloglik=pos.avgloglik,
+            burn.invNugget = burn.invNugget,
+            pos.invNugget=pos.invNugget,
+            dat.info = dat.info , 
+            last.draw = last.draw, 
             prior.spec = prior.spec.list)
     }else{
         ret <- list( ## burn.beta0 = burn.beta0,
@@ -446,15 +459,12 @@ run.Gibbs.fast <- function(ylist, countslist, X,
             pos.gamma = pos.gamma,
             ## pos.Omega = pos.Omega,
             pos.imputed.Y = do.call(rbind, imputed.ylist),
+            burn.invNugget = burn.invNugget,
+            pos.invNugget=pos.invNugget,
             burn.avgloglik = burn.avgloglik,
             pos.avgloglik = pos.avgloglik,
-            raw.ylist = ylist.raw, 
-            last.ylist = ylist,
-            last.Z.list = Z.list,
-            last.gamma = gamma.ell,
-            ## last.Omega = Omega,
-            last.beta = beta.ell, 
-            last.Sigma = Sig.ell,
+            dat.info = dat.info , 
+            last.draw = last.draw,
             prior.spec = prior.spec.list)
     }
     return(ret)

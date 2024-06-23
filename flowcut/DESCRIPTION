@@ -7,7 +7,7 @@ Description: Time-smooth mixture modeling for flow cytometry data.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
 Depends: 
     ggplot2,
     MASS,
@@ -22,4 +22,4 @@ Depends:
 Imports: 
     magrittr
 LitrVersionUsed: 0.9.0
-LitrId: 86107824b3ead86ce813974c8a63c233
+LitrId: dfe546b90efde2751afb334224b9c523
