@@ -1,61 +1,33 @@
 <!DOCTYPE html>
 <html lang="" xml:lang="">
 <head>
-
-  <meta charset="utf-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>4 Generating synthetic data | Creating the flowcut R package</title>
-  <meta name="description" content="4 Generating synthetic data | Creating the flowcut R package" />
-  <meta name="generator" content="bookdown 0.39 and GitBook 2.6.7" />
-
-  <meta property="og:title" content="4 Generating synthetic data | Creating the flowcut R package" />
-  <meta property="og:type" content="book" />
-  
-  
-  
-
-  <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="4 Generating synthetic data | Creating the flowcut R package" />
-  
-  
-  
-
-<meta name="author" content="Sheng Jiang, Sangwon Hyun" />
-
-
-<meta name="date" content="2024-06-12" />
-
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-  
-  
-<link rel="prev" href="helpers-functions.html"/>
-<link rel="next" href="gibbs-sampler.html"/>
-<script src="libs/header-attrs-2.27/header-attrs.js"></script>
-<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
-<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
-
-
-
-
-
-
-
-
-<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
-<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
-<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
-
-
-<style type="text/css">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>4 Generating synthetic data | Creating the flowcut R package</title>
+<meta name="description" content="4 Generating synthetic data | Creating the flowcut R package">
+<meta name="generator" content="bookdown 0.39 and GitBook 2.6.7">
+<meta property="og:title" content="4 Generating synthetic data | Creating the flowcut R package">
+<meta property="og:type" content="book">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="4 Generating synthetic data | Creating the flowcut R package">
+<meta name="author" content="Sheng Jiang, Sangwon Hyun">
+<meta name="date" content="2024-06-23">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<link rel="prev" href="helpers-functions.html">
+<link rel="next" href="gibbs-sampler.html">
+<script src="libs/header-attrs-2.27.1/header-attrs.js"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script><link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet">
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet">
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet">
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet">
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet">
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet">
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet">
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet">
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet">
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script><style type="text/css">
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
@@ -119,14 +91,14 @@ code span.va { color: #19177c; } /* Variable */
 code span.vs { color: #4070a0; } /* VerbatimString */
 code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
-
 <style type="text/css">
   
   div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 </style>
-
+<style type="text/css">fieldset.chunkfield {border:1px dotted black;padding-bottom: 0px;padding-top: 0px;margin:0 2px;padding:.35em .625em .75em}
+    legend.chunklegend {padding:0;width:auto;border:0; border-bottom: none; margin-bottom:0}
+    </style>
 </head>
-
 <body>
 
 
@@ -134,24 +106,22 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
 
     <div class="book-summary">
-      <nav role="navigation">
-
-<ul class="summary">
+      <nav role="navigation"><ul class="summary">
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
 <li class="chapter" data-level="2" data-path="package-setup.html"><a href="package-setup.html"><i class="fa fa-check"></i><b>2</b> Package setup</a></li>
 <li class="chapter" data-level="3" data-path="helpers-functions.html"><a href="helpers-functions.html"><i class="fa fa-check"></i><b>3</b> Helpers functions</a></li>
 <li class="chapter" data-level="4" data-path="syntheticdata.html"><a href="syntheticdata.html"><i class="fa fa-check"></i><b>4</b> Generating synthetic data</a></li>
-<li class="chapter" data-level="5" data-path="gibbs-sampler.html"><a href="gibbs-sampler.html"><i class="fa fa-check"></i><b>5</b> Gibbs sampler</a>
+<li class="chapter" data-level="5" data-path="gibbs-sampler.html">
+<a href="gibbs-sampler.html"><i class="fa fa-check"></i><b>5</b> Gibbs sampler</a>
 <ul>
 <li class="chapter" data-level="5.1" data-path="gibbs-sampler.html"><a href="gibbs-sampler.html#the-main-gibbs-sampler"><i class="fa fa-check"></i><b>5.1</b> The main Gibbs sampler</a></li>
-</ul></li>
+</ul>
+</li>
 <li class="chapter" data-level="6" data-path="simulations.html"><a href="simulations.html"><i class="fa fa-check"></i><b>6</b> Simulations</a></li>
 <li class="chapter" data-level="7" data-path="real-data-example.html"><a href="real-data-example.html"><i class="fa fa-check"></i><b>7</b> Real data example</a></li>
 <li class="chapter" data-level="8" data-path="documenting-the-package-and-building.html"><a href="documenting-the-package-and-building.html"><i class="fa fa-check"></i><b>8</b> Documenting the package and building</a></li>
-</ul>
-
-      </nav>
-    </div>
+</ul></nav>
+</div>
 
     <div class="book-body">
       <div class="body-inner">
@@ -164,9 +134,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
         <div class="page-wrapper" tabindex="-1" role="main">
           <div class="page-inner">
 
-            <section class="normal" id="section-">
-<div id="syntheticdata" class="section level1 hasAnchor" number="4">
-<h1><span class="header-section-number">4</span> Generating synthetic data<a href="syntheticdata.html#syntheticdata" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+            <section class="normal" id="section-"><div id="syntheticdata" class="section level1 hasAnchor" number="4">
+<h1>
+<span class="header-section-number">4</span> Generating synthetic data<a href="syntheticdata.html#syntheticdata" class="anchor-section" aria-label="Anchor link to header"></a>
+</h1>
 <p>Here are some simple functions to generate 1d data. This code uses data from the
 flowmix AOAS paper.</p>
 <p>(More generally, the MCMC function takes mainly <code>ylist</code>, <code>countslist</code>, and <code>X</code>
@@ -182,13 +153,13 @@ boundaries towards the center. (not done yet!)</p></li>
 <p>(The two data files
 <code>MGL1704-hourly-paper-1d-diam.RDS</code>, <code>1d-cvres.rds</code>, which can be downloaded from the
 <a href="https://github.com/sangwon-hyun/flowmix/tree/master/paper-data">flowmix R package</a>, is assumed to be in <code>inst/data</code> from the base directory of the repository.)</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="syntheticdata.html#cb8-1" tabindex="-1"></a><span class="do">## dat_1d = readRDS(&quot;~/Downloads/paper-data/MGL1704-hourly-paper-1d-diam.RDS&quot;)</span></span>
-<span id="cb8-2"><a href="syntheticdata.html#cb8-2" tabindex="-1"></a><span class="do">## res = readRDS(&quot;~/Downloads/paper-data/1d-cvres.rds&quot;) %&gt;% .$bestres</span></span>
-<span id="cb8-3"><a href="syntheticdata.html#cb8-3" tabindex="-1"></a>datadir <span class="ot">=</span> <span class="st">&quot;../inst/data&quot;</span></span>
-<span id="cb8-4"><a href="syntheticdata.html#cb8-4" tabindex="-1"></a>dat_1d <span class="ot">=</span> <span class="fu">readRDS</span>(<span class="fu">file.path</span>(datadir, <span class="st">&quot;MGL1704-hourly-paper-1d-diam.RDS&quot;</span>))</span>
-<span id="cb8-5"><a href="syntheticdata.html#cb8-5" tabindex="-1"></a>res <span class="ot">=</span> <span class="fu">readRDS</span>(<span class="fu">file.path</span>(datadir, <span class="st">&quot;1d-cvres.rds&quot;</span>)) <span class="sc">%&gt;%</span> .<span class="sc">$</span>bestres</span>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="syntheticdata.html#cb8-1" tabindex="-1"></a><span class="do">## dat_1d = readRDS("~/Downloads/paper-data/MGL1704-hourly-paper-1d-diam.RDS")</span></span>
+<span id="cb8-2"><a href="syntheticdata.html#cb8-2" tabindex="-1"></a><span class="do">## res = readRDS("~/Downloads/paper-data/1d-cvres.rds") %&gt;% .$bestres</span></span>
+<span id="cb8-3"><a href="syntheticdata.html#cb8-3" tabindex="-1"></a>datadir <span class="ot">=</span> <span class="st">"../inst/data"</span></span>
+<span id="cb8-4"><a href="syntheticdata.html#cb8-4" tabindex="-1"></a>dat_1d <span class="ot">=</span> <span class="fu">readRDS</span>(<span class="fu">file.path</span>(datadir, <span class="st">"MGL1704-hourly-paper-1d-diam.RDS"</span>))</span>
+<span id="cb8-5"><a href="syntheticdata.html#cb8-5" tabindex="-1"></a>res <span class="ot">=</span> <span class="fu">readRDS</span>(<span class="fu">file.path</span>(datadir, <span class="st">"1d-cvres.rds"</span>)) <span class="sc">%&gt;%</span> .<span class="sc">$</span>bestres</span>
 <span id="cb8-6"><a href="syntheticdata.html#cb8-6" tabindex="-1"></a></span>
-<span id="cb8-7"><a href="syntheticdata.html#cb8-7" tabindex="-1"></a><span class="do">## Take two clusters&#39; model parameters (Picoeukaryotes and Prochlorococcus)</span></span>
+<span id="cb8-7"><a href="syntheticdata.html#cb8-7" tabindex="-1"></a><span class="do">## Take two clusters' model parameters (Picoeukaryotes and Prochlorococcus)</span></span>
 <span id="cb8-8"><a href="syntheticdata.html#cb8-8" tabindex="-1"></a>orig_model <span class="ot">=</span> <span class="fu">list</span>()</span>
 <span id="cb8-9"><a href="syntheticdata.html#cb8-9" tabindex="-1"></a>orig_model<span class="sc">$</span>alpha <span class="ot">=</span> res<span class="sc">$</span>alpha[<span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">4</span>),,drop<span class="ot">=</span><span class="cn">FALSE</span>]</span>
 <span id="cb8-10"><a href="syntheticdata.html#cb8-10" tabindex="-1"></a>orig_model<span class="sc">$</span>beta <span class="ot">=</span> res<span class="sc">$</span>beta[<span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">4</span>)]</span>
@@ -200,11 +171,11 @@ boundaries towards the center. (not done yet!)</p></li>
 <span id="cb8-16"><a href="syntheticdata.html#cb8-16" tabindex="-1"></a><span class="do">## Covariates are the same</span></span>
 <span id="cb8-17"><a href="syntheticdata.html#cb8-17" tabindex="-1"></a>orig_model<span class="sc">$</span>X <span class="ot">=</span> res<span class="sc">$</span>X</span>
 <span id="cb8-18"><a href="syntheticdata.html#cb8-18" tabindex="-1"></a></span>
-<span id="cb8-19"><a href="syntheticdata.html#cb8-19" tabindex="-1"></a><span class="do">## Save the &quot;original model&quot;</span></span>
-<span id="cb8-20"><a href="syntheticdata.html#cb8-20" tabindex="-1"></a><span class="do">## saveRDS(orig_model, file=file.path(&quot;~/repos/flowcut/inst/output&quot;, &quot;orig_model.RDS&quot;))</span></span>
-<span id="cb8-21"><a href="syntheticdata.html#cb8-21" tabindex="-1"></a><span class="do">## outputdir = &quot;~/repos/flowcut/inst/output&quot;</span></span>
-<span id="cb8-22"><a href="syntheticdata.html#cb8-22" tabindex="-1"></a>outputdir <span class="ot">=</span> <span class="st">&quot;../inst/data&quot;</span></span>
-<span id="cb8-23"><a href="syntheticdata.html#cb8-23" tabindex="-1"></a><span class="fu">saveRDS</span>(orig_model, <span class="at">file=</span><span class="fu">file.path</span>(outputdir, <span class="st">&quot;orig_model.RDS&quot;</span>))</span></code></pre></div>
+<span id="cb8-19"><a href="syntheticdata.html#cb8-19" tabindex="-1"></a><span class="do">## Save the "original model"</span></span>
+<span id="cb8-20"><a href="syntheticdata.html#cb8-20" tabindex="-1"></a><span class="do">## saveRDS(orig_model, file=file.path("~/repos/flowcut/inst/output", "orig_model.RDS"))</span></span>
+<span id="cb8-21"><a href="syntheticdata.html#cb8-21" tabindex="-1"></a><span class="do">## outputdir = "~/repos/flowcut/inst/output"</span></span>
+<span id="cb8-22"><a href="syntheticdata.html#cb8-22" tabindex="-1"></a>outputdir <span class="ot">=</span> <span class="st">"../inst/data"</span></span>
+<span id="cb8-23"><a href="syntheticdata.html#cb8-23" tabindex="-1"></a><span class="fu">saveRDS</span>(orig_model, <span class="at">file=</span><span class="fu">file.path</span>(outputdir, <span class="st">"orig_model.RDS"</span>))</span></code></pre></div>
 <p>Next, we’ll make several versions of this model with <code>isignal</code> from 0 to 10; (1)
 <code>isignal=0</code> means the means are completely overlapping. (2) <code>isignal=10</code> is the
 highest signal size (gap between the two means).</p>
@@ -212,15 +183,15 @@ highest signal size (gap between the two means).</p>
 true <span class="math inline">\(\alpha\)</span> coefficients are zero.</p>
 <p>(TODO: Check object classes and restrict to flowmix or flowcut (but not
 flowtrend) model objects.)</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="syntheticdata.html#cb9-1" tabindex="-1"></a><span class="co">#&#39; From an original set of model parameters (|true_model|),</span></span>
-<span id="cb9-2"><a href="syntheticdata.html#cb9-2" tabindex="-1"></a><span class="co">#&#39; generate synthetic 2-cluster 1-dimensional data with equal probabilities.</span></span>
-<span id="cb9-3"><a href="syntheticdata.html#cb9-3" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb9-4"><a href="syntheticdata.html#cb9-4" tabindex="-1"></a><span class="co">#&#39; @param isignal 0 to 10, which generates the means.</span></span>
-<span id="cb9-5"><a href="syntheticdata.html#cb9-5" tabindex="-1"></a><span class="co">#&#39; @param orig_model Original model of class flowmix or flowcut; a list that contains alpha, beta and TT.</span></span>
-<span id="cb9-6"><a href="syntheticdata.html#cb9-6" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb9-7"><a href="syntheticdata.html#cb9-7" tabindex="-1"></a><span class="co">#&#39; @return A list with beta, mn, alpha, prob, X, sigma, TT, numclust.</span></span>
-<span id="cb9-8"><a href="syntheticdata.html#cb9-8" tabindex="-1"></a><span class="co">#&#39; @export</span></span>
-<span id="cb9-9"><a href="syntheticdata.html#cb9-9" tabindex="-1"></a><span id='make_model'>make_model</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(orig_model, isignal){</span>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="syntheticdata.html#cb9-1" tabindex="-1"></a><span class="co">#' From an original set of model parameters (|true_model|),</span></span>
+<span id="cb9-2"><a href="syntheticdata.html#cb9-2" tabindex="-1"></a><span class="co">#' generate synthetic 2-cluster 1-dimensional data with equal probabilities.</span></span>
+<span id="cb9-3"><a href="syntheticdata.html#cb9-3" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb9-4"><a href="syntheticdata.html#cb9-4" tabindex="-1"></a><span class="co">#' @param isignal 0 to 10, which generates the means.</span></span>
+<span id="cb9-5"><a href="syntheticdata.html#cb9-5" tabindex="-1"></a><span class="co">#' @param orig_model Original model of class flowmix or flowcut; a list that contains alpha, beta and TT.</span></span>
+<span id="cb9-6"><a href="syntheticdata.html#cb9-6" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb9-7"><a href="syntheticdata.html#cb9-7" tabindex="-1"></a><span class="co">#' @return A list with beta, mn, alpha, prob, X, sigma, TT, numclust.</span></span>
+<span id="cb9-8"><a href="syntheticdata.html#cb9-8" tabindex="-1"></a><span class="co">#' @export</span></span>
+<span id="cb9-9"><a href="syntheticdata.html#cb9-9" tabindex="-1"></a><span id="make_model">make_model</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(orig_model, isignal){</span>
 <span id="cb9-10"><a href="syntheticdata.html#cb9-10" tabindex="-1"></a></span>
 <span id="cb9-11"><a href="syntheticdata.html#cb9-11" tabindex="-1"></a>  <span class="do">## Setup</span></span>
 <span id="cb9-12"><a href="syntheticdata.html#cb9-12" tabindex="-1"></a>  <span class="fu">stopifnot</span>(isignal <span class="sc">%in%</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">10</span>)</span>
@@ -231,7 +202,7 @@ flowtrend) model objects.)</p>
 <span id="cb9-17"><a href="syntheticdata.html#cb9-17" tabindex="-1"></a>  <span class="cf">if</span>(<span class="cn">FALSE</span>){</span>
 <span id="cb9-18"><a href="syntheticdata.html#cb9-18" tabindex="-1"></a>    link <span class="ot">=</span> <span class="fu">cbind</span>(<span class="dv">1</span>, orig_model<span class="sc">$</span>X) <span class="sc">%*%</span> <span class="fu">t</span>(orig_model<span class="sc">$</span>alpha)</span>
 <span id="cb9-19"><a href="syntheticdata.html#cb9-19" tabindex="-1"></a>    new_model<span class="sc">$</span>prob <span class="ot">=</span> <span class="fu">exp</span>(link) <span class="sc">/</span> <span class="fu">rowSums</span>(<span class="fu">exp</span>(link))</span>
-<span id="cb9-20"><a href="syntheticdata.html#cb9-20" tabindex="-1"></a>    new_model<span class="sc">$</span>prob  <span class="sc">%&gt;%</span> <span class="fu">matplot</span>(<span class="at">type =</span> <span class="st">&#39;l&#39;</span>, <span class="at">lty =</span> <span class="dv">1</span>)</span>
+<span id="cb9-20"><a href="syntheticdata.html#cb9-20" tabindex="-1"></a>    new_model<span class="sc">$</span>prob  <span class="sc">%&gt;%</span> <span class="fu">matplot</span>(<span class="at">type =</span> <span class="st">'l'</span>, <span class="at">lty =</span> <span class="dv">1</span>)</span>
 <span id="cb9-21"><a href="syntheticdata.html#cb9-21" tabindex="-1"></a>  }</span>
 <span id="cb9-22"><a href="syntheticdata.html#cb9-22" tabindex="-1"></a></span>
 <span id="cb9-23"><a href="syntheticdata.html#cb9-23" tabindex="-1"></a>  <span class="do">## We are actually just going to use flat probabilities, for now.</span></span>
@@ -242,41 +213,41 @@ flowtrend) model objects.)</p>
 <span id="cb9-28"><a href="syntheticdata.html#cb9-28" tabindex="-1"></a>  new_model<span class="sc">$</span>prob <span class="ot">=</span> <span class="fu">matrix</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>, <span class="at">nrow =</span> orig_model<span class="sc">$</span>TT, <span class="at">ncol =</span> <span class="dv">2</span>)</span>
 <span id="cb9-29"><a href="syntheticdata.html#cb9-29" tabindex="-1"></a></span>
 <span id="cb9-30"><a href="syntheticdata.html#cb9-30" tabindex="-1"></a>  <span class="do">## Take the two intercepts</span></span>
-<span id="cb9-31"><a href="syntheticdata.html#cb9-31" tabindex="-1"></a>  intp_high <span class="ot">=</span> orig_model<span class="sc">$</span>beta <span class="sc">%&gt;%</span> .[[<span class="dv">1</span>]]<span class="sc">%&gt;%</span> .[<span class="st">&quot;intp&quot;</span>,]  </span>
-<span id="cb9-32"><a href="syntheticdata.html#cb9-32" tabindex="-1"></a>  intp_low <span class="ot">=</span> orig_model<span class="sc">$</span>beta <span class="sc">%&gt;%</span> .[[<span class="dv">2</span>]]<span class="sc">%&gt;%</span> .[<span class="st">&quot;intp&quot;</span>,] </span>
+<span id="cb9-31"><a href="syntheticdata.html#cb9-31" tabindex="-1"></a>  intp_high <span class="ot">=</span> orig_model<span class="sc">$</span>beta <span class="sc">%&gt;%</span> .[[<span class="dv">1</span>]]<span class="sc">%&gt;%</span> .[<span class="st">"intp"</span>,]  </span>
+<span id="cb9-32"><a href="syntheticdata.html#cb9-32" tabindex="-1"></a>  intp_low <span class="ot">=</span> orig_model<span class="sc">$</span>beta <span class="sc">%&gt;%</span> .[[<span class="dv">2</span>]]<span class="sc">%&gt;%</span> .[<span class="st">"intp"</span>,] </span>
 <span id="cb9-33"><a href="syntheticdata.html#cb9-33" tabindex="-1"></a>  increment <span class="ot">=</span> (intp_high <span class="sc">-</span> intp_low)<span class="sc">/</span><span class="dv">10</span></span>
 <span id="cb9-34"><a href="syntheticdata.html#cb9-34" tabindex="-1"></a>  </span>
 <span id="cb9-35"><a href="syntheticdata.html#cb9-35" tabindex="-1"></a>  <span class="do">## Bring the larger mean down.</span></span>
-<span id="cb9-36"><a href="syntheticdata.html#cb9-36" tabindex="-1"></a>  new_model<span class="sc">$</span>beta[[<span class="dv">1</span>]][<span class="st">&quot;intp&quot;</span>,] <span class="ot">=</span> intp_low <span class="sc">+</span> increment <span class="sc">*</span> isignal</span>
+<span id="cb9-36"><a href="syntheticdata.html#cb9-36" tabindex="-1"></a>  new_model<span class="sc">$</span>beta[[<span class="dv">1</span>]][<span class="st">"intp"</span>,] <span class="ot">=</span> intp_low <span class="sc">+</span> increment <span class="sc">*</span> isignal</span>
 <span id="cb9-37"><a href="syntheticdata.html#cb9-37" tabindex="-1"></a>  new_model<span class="sc">$</span>mn <span class="ot">=</span> <span class="fu">array</span>(<span class="cn">NA</span>, <span class="at">dim =</span> <span class="fu">c</span>(orig_model<span class="sc">$</span>TT, <span class="dv">1</span>, <span class="dv">2</span>))</span>
 <span id="cb9-38"><a href="syntheticdata.html#cb9-38" tabindex="-1"></a>  new_model<span class="sc">$</span>mn[,,<span class="dv">1</span>] <span class="ot">=</span> (<span class="fu">cbind</span>(<span class="dv">1</span>,new_model<span class="sc">$</span>X))  <span class="sc">%*%</span>  (new_model<span class="sc">$</span>beta[[<span class="dv">1</span>]])</span>
 <span id="cb9-39"><a href="syntheticdata.html#cb9-39" tabindex="-1"></a>  new_model<span class="sc">$</span>mn[,,<span class="dv">2</span>] <span class="ot">=</span> (<span class="fu">cbind</span>(<span class="dv">1</span>,new_model<span class="sc">$</span>X))  <span class="sc">%*%</span>  (new_model<span class="sc">$</span>beta[[<span class="dv">2</span>]])</span>
 <span id="cb9-40"><a href="syntheticdata.html#cb9-40" tabindex="-1"></a>  </span>
 <span id="cb9-41"><a href="syntheticdata.html#cb9-41" tabindex="-1"></a>  <span class="do">## Optional: plot the means</span></span>
 <span id="cb9-42"><a href="syntheticdata.html#cb9-42" tabindex="-1"></a>  <span class="cf">if</span>(<span class="cn">FALSE</span>){</span>
-<span id="cb9-43"><a href="syntheticdata.html#cb9-43" tabindex="-1"></a>    new_model<span class="sc">$</span>mn[,<span class="dv">1</span>,] <span class="sc">%&gt;%</span> <span class="fu">matplot</span>(<span class="at">type =</span> <span class="st">&#39;l&#39;</span>, <span class="at">lty =</span> <span class="dv">1</span>)</span>
+<span id="cb9-43"><a href="syntheticdata.html#cb9-43" tabindex="-1"></a>    new_model<span class="sc">$</span>mn[,<span class="dv">1</span>,] <span class="sc">%&gt;%</span> <span class="fu">matplot</span>(<span class="at">type =</span> <span class="st">'l'</span>, <span class="at">lty =</span> <span class="dv">1</span>)</span>
 <span id="cb9-44"><a href="syntheticdata.html#cb9-44" tabindex="-1"></a>  }</span>
 <span id="cb9-45"><a href="syntheticdata.html#cb9-45" tabindex="-1"></a>  </span>
 <span id="cb9-46"><a href="syntheticdata.html#cb9-46" tabindex="-1"></a>  <span class="fu">return</span>(new_model)</span>
 <span id="cb9-47"><a href="syntheticdata.html#cb9-47" tabindex="-1"></a>}</span></code></pre></div>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="syntheticdata.html#cb10-1" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">1</span>))</span>
-<span id="cb10-2"><a href="syntheticdata.html#cb10-2" tabindex="-1"></a>new_model <span class="ot">=</span> <a href='syntheticdata.html#make_model'>make_model</a>(orig_model, <span class="dv">0</span>)</span>
-<span id="cb10-3"><a href="syntheticdata.html#cb10-3" tabindex="-1"></a>new_model<span class="sc">$</span>mn <span class="sc">%&gt;%</span> .[,<span class="dv">1</span>,] <span class="sc">%&gt;%</span> <span class="fu">matplot</span>(<span class="at">type=</span><span class="st">&#39;l&#39;</span>, <span class="at">main =</span> <span class="fu">paste0</span>(<span class="st">&quot;isignal=&quot;</span>, <span class="dv">0</span>), <span class="at">ylim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.5</span>, <span class="fl">0.6</span>))</span>
-<span id="cb10-4"><a href="syntheticdata.html#cb10-4" tabindex="-1"></a>new_model <span class="ot">=</span> <a href='syntheticdata.html#make_model'>make_model</a>(orig_model, <span class="dv">5</span>)</span>
-<span id="cb10-5"><a href="syntheticdata.html#cb10-5" tabindex="-1"></a>new_model<span class="sc">$</span>mn <span class="sc">%&gt;%</span> .[,<span class="dv">1</span>,] <span class="sc">%&gt;%</span> <span class="fu">matplot</span>(<span class="at">type=</span><span class="st">&#39;l&#39;</span>, <span class="at">main =</span> <span class="fu">paste0</span>(<span class="st">&quot;isignal=&quot;</span>, <span class="dv">5</span>), <span class="at">ylim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.5</span>, <span class="fl">0.6</span>))</span>
-<span id="cb10-6"><a href="syntheticdata.html#cb10-6" tabindex="-1"></a>new_model <span class="ot">=</span> <a href='syntheticdata.html#make_model'>make_model</a>(orig_model, <span class="dv">10</span>)</span>
-<span id="cb10-7"><a href="syntheticdata.html#cb10-7" tabindex="-1"></a>new_model<span class="sc">$</span>mn <span class="sc">%&gt;%</span> .[,<span class="dv">1</span>,] <span class="sc">%&gt;%</span> <span class="fu">matplot</span>(<span class="at">type=</span><span class="st">&#39;l&#39;</span>, <span class="at">main =</span> <span class="fu">paste0</span>(<span class="st">&quot;isignal=&quot;</span>, <span class="dv">10</span>), <span class="at">ylim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.5</span>, <span class="fl">0.6</span>))</span></code></pre></div>
-<p><img src="_main_files/figure-html/plot-data-1.png" width="960" /></p>
-<p>Then, we will generate data from this model using the function <code><a href='syntheticdata.html#gen_1d'>gen_1d</a>()</code>.</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="syntheticdata.html#cb11-1" tabindex="-1"></a><span class="co">#&#39; Generate 1d data with 2 clusters from a list (|true_model|)</span></span>
-<span id="cb11-2"><a href="syntheticdata.html#cb11-2" tabindex="-1"></a><span class="co">#&#39; containing true model parameters.</span></span>
-<span id="cb11-3"><a href="syntheticdata.html#cb11-3" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb11-4"><a href="syntheticdata.html#cb11-4" tabindex="-1"></a><span class="co">#&#39; @param true_model List containing beta, alpha, mn, prob, numclust.</span></span>
-<span id="cb11-5"><a href="syntheticdata.html#cb11-5" tabindex="-1"></a><span class="co">#&#39; @param nt Particles per time point.</span></span>
-<span id="cb11-6"><a href="syntheticdata.html#cb11-6" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb11-7"><a href="syntheticdata.html#cb11-7" tabindex="-1"></a><span class="co">#&#39; @return Cytograms (a |ylist| object)</span></span>
-<span id="cb11-8"><a href="syntheticdata.html#cb11-8" tabindex="-1"></a><span class="co">#&#39; @export</span></span>
-<span id="cb11-9"><a href="syntheticdata.html#cb11-9" tabindex="-1"></a><span id='gen_1d'>gen_1d</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(true_model, <span class="at">nt =</span> <span class="dv">1000</span>){</span>
+<span id="cb10-2"><a href="syntheticdata.html#cb10-2" tabindex="-1"></a>new_model <span class="ot">=</span> <a href="syntheticdata.html#make_model">make_model</a>(orig_model, <span class="dv">0</span>)</span>
+<span id="cb10-3"><a href="syntheticdata.html#cb10-3" tabindex="-1"></a>new_model<span class="sc">$</span>mn <span class="sc">%&gt;%</span> .[,<span class="dv">1</span>,] <span class="sc">%&gt;%</span> <span class="fu">matplot</span>(<span class="at">type=</span><span class="st">'l'</span>, <span class="at">main =</span> <span class="fu">paste0</span>(<span class="st">"isignal="</span>, <span class="dv">0</span>), <span class="at">ylim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.5</span>, <span class="fl">0.6</span>))</span>
+<span id="cb10-4"><a href="syntheticdata.html#cb10-4" tabindex="-1"></a>new_model <span class="ot">=</span> <a href="syntheticdata.html#make_model">make_model</a>(orig_model, <span class="dv">5</span>)</span>
+<span id="cb10-5"><a href="syntheticdata.html#cb10-5" tabindex="-1"></a>new_model<span class="sc">$</span>mn <span class="sc">%&gt;%</span> .[,<span class="dv">1</span>,] <span class="sc">%&gt;%</span> <span class="fu">matplot</span>(<span class="at">type=</span><span class="st">'l'</span>, <span class="at">main =</span> <span class="fu">paste0</span>(<span class="st">"isignal="</span>, <span class="dv">5</span>), <span class="at">ylim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.5</span>, <span class="fl">0.6</span>))</span>
+<span id="cb10-6"><a href="syntheticdata.html#cb10-6" tabindex="-1"></a>new_model <span class="ot">=</span> <a href="syntheticdata.html#make_model">make_model</a>(orig_model, <span class="dv">10</span>)</span>
+<span id="cb10-7"><a href="syntheticdata.html#cb10-7" tabindex="-1"></a>new_model<span class="sc">$</span>mn <span class="sc">%&gt;%</span> .[,<span class="dv">1</span>,] <span class="sc">%&gt;%</span> <span class="fu">matplot</span>(<span class="at">type=</span><span class="st">'l'</span>, <span class="at">main =</span> <span class="fu">paste0</span>(<span class="st">"isignal="</span>, <span class="dv">10</span>), <span class="at">ylim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.5</span>, <span class="fl">0.6</span>))</span></code></pre></div>
+<p><img src="_main_files/figure-html/plot-data-1.png" width="960"></p>
+<p>Then, we will generate data from this model using the function <code><a href="syntheticdata.html#gen_1d">gen_1d</a>()</code>.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="syntheticdata.html#cb11-1" tabindex="-1"></a><span class="co">#' Generate 1d data with 2 clusters from a list (|true_model|)</span></span>
+<span id="cb11-2"><a href="syntheticdata.html#cb11-2" tabindex="-1"></a><span class="co">#' containing true model parameters.</span></span>
+<span id="cb11-3"><a href="syntheticdata.html#cb11-3" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb11-4"><a href="syntheticdata.html#cb11-4" tabindex="-1"></a><span class="co">#' @param true_model List containing beta, alpha, mn, prob, numclust.</span></span>
+<span id="cb11-5"><a href="syntheticdata.html#cb11-5" tabindex="-1"></a><span class="co">#' @param nt Particles per time point.</span></span>
+<span id="cb11-6"><a href="syntheticdata.html#cb11-6" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb11-7"><a href="syntheticdata.html#cb11-7" tabindex="-1"></a><span class="co">#' @return Cytograms (a |ylist| object)</span></span>
+<span id="cb11-8"><a href="syntheticdata.html#cb11-8" tabindex="-1"></a><span class="co">#' @export</span></span>
+<span id="cb11-9"><a href="syntheticdata.html#cb11-9" tabindex="-1"></a><span id="gen_1d">gen_1d</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(true_model, <span class="at">nt =</span> <span class="dv">1000</span>){</span>
 <span id="cb11-10"><a href="syntheticdata.html#cb11-10" tabindex="-1"></a></span>
 <span id="cb11-11"><a href="syntheticdata.html#cb11-11" tabindex="-1"></a>  <span class="do">## Setup</span></span>
 <span id="cb11-12"><a href="syntheticdata.html#cb11-12" tabindex="-1"></a>  <span class="fu">stopifnot</span>(true_model<span class="sc">$</span>numclust <span class="sc">==</span> <span class="dv">2</span>)</span>
@@ -312,8 +283,8 @@ flowtrend) model objects.)</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="syntheticdata.html#cb12-1" tabindex="-1"></a><span class="do">## Generate data</span></span>
 <span id="cb12-2"><a href="syntheticdata.html#cb12-2" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">100</span>)</span>
 <span id="cb12-3"><a href="syntheticdata.html#cb12-3" tabindex="-1"></a></span>
-<span id="cb12-4"><a href="syntheticdata.html#cb12-4" tabindex="-1"></a>new_model <span class="ot">=</span> <a href='syntheticdata.html#make_model'>make_model</a>(orig_model, <span class="dv">8</span>)</span>
-<span id="cb12-5"><a href="syntheticdata.html#cb12-5" tabindex="-1"></a>ylist <span class="ot">=</span> <a href='syntheticdata.html#gen_1d'>gen_1d</a>(new_model, <span class="at">nt =</span> <span class="dv">100</span>)</span>
+<span id="cb12-4"><a href="syntheticdata.html#cb12-4" tabindex="-1"></a>new_model <span class="ot">=</span> <a href="syntheticdata.html#make_model">make_model</a>(orig_model, <span class="dv">8</span>)</span>
+<span id="cb12-5"><a href="syntheticdata.html#cb12-5" tabindex="-1"></a>ylist <span class="ot">=</span> <a href="syntheticdata.html#gen_1d">gen_1d</a>(new_model, <span class="at">nt =</span> <span class="dv">100</span>)</span>
 <span id="cb12-6"><a href="syntheticdata.html#cb12-6" tabindex="-1"></a>flowtrend<span class="sc">::</span><span class="fu">plot_1d</span>(ylist, <span class="at">obj =</span> new_model)</span>
 <span id="cb12-7"><a href="syntheticdata.html#cb12-7" tabindex="-1"></a></span>
 <span id="cb12-8"><a href="syntheticdata.html#cb12-8" tabindex="-1"></a><span class="do">## Censor it</span></span>
@@ -322,30 +293,21 @@ flowtrend) model objects.)</p>
 <span id="cb12-11"><a href="syntheticdata.html#cb12-11" tabindex="-1"></a>})</span>
 <span id="cb12-12"><a href="syntheticdata.html#cb12-12" tabindex="-1"></a>flowtrend<span class="sc">::</span><span class="fu">plot_1d</span>(ylist, <span class="at">obj =</span> new_model)</span>
 <span id="cb12-13"><a href="syntheticdata.html#cb12-13" tabindex="-1"></a></span>
-<span id="cb12-14"><a href="syntheticdata.html#cb12-14" tabindex="-1"></a><span class="do">## Form the censored &quot;box&quot;</span></span>
+<span id="cb12-14"><a href="syntheticdata.html#cb12-14" tabindex="-1"></a><span class="do">## Form the censored "box"</span></span>
 <span id="cb12-15"><a href="syntheticdata.html#cb12-15" tabindex="-1"></a>Cbox <span class="ot">=</span> <span class="fu">rbind</span>(<span class="fu">c</span>(<span class="sc">-</span><span class="cn">Inf</span>, <span class="fl">0.5</span>)) </span></code></pre></div>
 <p>(TODO: Maybe we will use fewer than 40 coefficients. Let’s get the top 10
 coefficients by importance, and only use them.)</p>
 
 </div>
             </section>
-
-          </div>
+</div>
         </div>
       </div>
 <a href="helpers-functions.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
 <a href="gibbs-sampler.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
-<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
-<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
-<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
-<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
-<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
-<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
-<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
-<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
-<script>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script><script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script><script src="libs/gitbook-2.6.7/js/plugin-search.js"></script><script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script><script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script><script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script><script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script><script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script><script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
 "sharing": {
@@ -386,10 +348,7 @@ gitbook.start({
 }
 });
 });
-</script>
-
-<!-- dynamically load mathjax for compatibility with self-contained -->
-<script>
+</script><!-- dynamically load mathjax for compatibility with self-contained --><script>
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
@@ -403,5 +362,4 @@ gitbook.start({
   })();
 </script>
 </body>
-
 </html>

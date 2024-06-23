@@ -1,61 +1,33 @@
 <!DOCTYPE html>
 <html lang="" xml:lang="">
 <head>
-
-  <meta charset="utf-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>3 Helpers functions | Creating the flowcut R package</title>
-  <meta name="description" content="3 Helpers functions | Creating the flowcut R package" />
-  <meta name="generator" content="bookdown 0.39 and GitBook 2.6.7" />
-
-  <meta property="og:title" content="3 Helpers functions | Creating the flowcut R package" />
-  <meta property="og:type" content="book" />
-  
-  
-  
-
-  <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="3 Helpers functions | Creating the flowcut R package" />
-  
-  
-  
-
-<meta name="author" content="Sheng Jiang, Sangwon Hyun" />
-
-
-<meta name="date" content="2024-06-12" />
-
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-  
-  
-<link rel="prev" href="package-setup.html"/>
-<link rel="next" href="syntheticdata.html"/>
-<script src="libs/header-attrs-2.27/header-attrs.js"></script>
-<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
-<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
-
-
-
-
-
-
-
-
-<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
-<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
-<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
-
-
-<style type="text/css">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>3 Helpers functions | Creating the flowcut R package</title>
+<meta name="description" content="3 Helpers functions | Creating the flowcut R package">
+<meta name="generator" content="bookdown 0.39 and GitBook 2.6.7">
+<meta property="og:title" content="3 Helpers functions | Creating the flowcut R package">
+<meta property="og:type" content="book">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="3 Helpers functions | Creating the flowcut R package">
+<meta name="author" content="Sheng Jiang, Sangwon Hyun">
+<meta name="date" content="2024-06-23">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<link rel="prev" href="package-setup.html">
+<link rel="next" href="syntheticdata.html">
+<script src="libs/header-attrs-2.27.1/header-attrs.js"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script><link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet">
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet">
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet">
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet">
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet">
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet">
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet">
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet">
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet">
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script><style type="text/css">
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
@@ -119,14 +91,14 @@ code span.va { color: #19177c; } /* Variable */
 code span.vs { color: #4070a0; } /* VerbatimString */
 code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
-
 <style type="text/css">
   
   div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 </style>
-
+<style type="text/css">fieldset.chunkfield {border:1px dotted black;padding-bottom: 0px;padding-top: 0px;margin:0 2px;padding:.35em .625em .75em}
+    legend.chunklegend {padding:0;width:auto;border:0; border-bottom: none; margin-bottom:0}
+    </style>
 </head>
-
 <body>
 
 
@@ -134,24 +106,22 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
 
     <div class="book-summary">
-      <nav role="navigation">
-
-<ul class="summary">
+      <nav role="navigation"><ul class="summary">
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
 <li class="chapter" data-level="2" data-path="package-setup.html"><a href="package-setup.html"><i class="fa fa-check"></i><b>2</b> Package setup</a></li>
 <li class="chapter" data-level="3" data-path="helpers-functions.html"><a href="helpers-functions.html"><i class="fa fa-check"></i><b>3</b> Helpers functions</a></li>
 <li class="chapter" data-level="4" data-path="syntheticdata.html"><a href="syntheticdata.html"><i class="fa fa-check"></i><b>4</b> Generating synthetic data</a></li>
-<li class="chapter" data-level="5" data-path="gibbs-sampler.html"><a href="gibbs-sampler.html"><i class="fa fa-check"></i><b>5</b> Gibbs sampler</a>
+<li class="chapter" data-level="5" data-path="gibbs-sampler.html">
+<a href="gibbs-sampler.html"><i class="fa fa-check"></i><b>5</b> Gibbs sampler</a>
 <ul>
 <li class="chapter" data-level="5.1" data-path="gibbs-sampler.html"><a href="gibbs-sampler.html#the-main-gibbs-sampler"><i class="fa fa-check"></i><b>5.1</b> The main Gibbs sampler</a></li>
-</ul></li>
+</ul>
+</li>
 <li class="chapter" data-level="6" data-path="simulations.html"><a href="simulations.html"><i class="fa fa-check"></i><b>6</b> Simulations</a></li>
 <li class="chapter" data-level="7" data-path="real-data-example.html"><a href="real-data-example.html"><i class="fa fa-check"></i><b>7</b> Real data example</a></li>
 <li class="chapter" data-level="8" data-path="documenting-the-package-and-building.html"><a href="documenting-the-package-and-building.html"><i class="fa fa-check"></i><b>8</b> Documenting the package and building</a></li>
-</ul>
-
-      </nav>
-    </div>
+</ul></nav>
+</div>
 
     <div class="book-body">
       <div class="body-inner">
@@ -164,32 +134,33 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
         <div class="page-wrapper" tabindex="-1" role="main">
           <div class="page-inner">
 
-            <section class="normal" id="section-">
-<div id="helpers-functions" class="section level1 hasAnchor" number="3">
-<h1><span class="header-section-number">3</span> Helpers functions<a href="helpers-functions.html#helpers-functions" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+            <section class="normal" id="section-"><div id="helpers-functions" class="section level1 hasAnchor" number="3">
+<h1>
+<span class="header-section-number">3</span> Helpers functions<a href="helpers-functions.html#helpers-functions" class="anchor-section" aria-label="Anchor link to header"></a>
+</h1>
 <p>These are some helper functions that are needed for the MCMC.</p>
 <p>These functions are not documented for now. (TODO: do this).</p>
 <!-- send_to to put all helper functions into one file.. -->
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="helpers-functions.html#cb6-1" tabindex="-1"></a><span class="co">#&#39; Helper function to print progress.</span></span>
-<span id="cb6-2"><a href="helpers-functions.html#cb6-2" tabindex="-1"></a><span class="co">#&#39; </span></span>
-<span id="cb6-3"><a href="helpers-functions.html#cb6-3" tabindex="-1"></a><span class="co">#&#39; @param iter Current iteration.</span></span>
-<span id="cb6-4"><a href="helpers-functions.html#cb6-4" tabindex="-1"></a><span class="co">#&#39; @param Nmc Total number of MCMC iterations.</span></span>
-<span id="cb6-5"><a href="helpers-functions.html#cb6-5" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb6-6"><a href="helpers-functions.html#cb6-6" tabindex="-1"></a><span class="co">#&#39; @export</span></span>
-<span id="cb6-7"><a href="helpers-functions.html#cb6-7" tabindex="-1"></a><span id='progress'>progress</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(iter, Nmc){</span>
-<span id="cb6-8"><a href="helpers-functions.html#cb6-8" tabindex="-1"></a>    <span class="fu">cat</span>(<span class="st">&quot;MCMC iteration: &quot;</span>, iter,</span>
-<span id="cb6-9"><a href="helpers-functions.html#cb6-9" tabindex="-1"></a>        <span class="st">&quot;.&quot;</span>, <span class="fu">round</span>(iter<span class="sc">/</span>Nmc,<span class="dv">3</span>)<span class="sc">*</span><span class="dv">100</span>, <span class="st">&quot;% is done&quot;</span>, <span class="at">fill =</span> <span class="cn">TRUE</span>)</span>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="helpers-functions.html#cb6-1" tabindex="-1"></a><span class="co">#' Helper function to print progress.</span></span>
+<span id="cb6-2"><a href="helpers-functions.html#cb6-2" tabindex="-1"></a><span class="co">#' </span></span>
+<span id="cb6-3"><a href="helpers-functions.html#cb6-3" tabindex="-1"></a><span class="co">#' @param iter Current iteration.</span></span>
+<span id="cb6-4"><a href="helpers-functions.html#cb6-4" tabindex="-1"></a><span class="co">#' @param Nmc Total number of MCMC iterations.</span></span>
+<span id="cb6-5"><a href="helpers-functions.html#cb6-5" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb6-6"><a href="helpers-functions.html#cb6-6" tabindex="-1"></a><span class="co">#' @export</span></span>
+<span id="cb6-7"><a href="helpers-functions.html#cb6-7" tabindex="-1"></a><span id="progress">progress</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(iter, Nmc){</span>
+<span id="cb6-8"><a href="helpers-functions.html#cb6-8" tabindex="-1"></a>    <span class="fu">cat</span>(<span class="st">"MCMC iteration: "</span>, iter,</span>
+<span id="cb6-9"><a href="helpers-functions.html#cb6-9" tabindex="-1"></a>        <span class="st">"."</span>, <span class="fu">round</span>(iter<span class="sc">/</span>Nmc,<span class="dv">3</span>)<span class="sc">*</span><span class="dv">100</span>, <span class="st">"% is done"</span>, <span class="at">fill =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb6-10"><a href="helpers-functions.html#cb6-10" tabindex="-1"></a>}</span>
 <span id="cb6-11"><a href="helpers-functions.html#cb6-11" tabindex="-1"></a></span>
-<span id="cb6-12"><a href="helpers-functions.html#cb6-12" tabindex="-1"></a><span id='wcrossprod.fast'>wcrossprod.fast</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(x, w.sqrt, <span class="at">weighting =</span> <span class="cn">TRUE</span>){</span>
+<span id="cb6-12"><a href="helpers-functions.html#cb6-12" tabindex="-1"></a><span id="wcrossprod.fast">wcrossprod.fast</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(x, w.sqrt, <span class="at">weighting =</span> <span class="cn">TRUE</span>){</span>
 <span id="cb6-13"><a href="helpers-functions.html#cb6-13" tabindex="-1"></a>    <span class="cf">if</span>(weighting){</span>
 <span id="cb6-14"><a href="helpers-functions.html#cb6-14" tabindex="-1"></a>        x <span class="ot">&lt;-</span> x <span class="sc">*</span> w.sqrt</span>
 <span id="cb6-15"><a href="helpers-functions.html#cb6-15" tabindex="-1"></a>    }</span>
 <span id="cb6-16"><a href="helpers-functions.html#cb6-16" tabindex="-1"></a>  <span class="fu">return</span>(Rfast<span class="sc">::</span><span class="fu">Crossprod</span>(x,x))</span>
 <span id="cb6-17"><a href="helpers-functions.html#cb6-17" tabindex="-1"></a>}</span>
 <span id="cb6-18"><a href="helpers-functions.html#cb6-18" tabindex="-1"></a></span>
-<span id="cb6-19"><a href="helpers-functions.html#cb6-19" tabindex="-1"></a><span class="co">#&#39; </span></span>
-<span id="cb6-20"><a href="helpers-functions.html#cb6-20" tabindex="-1"></a><span id='self.crossprod'>self.crossprod</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(x){ <span class="do">## this function can be deleted. </span></span>
+<span id="cb6-19"><a href="helpers-functions.html#cb6-19" tabindex="-1"></a><span class="co">#' </span></span>
+<span id="cb6-20"><a href="helpers-functions.html#cb6-20" tabindex="-1"></a><span id="self.crossprod">self.crossprod</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(x){ <span class="do">## this function can be deleted. </span></span>
 <span id="cb6-21"><a href="helpers-functions.html#cb6-21" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">ncol</span>(x) <span class="sc">==</span> <span class="dv">1</span>){</span>
 <span id="cb6-22"><a href="helpers-functions.html#cb6-22" tabindex="-1"></a>        ret <span class="ot">&lt;-</span> x <span class="sc">%*%</span> <span class="fu">t</span>(x)</span>
 <span id="cb6-23"><a href="helpers-functions.html#cb6-23" tabindex="-1"></a>    }<span class="cf">else</span>{</span>
@@ -198,46 +169,46 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb6-26"><a href="helpers-functions.html#cb6-26" tabindex="-1"></a>  <span class="fu">return</span>(ret)</span>
 <span id="cb6-27"><a href="helpers-functions.html#cb6-27" tabindex="-1"></a>}</span>
 <span id="cb6-28"><a href="helpers-functions.html#cb6-28" tabindex="-1"></a></span>
-<span id="cb6-29"><a href="helpers-functions.html#cb6-29" tabindex="-1"></a><span class="co">#&#39; </span></span>
-<span id="cb6-30"><a href="helpers-functions.html#cb6-30" tabindex="-1"></a><span id='logsumexp'>logsumexp</span> <span class="ot">&lt;-</span> <span class="cf">function</span> (x) {</span>
+<span id="cb6-29"><a href="helpers-functions.html#cb6-29" tabindex="-1"></a><span class="co">#' </span></span>
+<span id="cb6-30"><a href="helpers-functions.html#cb6-30" tabindex="-1"></a><span id="logsumexp">logsumexp</span> <span class="ot">&lt;-</span> <span class="cf">function</span> (x) {</span>
 <span id="cb6-31"><a href="helpers-functions.html#cb6-31" tabindex="-1"></a>  y <span class="ot">=</span> <span class="fu">max</span>(x)</span>
 <span id="cb6-32"><a href="helpers-functions.html#cb6-32" tabindex="-1"></a>  y <span class="sc">+</span> <span class="fu">log</span>(<span class="fu">sum</span>(<span class="fu">exp</span>(x <span class="sc">-</span> y)))</span>
 <span id="cb6-33"><a href="helpers-functions.html#cb6-33" tabindex="-1"></a>}</span>
 <span id="cb6-34"><a href="helpers-functions.html#cb6-34" tabindex="-1"></a></span>
-<span id="cb6-35"><a href="helpers-functions.html#cb6-35" tabindex="-1"></a><span class="co">#&#39; </span></span>
-<span id="cb6-36"><a href="helpers-functions.html#cb6-36" tabindex="-1"></a><span id='softmax'>softmax</span> <span class="ot">&lt;-</span> <span class="cf">function</span> (x) {</span>
-<span id="cb6-37"><a href="helpers-functions.html#cb6-37" tabindex="-1"></a>  <span class="fu">exp</span>(x <span class="sc">-</span> <a href='helpers-functions.html#logsumexp'>logsumexp</a>(x))</span>
+<span id="cb6-35"><a href="helpers-functions.html#cb6-35" tabindex="-1"></a><span class="co">#' </span></span>
+<span id="cb6-36"><a href="helpers-functions.html#cb6-36" tabindex="-1"></a><span id="softmax">softmax</span> <span class="ot">&lt;-</span> <span class="cf">function</span> (x) {</span>
+<span id="cb6-37"><a href="helpers-functions.html#cb6-37" tabindex="-1"></a>  <span class="fu">exp</span>(x <span class="sc">-</span> <a href="helpers-functions.html#logsumexp">logsumexp</a>(x))</span>
 <span id="cb6-38"><a href="helpers-functions.html#cb6-38" tabindex="-1"></a>}</span>
 <span id="cb6-39"><a href="helpers-functions.html#cb6-39" tabindex="-1"></a></span>
-<span id="cb6-40"><a href="helpers-functions.html#cb6-40" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb6-41"><a href="helpers-functions.html#cb6-41" tabindex="-1"></a><span id='softmax2'>softmax2</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(x){</span>
+<span id="cb6-40"><a href="helpers-functions.html#cb6-40" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb6-41"><a href="helpers-functions.html#cb6-41" tabindex="-1"></a><span id="softmax2">softmax2</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(x){</span>
 <span id="cb6-42"><a href="helpers-functions.html#cb6-42" tabindex="-1"></a>    <span class="fu">return</span>(<span class="fu">exp</span>(x)<span class="sc">/</span><span class="fu">sum</span>(<span class="fu">exp</span>(x)))</span>
 <span id="cb6-43"><a href="helpers-functions.html#cb6-43" tabindex="-1"></a>}</span>
 <span id="cb6-44"><a href="helpers-functions.html#cb6-44" tabindex="-1"></a></span>
-<span id="cb6-45"><a href="helpers-functions.html#cb6-45" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb6-46"><a href="helpers-functions.html#cb6-46" tabindex="-1"></a><span id='logMNdensity'>logMNdensity</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(y,invSig,logdet){</span>
-<span id="cb6-47"><a href="helpers-functions.html#cb6-47" tabindex="-1"></a>    <span class="do">## The term &quot;-log(2*pi)*d/2&quot; is omitted</span></span>
+<span id="cb6-45"><a href="helpers-functions.html#cb6-45" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb6-46"><a href="helpers-functions.html#cb6-46" tabindex="-1"></a><span id="logMNdensity">logMNdensity</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(y,invSig,logdet){</span>
+<span id="cb6-47"><a href="helpers-functions.html#cb6-47" tabindex="-1"></a>    <span class="do">## The term "-log(2*pi)*d/2" is omitted</span></span>
 <span id="cb6-48"><a href="helpers-functions.html#cb6-48" tabindex="-1"></a>    <span class="fu">return</span>(<span class="sc">-</span> Rfast<span class="sc">::</span><span class="fu">Crossprod</span>(y, invSig) <span class="sc">%*%</span> y <span class="sc">/</span><span class="dv">2</span> <span class="sc">-</span> logdet<span class="sc">/</span><span class="dv">2</span>)</span>
 <span id="cb6-49"><a href="helpers-functions.html#cb6-49" tabindex="-1"></a>}</span>
 <span id="cb6-50"><a href="helpers-functions.html#cb6-50" tabindex="-1"></a></span>
-<span id="cb6-51"><a href="helpers-functions.html#cb6-51" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb6-52"><a href="helpers-functions.html#cb6-52" tabindex="-1"></a><span id='KL.MN'>KL.MN</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(p,q){</span>
+<span id="cb6-51"><a href="helpers-functions.html#cb6-51" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb6-52"><a href="helpers-functions.html#cb6-52" tabindex="-1"></a><span id="KL.MN">KL.MN</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(p,q){</span>
 <span id="cb6-53"><a href="helpers-functions.html#cb6-53" tabindex="-1"></a>    <span class="fu">sum</span>(p<span class="sc">*</span><span class="fu">log</span>(p<span class="sc">/</span>q))</span>
 <span id="cb6-54"><a href="helpers-functions.html#cb6-54" tabindex="-1"></a>}</span>
 <span id="cb6-55"><a href="helpers-functions.html#cb6-55" tabindex="-1"></a></span>
-<span id="cb6-56"><a href="helpers-functions.html#cb6-56" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb6-57"><a href="helpers-functions.html#cb6-57" tabindex="-1"></a><span id='pgdraw.mod'>pgdraw.mod</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(b,c){</span>
+<span id="cb6-56"><a href="helpers-functions.html#cb6-56" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb6-57"><a href="helpers-functions.html#cb6-57" tabindex="-1"></a><span id="pgdraw.mod">pgdraw.mod</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(b,c){</span>
 <span id="cb6-58"><a href="helpers-functions.html#cb6-58" tabindex="-1"></a>    <span class="cf">if</span>(b<span class="sc">&gt;</span><span class="dv">0</span>){</span>
 <span id="cb6-59"><a href="helpers-functions.html#cb6-59" tabindex="-1"></a>        ret <span class="ot">&lt;-</span> pgdraw<span class="sc">::</span><span class="fu">pgdraw</span>(b,c)</span>
 <span id="cb6-60"><a href="helpers-functions.html#cb6-60" tabindex="-1"></a>    }<span class="cf">else</span>{</span>
-<span id="cb6-61"><a href="helpers-functions.html#cb6-61" tabindex="-1"></a><span class="do">##        print(&quot;in pgdraw: b=0&quot;)</span></span>
+<span id="cb6-61"><a href="helpers-functions.html#cb6-61" tabindex="-1"></a><span class="do">##        print("in pgdraw: b=0")</span></span>
 <span id="cb6-62"><a href="helpers-functions.html#cb6-62" tabindex="-1"></a>        ret <span class="ot">&lt;-</span> <span class="dv">0</span></span>
 <span id="cb6-63"><a href="helpers-functions.html#cb6-63" tabindex="-1"></a>    }</span>
 <span id="cb6-64"><a href="helpers-functions.html#cb6-64" tabindex="-1"></a>    <span class="fu">return</span>(ret)</span>
 <span id="cb6-65"><a href="helpers-functions.html#cb6-65" tabindex="-1"></a>}</span>
 <span id="cb6-66"><a href="helpers-functions.html#cb6-66" tabindex="-1"></a></span>
-<span id="cb6-67"><a href="helpers-functions.html#cb6-67" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb6-68"><a href="helpers-functions.html#cb6-68" tabindex="-1"></a><span id='SB2MN'>SB2MN</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(pi.sb){</span>
+<span id="cb6-67"><a href="helpers-functions.html#cb6-67" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb6-68"><a href="helpers-functions.html#cb6-68" tabindex="-1"></a><span id="SB2MN">SB2MN</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(pi.sb){</span>
 <span id="cb6-69"><a href="helpers-functions.html#cb6-69" tabindex="-1"></a>    pi.sb <span class="ot">&lt;-</span> <span class="fu">c</span>(pi.sb,<span class="dv">1</span>) <span class="do">## append 1</span></span>
 <span id="cb6-70"><a href="helpers-functions.html#cb6-70" tabindex="-1"></a>    K <span class="ot">&lt;-</span> <span class="fu">length</span>(pi.sb)</span>
 <span id="cb6-71"><a href="helpers-functions.html#cb6-71" tabindex="-1"></a>    pi.mn <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">0</span>,K)</span>
@@ -248,8 +219,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb6-76"><a href="helpers-functions.html#cb6-76" tabindex="-1"></a>    <span class="fu">return</span>(pi.mn)</span>
 <span id="cb6-77"><a href="helpers-functions.html#cb6-77" tabindex="-1"></a>}</span>
 <span id="cb6-78"><a href="helpers-functions.html#cb6-78" tabindex="-1"></a></span>
-<span id="cb6-79"><a href="helpers-functions.html#cb6-79" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb6-80"><a href="helpers-functions.html#cb6-80" tabindex="-1"></a><span id='MN2SB'>MN2SB</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(pi.mn){</span>
+<span id="cb6-79"><a href="helpers-functions.html#cb6-79" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb6-80"><a href="helpers-functions.html#cb6-80" tabindex="-1"></a><span id="MN2SB">MN2SB</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(pi.mn){</span>
 <span id="cb6-81"><a href="helpers-functions.html#cb6-81" tabindex="-1"></a>    K <span class="ot">&lt;-</span> <span class="fu">length</span>(pi.mn)</span>
 <span id="cb6-82"><a href="helpers-functions.html#cb6-82" tabindex="-1"></a>    pi.sb <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">0</span>,K<span class="dv">-1</span>)</span>
 <span id="cb6-83"><a href="helpers-functions.html#cb6-83" tabindex="-1"></a>    pi.cs <span class="ot">&lt;-</span> <span class="fu">cumsum</span>(pi.mn[<span class="sc">-</span>K])</span>
@@ -258,15 +229,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb6-86"><a href="helpers-functions.html#cb6-86" tabindex="-1"></a>    <span class="fu">return</span>(pi.sb)</span>
 <span id="cb6-87"><a href="helpers-functions.html#cb6-87" tabindex="-1"></a>}</span>
 <span id="cb6-88"><a href="helpers-functions.html#cb6-88" tabindex="-1"></a></span>
-<span id="cb6-89"><a href="helpers-functions.html#cb6-89" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb6-90"><a href="helpers-functions.html#cb6-90" tabindex="-1"></a><span id='gamma2pi'>gamma2pi</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(gamma,Xp){</span>
+<span id="cb6-89"><a href="helpers-functions.html#cb6-89" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb6-90"><a href="helpers-functions.html#cb6-90" tabindex="-1"></a><span id="gamma2pi">gamma2pi</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(gamma,Xp){</span>
 <span id="cb6-91"><a href="helpers-functions.html#cb6-91" tabindex="-1"></a>    XpGamma <span class="ot">&lt;-</span> Rfast<span class="sc">::</span><span class="fu">Crossprod</span>(gamma, Xp) <span class="do">## K-1 x T</span></span>
 <span id="cb6-92"><a href="helpers-functions.html#cb6-92" tabindex="-1"></a>    pi.sb <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span>(<span class="dv">1</span><span class="sc">+</span><span class="fu">exp</span>(<span class="sc">-</span>XpGamma))</span>
 <span id="cb6-93"><a href="helpers-functions.html#cb6-93" tabindex="-1"></a>    <span class="fu">return</span>(pi.sb)</span>
 <span id="cb6-94"><a href="helpers-functions.html#cb6-94" tabindex="-1"></a>}</span>
 <span id="cb6-95"><a href="helpers-functions.html#cb6-95" tabindex="-1"></a></span>
-<span id="cb6-96"><a href="helpers-functions.html#cb6-96" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb6-97"><a href="helpers-functions.html#cb6-97" tabindex="-1"></a><span id='dtaMatCensor'>dtaMatCensor</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(x,Cbox){</span>
+<span id="cb6-96"><a href="helpers-functions.html#cb6-96" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb6-97"><a href="helpers-functions.html#cb6-97" tabindex="-1"></a><span id="dtaMatCensor">dtaMatCensor</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(x,Cbox){</span>
 <span id="cb6-98"><a href="helpers-functions.html#cb6-98" tabindex="-1"></a>    d <span class="ot">&lt;-</span> <span class="fu">dim</span>(x)[<span class="dv">2</span>]</span>
 <span id="cb6-99"><a href="helpers-functions.html#cb6-99" tabindex="-1"></a>    <span class="cf">for</span>(ii <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>d){</span>
 <span id="cb6-100"><a href="helpers-functions.html#cb6-100" tabindex="-1"></a>        x[,ii] <span class="ot">&lt;-</span> <span class="fu">pmin</span>(<span class="fu">pmax</span>(x[,ii],Cbox[ii,<span class="dv">1</span>]),Cbox[ii,<span class="dv">2</span>])</span>
@@ -274,8 +245,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb6-102"><a href="helpers-functions.html#cb6-102" tabindex="-1"></a>    <span class="fu">return</span>(x)</span>
 <span id="cb6-103"><a href="helpers-functions.html#cb6-103" tabindex="-1"></a>}</span>
 <span id="cb6-104"><a href="helpers-functions.html#cb6-104" tabindex="-1"></a></span>
-<span id="cb6-105"><a href="helpers-functions.html#cb6-105" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb6-106"><a href="helpers-functions.html#cb6-106" tabindex="-1"></a><span id='censorIndicator'>censorIndicator</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(x,Cbox){</span>
+<span id="cb6-105"><a href="helpers-functions.html#cb6-105" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb6-106"><a href="helpers-functions.html#cb6-106" tabindex="-1"></a><span id="censorIndicator">censorIndicator</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(x,Cbox){</span>
 <span id="cb6-107"><a href="helpers-functions.html#cb6-107" tabindex="-1"></a>    d <span class="ot">&lt;-</span> <span class="fu">dim</span>(Cbox)[<span class="dv">1</span>]</span>
 <span id="cb6-108"><a href="helpers-functions.html#cb6-108" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">dim</span>(x)[<span class="dv">2</span>]<span class="sc">!=</span>d <span class="sc">&amp;</span> <span class="fu">dim</span>(x)[<span class="dv">1</span>]<span class="sc">==</span>d){</span>
 <span id="cb6-109"><a href="helpers-functions.html#cb6-109" tabindex="-1"></a>        x <span class="ot">&lt;-</span> <span class="fu">t</span>(x)</span>
@@ -286,8 +257,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb6-114"><a href="helpers-functions.html#cb6-114" tabindex="-1"></a>    <span class="fu">return</span>(x)</span>
 <span id="cb6-115"><a href="helpers-functions.html#cb6-115" tabindex="-1"></a>}</span>
 <span id="cb6-116"><a href="helpers-functions.html#cb6-116" tabindex="-1"></a></span>
-<span id="cb6-117"><a href="helpers-functions.html#cb6-117" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb6-118"><a href="helpers-functions.html#cb6-118" tabindex="-1"></a><span id='sample.region'>sample.region</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(cc,Cbox){</span>
+<span id="cb6-117"><a href="helpers-functions.html#cb6-117" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb6-118"><a href="helpers-functions.html#cb6-118" tabindex="-1"></a><span id="sample.region">sample.region</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(cc,Cbox){</span>
 <span id="cb6-119"><a href="helpers-functions.html#cb6-119" tabindex="-1"></a>    limits <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
 <span id="cb6-120"><a href="helpers-functions.html#cb6-120" tabindex="-1"></a>    d <span class="ot">&lt;-</span> <span class="fu">length</span>(cc)</span>
 <span id="cb6-121"><a href="helpers-functions.html#cb6-121" tabindex="-1"></a>    <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>d){</span>
@@ -299,14 +270,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb6-127"><a href="helpers-functions.html#cb6-127" tabindex="-1"></a>            limits <span class="ot">&lt;-</span> <span class="fu">rbind</span>(limits, <span class="fu">c</span>(Cbox[i,<span class="dv">2</span>], <span class="cn">Inf</span>))</span>
 <span id="cb6-128"><a href="helpers-functions.html#cb6-128" tabindex="-1"></a>        }</span>
 <span id="cb6-129"><a href="helpers-functions.html#cb6-129" tabindex="-1"></a>    }</span>
-<span id="cb6-130"><a href="helpers-functions.html#cb6-130" tabindex="-1"></a>    <span class="fu">colnames</span>(limits) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;lower&quot;</span>,<span class="st">&quot;upper&quot;</span>)</span>
+<span id="cb6-130"><a href="helpers-functions.html#cb6-130" tabindex="-1"></a>    <span class="fu">colnames</span>(limits) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"lower"</span>,<span class="st">"upper"</span>)</span>
 <span id="cb6-131"><a href="helpers-functions.html#cb6-131" tabindex="-1"></a>    <span class="fu">return</span>(limits)</span>
 <span id="cb6-132"><a href="helpers-functions.html#cb6-132" tabindex="-1"></a>}</span>
 <span id="cb6-133"><a href="helpers-functions.html#cb6-133" tabindex="-1"></a></span>
 <span id="cb6-134"><a href="helpers-functions.html#cb6-134" tabindex="-1"></a></span>
-<span id="cb6-135"><a href="helpers-functions.html#cb6-135" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb6-135"><a href="helpers-functions.html#cb6-135" tabindex="-1"></a><span class="co">#'</span></span>
 <span id="cb6-136"><a href="helpers-functions.html#cb6-136" tabindex="-1"></a></span>
-<span id="cb6-137"><a href="helpers-functions.html#cb6-137" tabindex="-1"></a><span id='rmatnorm.fast'>rmatnorm.fast</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(M,U,V){ </span>
+<span id="cb6-137"><a href="helpers-functions.html#cb6-137" tabindex="-1"></a><span id="rmatnorm.fast">rmatnorm.fast</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(M,U,V){ </span>
 <span id="cb6-138"><a href="helpers-functions.html#cb6-138" tabindex="-1"></a>    <span class="do">## M is d x p</span></span>
 <span id="cb6-139"><a href="helpers-functions.html#cb6-139" tabindex="-1"></a>    <span class="do">## U is d x d</span></span>
 <span id="cb6-140"><a href="helpers-functions.html#cb6-140" tabindex="-1"></a>    <span class="do">## V is p x p </span></span>
@@ -324,8 +295,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb6-152"><a href="helpers-functions.html#cb6-152" tabindex="-1"></a></span>
 <span id="cb6-153"><a href="helpers-functions.html#cb6-153" tabindex="-1"></a></span>
 <span id="cb6-154"><a href="helpers-functions.html#cb6-154" tabindex="-1"></a></span>
-<span id="cb6-155"><a href="helpers-functions.html#cb6-155" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb6-156"><a href="helpers-functions.html#cb6-156" tabindex="-1"></a><span id='samp.trunc.normal'>samp.trunc.normal</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(yy, zz, cc.info, bounds.info, mu.mat, Sigma.ell, dimdat){</span>
+<span id="cb6-155"><a href="helpers-functions.html#cb6-155" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb6-156"><a href="helpers-functions.html#cb6-156" tabindex="-1"></a><span id="samp.trunc.normal">samp.trunc.normal</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(yy, zz, cc.info, bounds.info, mu.mat, Sigma.ell, dimdat){</span>
 <span id="cb6-157"><a href="helpers-functions.html#cb6-157" tabindex="-1"></a>    cc <span class="ot">&lt;-</span> <span class="fu">abs</span>(cc.info)<span class="sc">==</span><span class="dv">1</span></span>
 <span id="cb6-158"><a href="helpers-functions.html#cb6-158" tabindex="-1"></a>    nc <span class="ot">&lt;-</span> cc<span class="sc">==</span><span class="dv">0</span></span>
 <span id="cb6-159"><a href="helpers-functions.html#cb6-159" tabindex="-1"></a>    d <span class="ot">&lt;-</span> <span class="fu">length</span>(cc.info)</span>
@@ -349,7 +320,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb6-177"><a href="helpers-functions.html#cb6-177" tabindex="-1"></a></span>
 <span id="cb6-178"><a href="helpers-functions.html#cb6-178" tabindex="-1"></a>      <span class="do">## Sample from this conditional truncated normal</span></span>
 <span id="cb6-179"><a href="helpers-functions.html#cb6-179" tabindex="-1"></a>      <span class="cf">if</span>(dimdat<span class="sc">==</span><span class="dv">1</span>) cond.sig <span class="ot">=</span> <span class="fu">as.matrix</span>(cond.sig)</span>
-<span id="cb6-180"><a href="helpers-functions.html#cb6-180" tabindex="-1"></a>      <span class="fu">stopifnot</span>(<span class="st">&quot;matrix&quot;</span> <span class="sc">%in%</span> <span class="fu">class</span>(cond.sig))</span>
+<span id="cb6-180"><a href="helpers-functions.html#cb6-180" tabindex="-1"></a>      <span class="fu">stopifnot</span>(<span class="st">"matrix"</span> <span class="sc">%in%</span> <span class="fu">class</span>(cond.sig))</span>
 <span id="cb6-181"><a href="helpers-functions.html#cb6-181" tabindex="-1"></a>      imputed_y <span class="ot">=</span> tmvnsim<span class="sc">::</span><span class="fu">tmvnsim</span>(<span class="at">nsamp =</span> <span class="dv">1</span>, <span class="fu">length</span>(cond.m),</span>
 <span id="cb6-182"><a href="helpers-functions.html#cb6-182" tabindex="-1"></a>              <span class="at">lower=</span>lower.info[cc], <span class="at">upper =</span> upper.info[cc],</span>
 <span id="cb6-183"><a href="helpers-functions.html#cb6-183" tabindex="-1"></a>              <span class="at">mean=</span> cond.m, <span class="at">sigma =</span> cond.sig)<span class="sc">$</span>samp</span>
@@ -360,19 +331,19 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb6-188"><a href="helpers-functions.html#cb6-188" tabindex="-1"></a>    <span class="fu">return</span>(yy)</span>
 <span id="cb6-189"><a href="helpers-functions.html#cb6-189" tabindex="-1"></a>}</span>
 <span id="cb6-190"><a href="helpers-functions.html#cb6-190" tabindex="-1"></a></span>
-<span id="cb6-191"><a href="helpers-functions.html#cb6-191" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb6-192"><a href="helpers-functions.html#cb6-192" tabindex="-1"></a><span id='impute.censored'>impute.censored</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(ww, yy, zz, cc.info.mat, bounds.mat,</span>
+<span id="cb6-191"><a href="helpers-functions.html#cb6-191" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb6-192"><a href="helpers-functions.html#cb6-192" tabindex="-1"></a><span id="impute.censored">impute.censored</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(ww, yy, zz, cc.info.mat, bounds.mat,</span>
 <span id="cb6-193"><a href="helpers-functions.html#cb6-193" tabindex="-1"></a>                            mu.mat, Sigma.ell, dimdat){</span>
 <span id="cb6-194"><a href="helpers-functions.html#cb6-194" tabindex="-1"></a>  <span class="do">## Setup</span></span>
-<span id="cb6-195"><a href="helpers-functions.html#cb6-195" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="st">&quot;array&quot;</span> <span class="sc">%in%</span> <span class="fu">class</span>(Sigma.ell))</span>
+<span id="cb6-195"><a href="helpers-functions.html#cb6-195" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="st">"array"</span> <span class="sc">%in%</span> <span class="fu">class</span>(Sigma.ell))</span>
 <span id="cb6-196"><a href="helpers-functions.html#cb6-196" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">length</span>(zz) <span class="sc">==</span> <span class="dv">0</span>){</span>
 <span id="cb6-197"><a href="helpers-functions.html#cb6-197" tabindex="-1"></a>        ret <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
 <span id="cb6-198"><a href="helpers-functions.html#cb6-198" tabindex="-1"></a>    }<span class="cf">else</span> <span class="cf">if</span> (<span class="fu">length</span>(zz)<span class="sc">==</span><span class="dv">1</span>){</span>
-<span id="cb6-199"><a href="helpers-functions.html#cb6-199" tabindex="-1"></a>        ret <span class="ot">&lt;-</span> <a href='helpers-functions.html#samp.trunc.normal'>samp.trunc.normal</a>(yy, zz, cc.info.mat, bounds.mat,</span>
+<span id="cb6-199"><a href="helpers-functions.html#cb6-199" tabindex="-1"></a>        ret <span class="ot">&lt;-</span> <a href="helpers-functions.html#samp.trunc.normal">samp.trunc.normal</a>(yy, zz, cc.info.mat, bounds.mat,</span>
 <span id="cb6-200"><a href="helpers-functions.html#cb6-200" tabindex="-1"></a>                                 mu.mat, Sigma.ell, dimdat)</span>
 <span id="cb6-201"><a href="helpers-functions.html#cb6-201" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
 <span id="cb6-202"><a href="helpers-functions.html#cb6-202" tabindex="-1"></a>        ret <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">sapply</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(zz), <span class="cf">function</span>(ii)</span>
-<span id="cb6-203"><a href="helpers-functions.html#cb6-203" tabindex="-1"></a>            <a href='helpers-functions.html#samp.trunc.normal'>samp.trunc.normal</a>(yy[ii,], zz[ii],</span>
+<span id="cb6-203"><a href="helpers-functions.html#cb6-203" tabindex="-1"></a>            <a href="helpers-functions.html#samp.trunc.normal">samp.trunc.normal</a>(yy[ii,], zz[ii],</span>
 <span id="cb6-204"><a href="helpers-functions.html#cb6-204" tabindex="-1"></a>                              cc.info.mat[ii,], bounds.mat[,ii],</span>
 <span id="cb6-205"><a href="helpers-functions.html#cb6-205" tabindex="-1"></a>                              mu.mat, Sigma.ell, dimdat)))</span>
 <span id="cb6-206"><a href="helpers-functions.html#cb6-206" tabindex="-1"></a>    }</span>
@@ -380,8 +351,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb6-208"><a href="helpers-functions.html#cb6-208" tabindex="-1"></a>}</span>
 <span id="cb6-209"><a href="helpers-functions.html#cb6-209" tabindex="-1"></a></span>
 <span id="cb6-210"><a href="helpers-functions.html#cb6-210" tabindex="-1"></a></span>
-<span id="cb6-211"><a href="helpers-functions.html#cb6-211" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb6-212"><a href="helpers-functions.html#cb6-212" tabindex="-1"></a><span id='gen.syn.dta'>gen.syn.dta</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(T, K, p, <span class="at">d=</span><span class="dv">3</span>, <span class="at">Cbox=</span><span class="cn">NULL</span>, <span class="at">Pi =</span><span class="cn">NULL</span>, <span class="at">avg.clust.size=</span><span class="dv">100</span>){</span>
+<span id="cb6-211"><a href="helpers-functions.html#cb6-211" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb6-212"><a href="helpers-functions.html#cb6-212" tabindex="-1"></a><span id="gen.syn.dta">gen.syn.dta</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(T, K, p, <span class="at">d=</span><span class="dv">3</span>, <span class="at">Cbox=</span><span class="cn">NULL</span>, <span class="at">Pi =</span><span class="cn">NULL</span>, <span class="at">avg.clust.size=</span><span class="dv">100</span>){</span>
 <span id="cb6-213"><a href="helpers-functions.html#cb6-213" tabindex="-1"></a>    <span class="do">## this function can be deleted </span></span>
 <span id="cb6-214"><a href="helpers-functions.html#cb6-214" tabindex="-1"></a>    <span class="do">### by default, d = 3</span></span>
 <span id="cb6-215"><a href="helpers-functions.html#cb6-215" tabindex="-1"></a>    nt <span class="ot">&lt;-</span> stats<span class="sc">::</span><span class="fu">rpois</span>(<span class="at">n=</span>T,<span class="at">lambda=</span>avg.clust.size<span class="sc">*</span>K)</span>
@@ -409,7 +380,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb6-237"><a href="helpers-functions.html#cb6-237" tabindex="-1"></a>    Ytrue.list <span class="ot">&lt;-</span> Y.list</span>
 <span id="cb6-238"><a href="helpers-functions.html#cb6-238" tabindex="-1"></a></span>
 <span id="cb6-239"><a href="helpers-functions.html#cb6-239" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">is.null</span>(Cbox)<span class="sc">==</span><span class="cn">FALSE</span>){</span>
-<span id="cb6-240"><a href="helpers-functions.html#cb6-240" tabindex="-1"></a>        Y.list <span class="ot">&lt;-</span> <span class="fu">lapply</span>(Y.list, <span class="cf">function</span>(x) <a href='helpers-functions.html#dtaMatCensor'>dtaMatCensor</a>(x,Cbox))</span>
+<span id="cb6-240"><a href="helpers-functions.html#cb6-240" tabindex="-1"></a>        Y.list <span class="ot">&lt;-</span> <span class="fu">lapply</span>(Y.list, <span class="cf">function</span>(x) <a href="helpers-functions.html#dtaMatCensor">dtaMatCensor</a>(x,Cbox))</span>
 <span id="cb6-241"><a href="helpers-functions.html#cb6-241" tabindex="-1"></a>    }</span>
 <span id="cb6-242"><a href="helpers-functions.html#cb6-242" tabindex="-1"></a>    <span class="fu">return</span>(<span class="fu">list</span>(<span class="at">Y.list=</span>Y.list, <span class="at">X=</span>X, <span class="at">Z.list=</span>Z.list, <span class="at">nt=</span>nt, <span class="at">Cbox=</span>Cbox, <span class="at">K=</span>K,</span>
 <span id="cb6-243"><a href="helpers-functions.html#cb6-243" tabindex="-1"></a>                <span class="at">Ytrue.list =</span> Ytrue.list,</span>
@@ -417,8 +388,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb6-245"><a href="helpers-functions.html#cb6-245" tabindex="-1"></a>}</span>
 <span id="cb6-246"><a href="helpers-functions.html#cb6-246" tabindex="-1"></a></span>
 <span id="cb6-247"><a href="helpers-functions.html#cb6-247" tabindex="-1"></a></span>
-<span id="cb6-248"><a href="helpers-functions.html#cb6-248" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb6-249"><a href="helpers-functions.html#cb6-249" tabindex="-1"></a><span id='loglik_eval'>loglik_eval</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(mu.list, chol.Sig.list,</span>
+<span id="cb6-248"><a href="helpers-functions.html#cb6-248" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb6-249"><a href="helpers-functions.html#cb6-249" tabindex="-1"></a><span id="loglik_eval">loglik_eval</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(mu.list, chol.Sig.list,</span>
 <span id="cb6-250"><a href="helpers-functions.html#cb6-250" tabindex="-1"></a>                        W.list, X.list, Y.list, Z.list,</span>
 <span id="cb6-251"><a href="helpers-functions.html#cb6-251" tabindex="-1"></a>                        nt.list, <span class="at">simple =</span> <span class="cn">FALSE</span>, <span class="at">n.cores =</span> <span class="dv">1</span>){</span>
 <span id="cb6-252"><a href="helpers-functions.html#cb6-252" tabindex="-1"></a></span>
@@ -442,17 +413,17 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb6-270"><a href="helpers-functions.html#cb6-270" tabindex="-1"></a>            <span class="at">ww =</span> W.list, <span class="at">xx =</span> X.list, <span class="at">yy =</span> Y.list,</span>
 <span id="cb6-271"><a href="helpers-functions.html#cb6-271" tabindex="-1"></a>            <span class="at">mm=</span>mu.list, <span class="at">zz =</span> Z.list, <span class="at">nt =</span> nt.list,</span>
 <span id="cb6-272"><a href="helpers-functions.html#cb6-272" tabindex="-1"></a>            <span class="at">mc.cores =</span> <span class="fu">min</span>(n.cores, T), <span class="at">SIMPLIFY =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb6-273"><a href="helpers-functions.html#cb6-273" tabindex="-1"></a>        out <span class="ot">&lt;-</span> <span class="fu">Reduce</span>(<span class="st">&quot;+&quot;</span>,ll.sums)<span class="sc">/</span><span class="fu">sum</span>(<span class="fu">unlist</span>(nt.list))</span>
+<span id="cb6-273"><a href="helpers-functions.html#cb6-273" tabindex="-1"></a>        out <span class="ot">&lt;-</span> <span class="fu">Reduce</span>(<span class="st">"+"</span>,ll.sums)<span class="sc">/</span><span class="fu">sum</span>(<span class="fu">unlist</span>(nt.list))</span>
 <span id="cb6-274"><a href="helpers-functions.html#cb6-274" tabindex="-1"></a>    }</span>
 <span id="cb6-275"><a href="helpers-functions.html#cb6-275" tabindex="-1"></a>    <span class="fu">return</span>(out)</span>
 <span id="cb6-276"><a href="helpers-functions.html#cb6-276" tabindex="-1"></a>}</span></code></pre></div>
 <p>Here’s a function that makes a censoring box (dimdat by 2 matrix, where the
 first column is the lower cutoff, and the second column is the upper cutoff).</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="helpers-functions.html#cb7-1" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb7-2"><a href="helpers-functions.html#cb7-2" tabindex="-1"></a><span class="co">#&#39; @param ylist Data with censored particles inside.</span></span>
-<span id="cb7-3"><a href="helpers-functions.html#cb7-3" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb7-4"><a href="helpers-functions.html#cb7-4" tabindex="-1"></a><span class="co">#&#39; @export</span></span>
-<span id="cb7-5"><a href="helpers-functions.html#cb7-5" tabindex="-1"></a><span id='get_Cbox'>get_Cbox</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(ylist){</span>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="helpers-functions.html#cb7-1" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb7-2"><a href="helpers-functions.html#cb7-2" tabindex="-1"></a><span class="co">#' @param ylist Data with censored particles inside.</span></span>
+<span id="cb7-3"><a href="helpers-functions.html#cb7-3" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb7-4"><a href="helpers-functions.html#cb7-4" tabindex="-1"></a><span class="co">#' @export</span></span>
+<span id="cb7-5"><a href="helpers-functions.html#cb7-5" tabindex="-1"></a><span id="get_Cbox">get_Cbox</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(ylist){</span>
 <span id="cb7-6"><a href="helpers-functions.html#cb7-6" tabindex="-1"></a></span>
 <span id="cb7-7"><a href="helpers-functions.html#cb7-7" tabindex="-1"></a>  <span class="do">## Setup</span></span>
 <span id="cb7-8"><a href="helpers-functions.html#cb7-8" tabindex="-1"></a>  dimdat <span class="ot">=</span> <span class="fu">ncol</span>(ylist[[<span class="dv">1</span>]])</span>
@@ -469,23 +440,14 @@ first column is the lower cutoff, and the second column is the upper cutoff).</p
 
 </div>
             </section>
-
-          </div>
+</div>
         </div>
       </div>
 <a href="package-setup.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
 <a href="syntheticdata.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
-<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
-<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
-<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
-<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
-<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
-<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
-<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
-<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
-<script>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script><script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script><script src="libs/gitbook-2.6.7/js/plugin-search.js"></script><script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script><script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script><script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script><script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script><script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script><script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
 "sharing": {
@@ -526,10 +488,7 @@ gitbook.start({
 }
 });
 });
-</script>
-
-<!-- dynamically load mathjax for compatibility with self-contained -->
-<script>
+</script><!-- dynamically load mathjax for compatibility with self-contained --><script>
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
@@ -543,5 +502,4 @@ gitbook.start({
   })();
 </script>
 </body>
-
 </html>

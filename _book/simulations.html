@@ -1,61 +1,33 @@
 <!DOCTYPE html>
 <html lang="" xml:lang="">
 <head>
-
-  <meta charset="utf-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>6 Simulations | Creating the flowcut R package</title>
-  <meta name="description" content="6 Simulations | Creating the flowcut R package" />
-  <meta name="generator" content="bookdown 0.39 and GitBook 2.6.7" />
-
-  <meta property="og:title" content="6 Simulations | Creating the flowcut R package" />
-  <meta property="og:type" content="book" />
-  
-  
-  
-
-  <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="6 Simulations | Creating the flowcut R package" />
-  
-  
-  
-
-<meta name="author" content="Sheng Jiang, Sangwon Hyun" />
-
-
-<meta name="date" content="2024-06-12" />
-
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-  
-  
-<link rel="prev" href="gibbs-sampler.html"/>
-<link rel="next" href="real-data-example.html"/>
-<script src="libs/header-attrs-2.27/header-attrs.js"></script>
-<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
-<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
-
-
-
-
-
-
-
-
-<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
-<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
-<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
-
-
-<style type="text/css">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>6 Simulations | Creating the flowcut R package</title>
+<meta name="description" content="6 Simulations | Creating the flowcut R package">
+<meta name="generator" content="bookdown 0.39 and GitBook 2.6.7">
+<meta property="og:title" content="6 Simulations | Creating the flowcut R package">
+<meta property="og:type" content="book">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="6 Simulations | Creating the flowcut R package">
+<meta name="author" content="Sheng Jiang, Sangwon Hyun">
+<meta name="date" content="2024-06-23">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<link rel="prev" href="gibbs-sampler.html">
+<link rel="next" href="real-data-example.html">
+<script src="libs/header-attrs-2.27.1/header-attrs.js"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script><link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet">
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet">
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet">
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet">
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet">
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet">
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet">
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet">
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet">
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script><style type="text/css">
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
@@ -119,14 +91,14 @@ code span.va { color: #19177c; } /* Variable */
 code span.vs { color: #4070a0; } /* VerbatimString */
 code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
-
 <style type="text/css">
   
   div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 </style>
-
+<style type="text/css">fieldset.chunkfield {border:1px dotted black;padding-bottom: 0px;padding-top: 0px;margin:0 2px;padding:.35em .625em .75em}
+    legend.chunklegend {padding:0;width:auto;border:0; border-bottom: none; margin-bottom:0}
+    </style>
 </head>
-
 <body>
 
 
@@ -134,24 +106,22 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
 
     <div class="book-summary">
-      <nav role="navigation">
-
-<ul class="summary">
+      <nav role="navigation"><ul class="summary">
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
 <li class="chapter" data-level="2" data-path="package-setup.html"><a href="package-setup.html"><i class="fa fa-check"></i><b>2</b> Package setup</a></li>
 <li class="chapter" data-level="3" data-path="helpers-functions.html"><a href="helpers-functions.html"><i class="fa fa-check"></i><b>3</b> Helpers functions</a></li>
 <li class="chapter" data-level="4" data-path="syntheticdata.html"><a href="syntheticdata.html"><i class="fa fa-check"></i><b>4</b> Generating synthetic data</a></li>
-<li class="chapter" data-level="5" data-path="gibbs-sampler.html"><a href="gibbs-sampler.html"><i class="fa fa-check"></i><b>5</b> Gibbs sampler</a>
+<li class="chapter" data-level="5" data-path="gibbs-sampler.html">
+<a href="gibbs-sampler.html"><i class="fa fa-check"></i><b>5</b> Gibbs sampler</a>
 <ul>
 <li class="chapter" data-level="5.1" data-path="gibbs-sampler.html"><a href="gibbs-sampler.html#the-main-gibbs-sampler"><i class="fa fa-check"></i><b>5.1</b> The main Gibbs sampler</a></li>
-</ul></li>
+</ul>
+</li>
 <li class="chapter" data-level="6" data-path="simulations.html"><a href="simulations.html"><i class="fa fa-check"></i><b>6</b> Simulations</a></li>
 <li class="chapter" data-level="7" data-path="real-data-example.html"><a href="real-data-example.html"><i class="fa fa-check"></i><b>7</b> Real data example</a></li>
 <li class="chapter" data-level="8" data-path="documenting-the-package-and-building.html"><a href="documenting-the-package-and-building.html"><i class="fa fa-check"></i><b>8</b> Documenting the package and building</a></li>
-</ul>
-
-      </nav>
-    </div>
+</ul></nav>
+</div>
 
     <div class="book-body">
       <div class="body-inner">
@@ -164,20 +134,21 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
         <div class="page-wrapper" tabindex="-1" role="main">
           <div class="page-inner">
 
-            <section class="normal" id="section-">
-<div id="simulations" class="section level1 hasAnchor" number="6">
-<h1><span class="header-section-number">6</span> Simulations<a href="simulations.html#simulations" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+            <section class="normal" id="section-"><div id="simulations" class="section level1 hasAnchor" number="6">
+<h1>
+<span class="header-section-number">6</span> Simulations<a href="simulations.html#simulations" class="anchor-section" aria-label="Anchor link to header"></a>
+</h1>
 <p>Refer back to the data generation in @ref{syntheticdata}. We will be
 top-censoring the data at 0.5. Before censoring, this is what the data looks
 like.</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="simulations.html#cb14-1" tabindex="-1"></a><span class="do">## Load the &quot;original&quot; model</span></span>
-<span id="cb14-2"><a href="simulations.html#cb14-2" tabindex="-1"></a>orig_model <span class="ot">=</span> <span class="fu">readRDS</span>(<span class="at">file=</span><span class="fu">file.path</span>(<span class="st">&quot;~/repos/flowcut/inst/output&quot;</span>, <span class="st">&quot;orig_model.RDS&quot;</span>))</span>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="simulations.html#cb14-1" tabindex="-1"></a><span class="do">## Load the "original" model</span></span>
+<span id="cb14-2"><a href="simulations.html#cb14-2" tabindex="-1"></a>orig_model <span class="ot">=</span> <span class="fu">readRDS</span>(<span class="at">file=</span><span class="fu">file.path</span>(<span class="st">"~/repos/flowcut/inst/output"</span>, <span class="st">"orig_model.RDS"</span>))</span>
 <span id="cb14-3"><a href="simulations.html#cb14-3" tabindex="-1"></a></span>
 <span id="cb14-4"><a href="simulations.html#cb14-4" tabindex="-1"></a><span class="do">## Generate data</span></span>
 <span id="cb14-5"><a href="simulations.html#cb14-5" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">100</span>)</span>
 <span id="cb14-6"><a href="simulations.html#cb14-6" tabindex="-1"></a>isignal <span class="ot">=</span> <span class="dv">8</span></span>
-<span id="cb14-7"><a href="simulations.html#cb14-7" tabindex="-1"></a>new_model <span class="ot">=</span> flowcut<span class="sc">::</span><a href='syntheticdata.html#make_model'>make_model</a>(orig_model, isignal)</span>
-<span id="cb14-8"><a href="simulations.html#cb14-8" tabindex="-1"></a>ylist <span class="ot">=</span> flowcut<span class="sc">::</span><a href='syntheticdata.html#gen_1d'>gen_1d</a>(new_model, <span class="at">nt =</span> <span class="dv">100</span>)</span>
+<span id="cb14-7"><a href="simulations.html#cb14-7" tabindex="-1"></a>new_model <span class="ot">=</span> flowcut<span class="sc">::</span><a href="syntheticdata.html#make_model">make_model</a>(orig_model, isignal)</span>
+<span id="cb14-8"><a href="simulations.html#cb14-8" tabindex="-1"></a>ylist <span class="ot">=</span> flowcut<span class="sc">::</span><a href="syntheticdata.html#gen_1d">gen_1d</a>(new_model, <span class="at">nt =</span> <span class="dv">100</span>)</span>
 <span id="cb14-9"><a href="simulations.html#cb14-9" tabindex="-1"></a>flowtrend<span class="sc">::</span><span class="fu">plot_1d</span>(ylist, <span class="at">obj =</span> new_model)</span></code></pre></div>
 <p>After censoring, this is it.</p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="simulations.html#cb15-1" tabindex="-1"></a><span class="do">## Censor it</span></span>
@@ -187,7 +158,7 @@ like.</p>
 <span id="cb15-5"><a href="simulations.html#cb15-5" tabindex="-1"></a>flowtrend<span class="sc">::</span><span class="fu">plot_1d</span>(ylist, <span class="at">obj =</span> new_model)</span></code></pre></div>
 <p>We need to specify a few things (1) like the censoring limits <code>Cbox</code> and (2)
 <code>countslist</code> before running the MCMC.</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="simulations.html#cb16-1" tabindex="-1"></a><span class="do">## Form the censoring &quot;box&quot;</span></span>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="simulations.html#cb16-1" tabindex="-1"></a><span class="do">## Form the censoring "box"</span></span>
 <span id="cb16-2"><a href="simulations.html#cb16-2" tabindex="-1"></a>Cbox <span class="ot">=</span> <span class="fu">rbind</span>(<span class="fu">c</span>(<span class="sc">-</span><span class="cn">Inf</span>, <span class="fl">0.5</span>)) </span>
 <span id="cb16-3"><a href="simulations.html#cb16-3" tabindex="-1"></a></span>
 <span id="cb16-4"><a href="simulations.html#cb16-4" tabindex="-1"></a><span class="do">## Counts are all equal for now</span></span>
@@ -196,21 +167,21 @@ like.</p>
 <span id="cb16-7"><a href="simulations.html#cb16-7" tabindex="-1"></a><span class="do">## Save the metadata</span></span>
 <span id="cb16-8"><a href="simulations.html#cb16-8" tabindex="-1"></a>datobj <span class="ot">=</span> <span class="fu">list</span>(<span class="at">ylist=</span>ylist, <span class="at">countslist=</span>countslist, <span class="at">Cbox=</span>Cbox, <span class="at">X=</span>orig_model<span class="sc">$</span>X)</span>
 <span id="cb16-9"><a href="simulations.html#cb16-9" tabindex="-1"></a><span class="fu">saveRDS</span>(datobj,</span>
-<span id="cb16-10"><a href="simulations.html#cb16-10" tabindex="-1"></a>        <span class="fu">file.path</span>(<span class="st">&quot;~/repos/flowcut/inst/output&quot;</span>,</span>
-<span id="cb16-11"><a href="simulations.html#cb16-11" tabindex="-1"></a>                  <span class="fu">paste0</span>(<span class="st">&quot;isignal-&quot;</span>, isignal, <span class="st">&quot;-datobj.RDS&quot;</span>)))</span></code></pre></div>
+<span id="cb16-10"><a href="simulations.html#cb16-10" tabindex="-1"></a>        <span class="fu">file.path</span>(<span class="st">"~/repos/flowcut/inst/output"</span>,</span>
+<span id="cb16-11"><a href="simulations.html#cb16-11" tabindex="-1"></a>                  <span class="fu">paste0</span>(<span class="st">"isignal-"</span>, isignal, <span class="st">"-datobj.RDS"</span>)))</span></code></pre></div>
 <p>We also need some <em>prior elicitation</em> to prevent the cluster means from changing
 too much across time.</p>
 <p>(code copy-pasted as-is for now, not meant to be run)</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="simulations.html#cb17-1" tabindex="-1"></a><span class="co">#&#39; X is a (T x p) covariate matrix (that doesn&#39;t include the intercept)</span></span>
-<span id="cb17-2"><a href="simulations.html#cb17-2" tabindex="-1"></a><span class="co">#&#39; </span></span>
-<span id="cb17-3"><a href="simulations.html#cb17-3" tabindex="-1"></a><span class="co">#&#39; @param X (T x p) matrix.</span></span>
-<span id="cb17-4"><a href="simulations.html#cb17-4" tabindex="-1"></a><span class="co">#&#39; @param dimdat Dimension of cytogram data.</span></span>
-<span id="cb17-5"><a href="simulations.html#cb17-5" tabindex="-1"></a><span class="co">#&#39; @param maxdev Maximum deviation of cluster means away from its grand mean.</span></span>
-<span id="cb17-6"><a href="simulations.html#cb17-6" tabindex="-1"></a><span class="co">#&#39; @param viz Whether to produce a plot.</span></span>
-<span id="cb17-7"><a href="simulations.html#cb17-7" tabindex="-1"></a><span class="co">#&#39; @param n.cores Number of cores.</span></span>
-<span id="cb17-8"><a href="simulations.html#cb17-8" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb17-9"><a href="simulations.html#cb17-9" tabindex="-1"></a><span class="co">#&#39; </span></span>
-<span id="cb17-10"><a href="simulations.html#cb17-10" tabindex="-1"></a><span id='maxdev_to_gg'>maxdev_to_gg</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(X, dimdat, maxdev, <span class="at">viz =</span> <span class="cn">FALSE</span>, <span class="at">n.cores =</span> <span class="dv">1</span>){</span>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="simulations.html#cb17-1" tabindex="-1"></a><span class="co">#' X is a (T x p) covariate matrix (that doesn't include the intercept)</span></span>
+<span id="cb17-2"><a href="simulations.html#cb17-2" tabindex="-1"></a><span class="co">#' </span></span>
+<span id="cb17-3"><a href="simulations.html#cb17-3" tabindex="-1"></a><span class="co">#' @param X (T x p) matrix.</span></span>
+<span id="cb17-4"><a href="simulations.html#cb17-4" tabindex="-1"></a><span class="co">#' @param dimdat Dimension of cytogram data.</span></span>
+<span id="cb17-5"><a href="simulations.html#cb17-5" tabindex="-1"></a><span class="co">#' @param maxdev Maximum deviation of cluster means away from its grand mean.</span></span>
+<span id="cb17-6"><a href="simulations.html#cb17-6" tabindex="-1"></a><span class="co">#' @param viz Whether to produce a plot.</span></span>
+<span id="cb17-7"><a href="simulations.html#cb17-7" tabindex="-1"></a><span class="co">#' @param n.cores Number of cores.</span></span>
+<span id="cb17-8"><a href="simulations.html#cb17-8" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb17-9"><a href="simulations.html#cb17-9" tabindex="-1"></a><span class="co">#' </span></span>
+<span id="cb17-10"><a href="simulations.html#cb17-10" tabindex="-1"></a><span id="maxdev_to_gg">maxdev_to_gg</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(X, dimdat, maxdev, <span class="at">viz =</span> <span class="cn">FALSE</span>, <span class="at">n.cores =</span> <span class="dv">1</span>){</span>
 <span id="cb17-11"><a href="simulations.html#cb17-11" tabindex="-1"></a></span>
 <span id="cb17-12"><a href="simulations.html#cb17-12" tabindex="-1"></a>  <span class="do">## Basic setup</span></span>
 <span id="cb17-13"><a href="simulations.html#cb17-13" tabindex="-1"></a>  p <span class="ot">=</span> <span class="fu">ncol</span>(X) <span class="do">## 39</span></span>
@@ -218,7 +189,7 @@ too much across time.</p>
 <span id="cb17-15"><a href="simulations.html#cb17-15" tabindex="-1"></a></span>
 <span id="cb17-16"><a href="simulations.html#cb17-16" tabindex="-1"></a>  <span class="co"># Helper function</span></span>
 <span id="cb17-17"><a href="simulations.html#cb17-17" tabindex="-1"></a>  <span class="co"># @param tX is the transpose of X</span></span>
-<span id="cb17-18"><a href="simulations.html#cb17-18" tabindex="-1"></a>  <span id='ball.deviance'>ball.deviance</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(gg, rr, tX, <span class="at">Nmc=</span><span class="dv">5000</span>,</span>
+<span id="cb17-18"><a href="simulations.html#cb17-18" tabindex="-1"></a>  <span id="ball.deviance">ball.deviance</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(gg, rr, tX, <span class="at">Nmc=</span><span class="dv">5000</span>,</span>
 <span id="cb17-19"><a href="simulations.html#cb17-19" tabindex="-1"></a>                            <span class="at">nu0=</span>d, <span class="at">nu1=</span>p<span class="sc">+</span><span class="dv">1</span>,</span>
 <span id="cb17-20"><a href="simulations.html#cb17-20" tabindex="-1"></a>                            <span class="at">S0=</span><span class="fu">diag</span>(d), <span class="at">S1=</span><span class="fu">diag</span>(p<span class="sc">+</span><span class="dv">1</span>),</span>
 <span id="cb17-21"><a href="simulations.html#cb17-21" tabindex="-1"></a>                            <span class="at">simple=</span> <span class="cn">TRUE</span>){</span>
@@ -250,12 +221,12 @@ too much across time.</p>
 <span id="cb17-47"><a href="simulations.html#cb17-47" tabindex="-1"></a></span>
 <span id="cb17-48"><a href="simulations.html#cb17-48" tabindex="-1"></a>  gglist <span class="ot">&lt;-</span> <span class="fu">as.list</span>((<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>)<span class="sc">/</span><span class="dv">10</span>)<span class="do">##as.list(1:40/100)</span></span>
 <span id="cb17-49"><a href="simulations.html#cb17-49" tabindex="-1"></a>  plist <span class="ot">&lt;-</span> parallel<span class="sc">::</span><span class="fu">mclapply</span>(gglist, <span class="cf">function</span>(gg){</span>
-<span id="cb17-50"><a href="simulations.html#cb17-50" tabindex="-1"></a>    <span class="fu">print</span>(<span class="st">&#39;here&#39;</span>)</span>
-<span id="cb17-51"><a href="simulations.html#cb17-51" tabindex="-1"></a>      <a href='simulations.html#ball.deviance'>ball.deviance</a>(gg, maxdev, <span class="fu">t</span>(X), <span class="at">Nmc =</span> <span class="fl">1e4</span>)<span class="sc">$</span>prob},</span>
+<span id="cb17-50"><a href="simulations.html#cb17-50" tabindex="-1"></a>    <span class="fu">print</span>(<span class="st">'here'</span>)</span>
+<span id="cb17-51"><a href="simulations.html#cb17-51" tabindex="-1"></a>      <a href="simulations.html#ball.deviance">ball.deviance</a>(gg, maxdev, <span class="fu">t</span>(X), <span class="at">Nmc =</span> <span class="fl">1e4</span>)<span class="sc">$</span>prob},</span>
 <span id="cb17-52"><a href="simulations.html#cb17-52" tabindex="-1"></a>      <span class="at">mc.cores =</span> <span class="fu">min</span>(n.cores, <span class="fu">length</span>(gglist)))</span>
 <span id="cb17-53"><a href="simulations.html#cb17-53" tabindex="-1"></a></span>
 <span id="cb17-54"><a href="simulations.html#cb17-54" tabindex="-1"></a>  <span class="do">## Make linear interpolation at a fine grid</span></span>
-<span id="cb17-55"><a href="simulations.html#cb17-55" tabindex="-1"></a>  res <span class="ot">=</span> stats<span class="sc">::</span><span class="fu">approx</span>(<span class="at">x =</span> <span class="fu">unlist</span>(gglist), <span class="at">y =</span> <span class="fu">unlist</span>(plist), <span class="at">method=</span><span class="st">&quot;linear&quot;</span>, <span class="at">n =</span> <span class="dv">100</span>)</span>
+<span id="cb17-55"><a href="simulations.html#cb17-55" tabindex="-1"></a>  res <span class="ot">=</span> stats<span class="sc">::</span><span class="fu">approx</span>(<span class="at">x =</span> <span class="fu">unlist</span>(gglist), <span class="at">y =</span> <span class="fu">unlist</span>(plist), <span class="at">method=</span><span class="st">"linear"</span>, <span class="at">n =</span> <span class="dv">100</span>)</span>
 <span id="cb17-56"><a href="simulations.html#cb17-56" tabindex="-1"></a>  newx <span class="ot">=</span>  res<span class="sc">$</span>x</span>
 <span id="cb17-57"><a href="simulations.html#cb17-57" tabindex="-1"></a>  newy <span class="ot">=</span> res<span class="sc">$</span>y</span>
 <span id="cb17-58"><a href="simulations.html#cb17-58" tabindex="-1"></a></span>
@@ -264,23 +235,23 @@ too much across time.</p>
 <span id="cb17-61"><a href="simulations.html#cb17-61" tabindex="-1"></a></span>
 <span id="cb17-62"><a href="simulations.html#cb17-62" tabindex="-1"></a>  <span class="co"># Make some plots to confirm</span></span>
 <span id="cb17-63"><a href="simulations.html#cb17-63" tabindex="-1"></a>  <span class="cf">if</span>(viz){</span>
-<span id="cb17-64"><a href="simulations.html#cb17-64" tabindex="-1"></a>    <span class="fu">plot</span>(gglist,plist,<span class="at">type =</span> <span class="st">&quot;l&quot;</span>,</span>
-<span id="cb17-65"><a href="simulations.html#cb17-65" tabindex="-1"></a>         <span class="at">ylab =</span> <span class="st">&quot;Prob outside of </span><span class="sc">\n</span><span class="st"> radius r&quot;</span>, <span class="at">xlab =</span> <span class="st">&quot;Value of |gg|&quot;</span>)</span>
-<span id="cb17-66"><a href="simulations.html#cb17-66" tabindex="-1"></a>    graphics<span class="sc">::</span><span class="fu">abline</span>(<span class="at">h=</span><span class="fl">0.05</span>,<span class="at">lwd=</span><span class="dv">2</span>,<span class="at">col =</span> <span class="st">&quot;red&quot;</span>)</span>
-<span id="cb17-67"><a href="simulations.html#cb17-67" tabindex="-1"></a>    graphics<span class="sc">::</span><span class="fu">abline</span>(<span class="at">h=</span><span class="fl">0.01</span>,<span class="at">lwd=</span><span class="dv">2</span>,<span class="at">col =</span> <span class="st">&quot;red&quot;</span>)</span>
-<span id="cb17-68"><a href="simulations.html#cb17-68" tabindex="-1"></a>    <span class="do">## lines(y=newy, x=newx,lwd=2,col=&quot;blue&quot;)</span></span>
+<span id="cb17-64"><a href="simulations.html#cb17-64" tabindex="-1"></a>    <span class="fu">plot</span>(gglist,plist,<span class="at">type =</span> <span class="st">"l"</span>,</span>
+<span id="cb17-65"><a href="simulations.html#cb17-65" tabindex="-1"></a>         <span class="at">ylab =</span> <span class="st">"Prob outside of </span><span class="sc">\n</span><span class="st"> radius r"</span>, <span class="at">xlab =</span> <span class="st">"Value of |gg|"</span>)</span>
+<span id="cb17-66"><a href="simulations.html#cb17-66" tabindex="-1"></a>    graphics<span class="sc">::</span><span class="fu">abline</span>(<span class="at">h=</span><span class="fl">0.05</span>,<span class="at">lwd=</span><span class="dv">2</span>,<span class="at">col =</span> <span class="st">"red"</span>)</span>
+<span id="cb17-67"><a href="simulations.html#cb17-67" tabindex="-1"></a>    graphics<span class="sc">::</span><span class="fu">abline</span>(<span class="at">h=</span><span class="fl">0.01</span>,<span class="at">lwd=</span><span class="dv">2</span>,<span class="at">col =</span> <span class="st">"red"</span>)</span>
+<span id="cb17-68"><a href="simulations.html#cb17-68" tabindex="-1"></a>    <span class="do">## lines(y=newy, x=newx,lwd=2,col="blue")</span></span>
 <span id="cb17-69"><a href="simulations.html#cb17-69" tabindex="-1"></a>    <span class="do">## abline(v=newx[imin])</span></span>
 <span id="cb17-70"><a href="simulations.html#cb17-70" tabindex="-1"></a>  }</span>
 <span id="cb17-71"><a href="simulations.html#cb17-71" tabindex="-1"></a></span>
 <span id="cb17-72"><a href="simulations.html#cb17-72" tabindex="-1"></a>  <span class="fu">return</span>(newx[imin])</span>
 <span id="cb17-73"><a href="simulations.html#cb17-73" tabindex="-1"></a>}</span>
 <span id="cb17-74"><a href="simulations.html#cb17-74" tabindex="-1"></a></span>
-<span id="cb17-75"><a href="simulations.html#cb17-75" tabindex="-1"></a><span class="do">## hist(<a href='simulations.html#ball.deviance'>ball.deviance</a>(0.01,0.5,t(X))$msd, breaks = &quot;FD&quot;)</span></span>
-<span id="cb17-76"><a href="simulations.html#cb17-76" tabindex="-1"></a><span class="do">## hist(<a href='simulations.html#ball.deviance'>ball.deviance</a>(0.1,0.5,X)$msd, breaks = &quot;FD&quot;)</span></span>
-<span id="cb17-77"><a href="simulations.html#cb17-77" tabindex="-1"></a><span class="do">## hist(<a href='simulations.html#ball.deviance'>ball.deviance</a>(0.2,0.5,X)$msd, breaks = &quot;FD&quot;)</span></span>
-<span id="cb17-78"><a href="simulations.html#cb17-78" tabindex="-1"></a><span class="do">## hist(<a href='simulations.html#ball.deviance'>ball.deviance</a>(0.5,0.5,X)$msd, breaks = &quot;FD&quot;)</span></span>
-<span id="cb17-79"><a href="simulations.html#cb17-79" tabindex="-1"></a><span class="do">## hist(<a href='simulations.html#ball.deviance'>ball.deviance</a>(1,0.5,X)$msd, breaks = &quot;FD&quot;)</span></span>
-<span id="cb17-80"><a href="simulations.html#cb17-80" tabindex="-1"></a><span class="do">## hist(<a href='simulations.html#ball.deviance'>ball.deviance</a>(2,0.5,X)$msd, breaks = &quot;FD&quot;)</span></span></code></pre></div>
+<span id="cb17-75"><a href="simulations.html#cb17-75" tabindex="-1"></a><span class="do">## hist(<a href="simulations.html#ball.deviance">ball.deviance</a>(0.01,0.5,t(X))$msd, breaks = "FD")</span></span>
+<span id="cb17-76"><a href="simulations.html#cb17-76" tabindex="-1"></a><span class="do">## hist(<a href="simulations.html#ball.deviance">ball.deviance</a>(0.1,0.5,X)$msd, breaks = "FD")</span></span>
+<span id="cb17-77"><a href="simulations.html#cb17-77" tabindex="-1"></a><span class="do">## hist(<a href="simulations.html#ball.deviance">ball.deviance</a>(0.2,0.5,X)$msd, breaks = "FD")</span></span>
+<span id="cb17-78"><a href="simulations.html#cb17-78" tabindex="-1"></a><span class="do">## hist(<a href="simulations.html#ball.deviance">ball.deviance</a>(0.5,0.5,X)$msd, breaks = "FD")</span></span>
+<span id="cb17-79"><a href="simulations.html#cb17-79" tabindex="-1"></a><span class="do">## hist(<a href="simulations.html#ball.deviance">ball.deviance</a>(1,0.5,X)$msd, breaks = "FD")</span></span>
+<span id="cb17-80"><a href="simulations.html#cb17-80" tabindex="-1"></a><span class="do">## hist(<a href="simulations.html#ball.deviance">ball.deviance</a>(2,0.5,X)$msd, breaks = "FD")</span></span></code></pre></div>
 <p>Next, we run the MCMC.</p>
 <div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="simulations.html#cb18-1" tabindex="-1"></a><span class="do">## Run the MCMC</span></span>
 <span id="cb18-2"><a href="simulations.html#cb18-2" tabindex="-1"></a>Nmc <span class="ot">&lt;-</span> <span class="fl">1e3</span> <span class="sc">*</span> <span class="dv">5</span></span>
@@ -290,7 +261,7 @@ too much across time.</p>
 <span id="cb18-6"><a href="simulations.html#cb18-6" tabindex="-1"></a>Nburn <span class="ot">&lt;-</span> <span class="dv">10</span></span>
 <span id="cb18-7"><a href="simulations.html#cb18-7" tabindex="-1"></a></span>
 <span id="cb18-8"><a href="simulations.html#cb18-8" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
-<span id="cb18-9"><a href="simulations.html#cb18-9" tabindex="-1"></a>Gibbs.res <span class="ot">&lt;-</span> <a href='gibbs-sampler.html#run.Gibbs.fast'>run.Gibbs.fast</a>(<span class="at">ylist =</span> datobj<span class="sc">$</span>ylist,</span>
+<span id="cb18-9"><a href="simulations.html#cb18-9" tabindex="-1"></a>Gibbs.res <span class="ot">&lt;-</span> <a href="gibbs-sampler.html#run.Gibbs.fast">run.Gibbs.fast</a>(<span class="at">ylist =</span> datobj<span class="sc">$</span>ylist,</span>
 <span id="cb18-10"><a href="simulations.html#cb18-10" tabindex="-1"></a>                            <span class="at">countslist =</span> datobj<span class="sc">$</span>countslist,</span>
 <span id="cb18-11"><a href="simulations.html#cb18-11" tabindex="-1"></a>                            <span class="at">numclust =</span> <span class="dv">2</span>,</span>
 <span id="cb18-12"><a href="simulations.html#cb18-12" tabindex="-1"></a>                            <span class="at">Nmc =</span> Nmc, <span class="at">Nburn =</span> Nburn,</span>
@@ -300,28 +271,19 @@ too much across time.</p>
 <span id="cb18-16"><a href="simulations.html#cb18-16" tabindex="-1"></a></span>
 <span id="cb18-17"><a href="simulations.html#cb18-17" tabindex="-1"></a><span class="do">## Save the results</span></span>
 <span id="cb18-18"><a href="simulations.html#cb18-18" tabindex="-1"></a><span class="fu">saveRDS</span>(Gibbs.res,</span>
-<span id="cb18-19"><a href="simulations.html#cb18-19" tabindex="-1"></a>        <span class="fu">file.path</span>(<span class="st">&quot;~/repos/flowcut/inst/output&quot;</span>,</span>
-<span id="cb18-20"><a href="simulations.html#cb18-20" tabindex="-1"></a>                  <span class="fu">paste0</span>(<span class="st">&quot;isignal-&quot;</span>, isignal, <span class="st">&quot;-gibbs.RDS&quot;</span>)))</span></code></pre></div>
+<span id="cb18-19"><a href="simulations.html#cb18-19" tabindex="-1"></a>        <span class="fu">file.path</span>(<span class="st">"~/repos/flowcut/inst/output"</span>,</span>
+<span id="cb18-20"><a href="simulations.html#cb18-20" tabindex="-1"></a>                  <span class="fu">paste0</span>(<span class="st">"isignal-"</span>, isignal, <span class="st">"-gibbs.RDS"</span>)))</span></code></pre></div>
 
 </div>
             </section>
-
-          </div>
+</div>
         </div>
       </div>
 <a href="gibbs-sampler.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
 <a href="real-data-example.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
-<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
-<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
-<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
-<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
-<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
-<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
-<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
-<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
-<script>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script><script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script><script src="libs/gitbook-2.6.7/js/plugin-search.js"></script><script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script><script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script><script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script><script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script><script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script><script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
 "sharing": {
@@ -362,10 +324,7 @@ gitbook.start({
 }
 });
 });
-</script>
-
-<!-- dynamically load mathjax for compatibility with self-contained -->
-<script>
+</script><!-- dynamically load mathjax for compatibility with self-contained --><script>
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
@@ -379,5 +338,4 @@ gitbook.start({
   })();
 </script>
 </body>
-
 </html>

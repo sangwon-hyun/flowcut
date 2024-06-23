@@ -1,61 +1,32 @@
 <!DOCTYPE html>
 <html lang="" xml:lang="">
 <head>
-
-  <meta charset="utf-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>8 Documenting the package and building | Creating the flowcut R package</title>
-  <meta name="description" content="8 Documenting the package and building | Creating the flowcut R package" />
-  <meta name="generator" content="bookdown 0.39 and GitBook 2.6.7" />
-
-  <meta property="og:title" content="8 Documenting the package and building | Creating the flowcut R package" />
-  <meta property="og:type" content="book" />
-  
-  
-  
-
-  <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="8 Documenting the package and building | Creating the flowcut R package" />
-  
-  
-  
-
-<meta name="author" content="Sheng Jiang, Sangwon Hyun" />
-
-
-<meta name="date" content="2024-06-12" />
-
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-  
-  
-<link rel="prev" href="real-data-example.html"/>
-
-<script src="libs/header-attrs-2.27/header-attrs.js"></script>
-<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
-<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
-
-
-
-
-
-
-
-
-<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
-<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
-<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
-
-
-<style type="text/css">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>8 Documenting the package and building | Creating the flowcut R package</title>
+<meta name="description" content="8 Documenting the package and building | Creating the flowcut R package">
+<meta name="generator" content="bookdown 0.39 and GitBook 2.6.7">
+<meta property="og:title" content="8 Documenting the package and building | Creating the flowcut R package">
+<meta property="og:type" content="book">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="8 Documenting the package and building | Creating the flowcut R package">
+<meta name="author" content="Sheng Jiang, Sangwon Hyun">
+<meta name="date" content="2024-06-23">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<link rel="prev" href="real-data-example.html">
+<script src="libs/header-attrs-2.27.1/header-attrs.js"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script><link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet">
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet">
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet">
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet">
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet">
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet">
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet">
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet">
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet">
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script><style type="text/css">
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
@@ -119,14 +90,14 @@ code span.va { color: #19177c; } /* Variable */
 code span.vs { color: #4070a0; } /* VerbatimString */
 code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
-
 <style type="text/css">
   
   div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 </style>
-
+<style type="text/css">fieldset.chunkfield {border:1px dotted black;padding-bottom: 0px;padding-top: 0px;margin:0 2px;padding:.35em .625em .75em}
+    legend.chunklegend {padding:0;width:auto;border:0; border-bottom: none; margin-bottom:0}
+    </style>
 </head>
-
 <body>
 
 
@@ -134,24 +105,22 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
 
     <div class="book-summary">
-      <nav role="navigation">
-
-<ul class="summary">
+      <nav role="navigation"><ul class="summary">
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
 <li class="chapter" data-level="2" data-path="package-setup.html"><a href="package-setup.html"><i class="fa fa-check"></i><b>2</b> Package setup</a></li>
 <li class="chapter" data-level="3" data-path="helpers-functions.html"><a href="helpers-functions.html"><i class="fa fa-check"></i><b>3</b> Helpers functions</a></li>
 <li class="chapter" data-level="4" data-path="syntheticdata.html"><a href="syntheticdata.html"><i class="fa fa-check"></i><b>4</b> Generating synthetic data</a></li>
-<li class="chapter" data-level="5" data-path="gibbs-sampler.html"><a href="gibbs-sampler.html"><i class="fa fa-check"></i><b>5</b> Gibbs sampler</a>
+<li class="chapter" data-level="5" data-path="gibbs-sampler.html">
+<a href="gibbs-sampler.html"><i class="fa fa-check"></i><b>5</b> Gibbs sampler</a>
 <ul>
 <li class="chapter" data-level="5.1" data-path="gibbs-sampler.html"><a href="gibbs-sampler.html#the-main-gibbs-sampler"><i class="fa fa-check"></i><b>5.1</b> The main Gibbs sampler</a></li>
-</ul></li>
+</ul>
+</li>
 <li class="chapter" data-level="6" data-path="simulations.html"><a href="simulations.html"><i class="fa fa-check"></i><b>6</b> Simulations</a></li>
 <li class="chapter" data-level="7" data-path="real-data-example.html"><a href="real-data-example.html"><i class="fa fa-check"></i><b>7</b> Real data example</a></li>
 <li class="chapter" data-level="8" data-path="documenting-the-package-and-building.html"><a href="documenting-the-package-and-building.html"><i class="fa fa-check"></i><b>8</b> Documenting the package and building</a></li>
-</ul>
-
-      </nav>
-    </div>
+</ul></nav>
+</div>
 
     <div class="book-body">
       <div class="body-inner">
@@ -164,22 +133,23 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
         <div class="page-wrapper" tabindex="-1" role="main">
           <div class="page-inner">
 
-            <section class="normal" id="section-">
-<div id="documenting-the-package-and-building" class="section level1 hasAnchor" number="8">
-<h1><span class="header-section-number">8</span> Documenting the package and building<a href="documenting-the-package-and-building.html#documenting-the-package-and-building" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+            <section class="normal" id="section-"><div id="documenting-the-package-and-building" class="section level1 hasAnchor" number="8">
+<h1>
+<span class="header-section-number">8</span> Documenting the package and building<a href="documenting-the-package-and-building.html#documenting-the-package-and-building" class="anchor-section" aria-label="Anchor link to header"></a>
+</h1>
 <p>We finish by running commands that will document, build, and install the
 package. It may also be a good idea to check the package from within this file.</p>
 <div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="documenting-the-package-and-building.html#cb20-1" tabindex="-1"></a>litr<span class="sc">::</span><span class="fu">document</span>() <span class="co"># &lt;-- use instead of devtools::document()</span></span></code></pre></div>
 <pre><code>## ℹ Updating flowcut documentation
-## Writing &#39;NAMESPACE&#39;
+## Writing 'NAMESPACE'
 ## ℹ Loading flowcut
 ## Loading required package: MASS
 ## 
 ## 
-## Attaching package: &#39;MASS&#39;
+## Attaching package: 'MASS'
 ## 
 ## 
-## The following object is masked from &#39;package:dplyr&#39;:
+## The following object is masked from 'package:dplyr':
 ## 
 ##     select
 ## 
@@ -187,10 +157,10 @@ package. It may also be a good idea to check the package from within this file.<
 ## Loading required package: matrixNormal
 ## 
 ## 
-## Attaching package: &#39;matrixNormal&#39;
+## Attaching package: 'matrixNormal'
 ## 
 ## 
-## The following object is masked from &#39;package:base&#39;:
+## The following object is masked from 'package:base':
 ## 
 ##     I
 ## 
@@ -200,10 +170,10 @@ package. It may also be a good idea to check the package from within this file.<
 ## Loading required package: mvnfast
 ## 
 ## 
-## Attaching package: &#39;mvnfast&#39;
+## Attaching package: 'mvnfast'
 ## 
 ## 
-## The following object is masked from &#39;package:lubridate&#39;:
+## The following object is masked from 'package:lubridate':
 ## 
 ##     ms
 ## 
@@ -221,10 +191,10 @@ package. It may also be a good idea to check the package from within this file.<
 ## Loading required package: RcppParallel
 ## 
 ## 
-## Attaching package: &#39;RcppParallel&#39;
+## Attaching package: 'RcppParallel'
 ## 
 ## 
-## The following object is masked from &#39;package:Rcpp&#39;:
+## The following object is masked from 'package:Rcpp':
 ## 
 ##     LdFlags
 ## 
@@ -247,20 +217,20 @@ package. It may also be a good idea to check the package from within this file.<
 ## |_|    \__ __ __\  |_|               /_/                   \_\   /_ __ __ __ ___|      \/             team
 ## 
 ## 
-## Attaching package: &#39;Rfast&#39;
+## Attaching package: 'Rfast'
 ## 
 ## 
-## The following objects are masked from &#39;package:mvnfast&#39;:
+## The following objects are masked from 'package:mvnfast':
 ## 
 ##     dmvt, rmvt
 ## 
 ## 
-## The following object is masked from &#39;package:dplyr&#39;:
+## The following object is masked from 'package:dplyr':
 ## 
 ##     nth
 ## 
 ## 
-## The following objects are masked from &#39;package:purrr&#39;:
+## The following objects are masked from 'package:purrr':
 ## 
 ##     is_integer, transpose
 ## 
@@ -268,34 +238,25 @@ package. It may also be a good idea to check the package from within this file.<
 ## Loading required package: tmvnsim
 ## 
 ## ✖ run.Gibbs.fast.R:21: @return requires a value.
-## Writing &#39;NAMESPACE&#39;
-## Writing &#39;progress.Rd&#39;
-## Writing &#39;flowcut-package.Rd&#39;
-## Writing &#39;gen_1d.Rd&#39;
-## Writing &#39;make_model.Rd&#39;
-## Writing &#39;maxdev_to_gg.Rd&#39;
-## Writing &#39;run.Gibbs.fast.Rd&#39;
-## Writing &#39;pipe.Rd&#39;</code></pre>
+## Writing 'NAMESPACE'
+## Writing 'progress.Rd'
+## Writing 'flowcut-package.Rd'
+## Writing 'gen_1d.Rd'
+## Writing 'make_model.Rd'
+## Writing 'maxdev_to_gg.Rd'
+## Writing 'run.Gibbs.fast.Rd'
+## Writing 'pipe.Rd'</code></pre>
 
 </div>
             </section>
-
-          </div>
+</div>
         </div>
       </div>
 <a href="real-data-example.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
 
     </div>
   </div>
-<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
-<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
-<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
-<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
-<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
-<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
-<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
-<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
-<script>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script><script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script><script src="libs/gitbook-2.6.7/js/plugin-search.js"></script><script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script><script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script><script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script><script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script><script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script><script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
 "sharing": {
@@ -336,10 +297,7 @@ gitbook.start({
 }
 });
 });
-</script>
-
-<!-- dynamically load mathjax for compatibility with self-contained -->
-<script>
+</script><!-- dynamically load mathjax for compatibility with self-contained --><script>
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
@@ -353,5 +311,4 @@ gitbook.start({
   })();
 </script>
 </body>
-
 </html>
