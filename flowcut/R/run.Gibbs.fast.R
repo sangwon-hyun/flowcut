@@ -1,6 +1,6 @@
 # Generated from _main.Rmd: do not edit by hand
 
-#' Runs a gibbs sampler to estimate the posterior distribution of the flowcut 
+#' Runs a gibbs sampler to sample from the posterior distribution of the flowcut 
 #' model.
 #'
 #' @param ylist data.

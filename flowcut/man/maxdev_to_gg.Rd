@@ -2,21 +2,39 @@
 % Please edit documentation in _main.Rmd.
 \name{maxdev_to_gg}
 \alias{maxdev_to_gg}
-\title{X is a (T x p) covariate matrix (that doesn't include the intercept)}
+\title{Obtain the g parameter by simulation.}
 \usage{
-maxdev_to_gg(X, dimdat, maxdev, viz = FALSE, n.cores = 1)
+maxdev_to_gg(
+  X,
+  dimdat,
+  maxdev,
+  numclust,
+  ggvec,
+  Nmc = 10000,
+  viz = FALSE,
+  n.cores = 1
+)
 }
 \arguments{
-\item{X}{(T x p) matrix.}
+\item{X}{the design matrix, TT by p, (that doesn't include the intercept)}
 
-\item{dimdat}{Dimension of cytogram data.}
+\item{dimdat}{the dimension of the cytogram space}
 
 \item{maxdev}{Maximum deviation of cluster means away from its grand mean.}
 
-\item{viz}{Whether to produce a plot.}
+\item{numclust}{the number of experts}
 
-\item{n.cores}{Number of cores.}
+\item{ggvec}{the vector of g parameter values to calculate the prior probability by Monte Carlo samples}
+
+\item{Nmc}{Monte Carlo simulation sample size, with default value being 1e4.}
+
+\item{viz}{show the plot of the fitted relationship between the g parameter and the prior probability.}
+
+\item{n.cores}{the number of CPU cores to be used for parallelization}
+}
+\value{
+the g parameter with desired prior probability on maxdev
 }
 \description{
-X is a (T x p) covariate matrix (that doesn't include the intercept)
+Obtain the g parameter by simulation.
 }

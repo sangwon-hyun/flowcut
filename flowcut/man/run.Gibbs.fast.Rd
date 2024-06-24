@@ -2,7 +2,7 @@
 % Please edit documentation in _main.Rmd.
 \name{run.Gibbs.fast}
 \alias{run.Gibbs.fast}
-\title{Runs a gibbs sampler to estimate the posterior distribution of the flowcut
+\title{Runs a gibbs sampler to sample from the posterior distribution of the flowcut
 model.}
 \usage{
 run.Gibbs.fast(
@@ -50,6 +50,6 @@ run.Gibbs.fast(
 \item{n.cores}{Number of cores for multiple cores.}
 }
 \description{
-Runs a gibbs sampler to estimate the posterior distribution of the flowcut
+Runs a gibbs sampler to sample from the posterior distribution of the flowcut
 model.
 }

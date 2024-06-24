@@ -3,6 +3,7 @@
 export("%>%")
 export(gen_1d)
 export(make_model)
+export(maxdev_to_gg)
 export(progress)
 export(run.Gibbs.fast)
 importFrom(magrittr,"%>%")
