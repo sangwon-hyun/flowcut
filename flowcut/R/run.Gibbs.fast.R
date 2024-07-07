@@ -193,7 +193,7 @@ run.Gibbs.fast <- function(ylist, countslist, X,
             }
             if(jj == tt.impute + 1){
                 ptm <- proc.time()
-                print(ptm)
+                print(Sys.time())                
             }
             if(jj ==Nburn+1 & Nburn > 0){
                 plot(burn.avgloglik[(tt.impute+1):Nburn],

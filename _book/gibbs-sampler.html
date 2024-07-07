@@ -342,7 +342,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb14-191"><a href="gibbs-sampler.html#cb14-191" tabindex="-1"></a>            }</span>
 <span id="cb14-192"><a href="gibbs-sampler.html#cb14-192" tabindex="-1"></a>            <span class="cf">if</span>(jj <span class="sc">==</span> tt.impute <span class="sc">+</span> <span class="dv">1</span>){</span>
 <span id="cb14-193"><a href="gibbs-sampler.html#cb14-193" tabindex="-1"></a>                ptm <span class="ot">&lt;-</span> <span class="fu">proc.time</span>()</span>
-<span id="cb14-194"><a href="gibbs-sampler.html#cb14-194" tabindex="-1"></a>                <span class="fu">print</span>(ptm)</span>
+<span id="cb14-194"><a href="gibbs-sampler.html#cb14-194" tabindex="-1"></a>                <span class="fu">print</span>(<span class="fu">Sys.time</span>())                </span>
 <span id="cb14-195"><a href="gibbs-sampler.html#cb14-195" tabindex="-1"></a>            }</span>
 <span id="cb14-196"><a href="gibbs-sampler.html#cb14-196" tabindex="-1"></a>            <span class="cf">if</span>(jj <span class="sc">==</span>Nburn<span class="sc">+</span><span class="dv">1</span> <span class="sc">&amp;</span> Nburn <span class="sc">&gt;</span> <span class="dv">0</span>){</span>
 <span id="cb14-197"><a href="gibbs-sampler.html#cb14-197" tabindex="-1"></a>                <span class="fu">plot</span>(burn.avgloglik[(tt.impute<span class="sc">+</span><span class="dv">1</span>)<span class="sc">:</span>Nburn],</span>
