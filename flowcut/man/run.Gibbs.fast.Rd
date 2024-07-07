@@ -17,7 +17,8 @@ run.Gibbs.fast(
   gg = 1,
   prior_spec.list = NULL,
   verbose = FALSE,
-  warm.start = NULL,
+  last.imputed = NULL,
+  last.para = NULL,
   tol = 1/1e+08,
   n.cores = 1
 )
@@ -43,11 +44,11 @@ run.Gibbs.fast(
 
 \item{verbose}{Whether to be loud.}
 
-\item{warm.start}{If supplied, restart the MCMC at these values.}
-
 \item{tol}{NOT USED.}
 
 \item{n.cores}{Number of cores for multiple cores.}
+
+\item{warm.start}{If supplied, restart the MCMC at these values.}
 }
 \description{
 Runs a gibbs sampler to sample from the posterior distribution of the flowcut
