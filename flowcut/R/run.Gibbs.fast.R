@@ -299,7 +299,8 @@ run.Gibbs.fast <- function(ylist, countslist, X,
         Mt.ell <- rbind(mt,
                         -sweep(mt.cumsum[-numclust,,drop=FALSE], 2,
                                mt.cumsum[numclust, , drop=FALSE])) 
-        omega.tell <- matrix(parallel::mcmapply(pgdraw::pgdraw,
+        #### omega.tell <- matrix(parallel::mcmapply(pgdraw::pgdraw,
+        omega.tell <- matrix(parallel::mcmapply(pgdraw.mod, ### mod here 
                                                 round(Mt.ell[-numclust,]), XpGamma.abs,
                                                 mc.cores = n.cores),
                              nrow=numclust-1, ncol = TT)

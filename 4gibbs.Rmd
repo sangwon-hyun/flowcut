@@ -206,7 +206,7 @@ run.Gibbs.fast <- function(ylist, countslist, X,
             }
             if(jj == tt.impute + 1){
                 ptm <- proc.time()
-                print(ptm)
+                print(Sys.time())                
             }
             if(jj ==Nburn+1 & Nburn > 0){
                 plot(burn.avgloglik[(tt.impute+1):Nburn],
@@ -312,7 +312,8 @@ run.Gibbs.fast <- function(ylist, countslist, X,
         Mt.ell <- rbind(mt,
                         -sweep(mt.cumsum[-numclust,,drop=FALSE], 2,
                                mt.cumsum[numclust, , drop=FALSE])) 
-        omega.tell <- matrix(parallel::mcmapply(pgdraw::pgdraw,
+        #### omega.tell <- matrix(parallel::mcmapply(pgdraw::pgdraw,
+        omega.tell <- matrix(parallel::mcmapply(pgdraw.mod, ### mod here 
                                                 round(Mt.ell[-numclust,]), XpGamma.abs,
                                                 mc.cores = n.cores),
                              nrow=numclust-1, ncol = TT)
