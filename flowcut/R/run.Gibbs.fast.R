@@ -96,8 +96,11 @@ run.Gibbs.fast <- function(ylist, countslist, X,
             ##    print(paste("Time=",tt,", censored obs.= ",sum(c01==TRUE),
             ## ", censored ratio =", round(sum(c01==TRUE)/ntlist[tt],2), sep=" ")) 
             ##}
+            
             if(sum(c01==TRUE)>1){
-                apply(cc[c01==TRUE,,drop=FALSE],1,function(xx) sample.region(xx,Cbox))
+                apply(cc[c01==TRUE,,drop=FALSE],1,function(xx)
+                    ## flowcut:::sample.region(xx,Cbox))
+                    sample.region(xx,Cbox))
             }else if(sum(c01==TRUE)==1){
                 matrix(sample.region(cc[c01==TRUE,,drop=FALSE],Cbox),ncol=1)
             }else{
@@ -229,11 +232,13 @@ run.Gibbs.fast <- function(ylist, countslist, X,
         
         chol.Sig.ell <- apply(Sig.ell,3, chol)
         if(dimdat == 1) chol.Sig.ell = rbind(chol.Sig.ell)
-        chol.Sig.list <- lapply(1:numclust,function(kk) matrix(chol.Sig.ell[,kk],nrow = dimdat))
+        chol.Sig.list <- lapply(1:numclust,function(kk) matrix(chol.Sig.ell[,kk], nrow = dimdat))
         mu.list <- lapply(1:TT, function(tt){
           one_mu = sapply(1:numclust, function(kk){
-            if(dimdat == 1) beta.ell[,,kk,drop=FALSE] %*% Xp[,tt,drop=FALSE]
-            if(dimdat > 1) beta.ell[,,kk] %*% Xp[,tt,drop=FALSE]
+              if(dimdat == 1){
+                  beta.ell[,,kk,drop=FALSE] %*% Xp[,tt,drop=FALSE]}
+              else{
+                      beta.ell[,,kk] %*% Xp[,tt,drop=FALSE]}
           })
           if(dimdat==1) one_mu = rbind(one_mu)
           return(one_mu)
@@ -247,7 +252,8 @@ run.Gibbs.fast <- function(ylist, countslist, X,
             mc.cores = n.cores, SIMPLIFY = FALSE)
 
         Z.list <- parallel::mclapply(logPiZ, function(pp) apply(pp,1, function(lpi)
-            sample(1:numclust, 1 , prob = softmax(lpi))),
+            sample(1:numclust, 1 ,
+                   prob = flowcut:::softmax(lpi))),
             mc.cores = n.cores)
 
 
@@ -332,7 +338,7 @@ run.Gibbs.fast <- function(ylist, countslist, X,
                 ww = W.list, yy = ylist, zz = Z.list, SIMPLIFY = TRUE,
                 mc.cores = n.cores)
             if(dimdat==1){
-                Sxy.ell <-  Xp %*% as.matrix(Sy.ell)  ## (p+1) x d
+                Sxy.ell <-  Xp %*% as.matrix(Sy.ell)  ## (p+1) x 1
             }else{
                 Sxy.ell <-  Rfast::Tcrossprod(Xp, Sy.ell)  ## (p+1) x d
             }

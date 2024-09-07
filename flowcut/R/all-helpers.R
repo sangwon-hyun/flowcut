@@ -294,7 +294,7 @@ loglik_eval <- function(mu.list, chol.Sig.list,
 #'
 #' @export 
   maxdev_to_gg <- function(X, dimdat, maxdev, numclust, ggvec,
-                           Nmc = 1e4 , 
+                           Nmc = 1e4 , prior.prob = 0.99, 
                          viz = FALSE, n.cores = 1){
     ## X is T x p 
     ## Basic setup
@@ -342,7 +342,7 @@ loglik_eval <- function(mu.list, chol.Sig.list,
     newy = res$y
     
     ## Get closest point
-    imin =  which.min(abs(newy - 0.95^(1/numclust))) 
+    imin =  which.min(abs(newy - prior.prob ^(1/numclust))) 
     
                                         # Make some plots to confirm
     if(viz){

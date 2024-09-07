@@ -12,7 +12,7 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="3 Helpers functions | Creating the flowcut R package">
 <meta name="author" content="Sheng Jiang, Sangwon Hyun">
-<meta name="date" content="2024-07-07">
+<meta name="date" content="2024-09-07">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -454,7 +454,7 @@ first column is the lower cutoff, and the second column is the upper cutoff).</p
 <span id="cb8-14"><a href="helpers-functions.html#cb8-14" tabindex="-1"></a><span class="co">#'</span></span>
 <span id="cb8-15"><a href="helpers-functions.html#cb8-15" tabindex="-1"></a><span class="co">#' @export </span></span>
 <span id="cb8-16"><a href="helpers-functions.html#cb8-16" tabindex="-1"></a>  <span id="maxdev_to_gg">maxdev_to_gg</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(X, dimdat, maxdev, numclust, ggvec,</span>
-<span id="cb8-17"><a href="helpers-functions.html#cb8-17" tabindex="-1"></a>                           <span class="at">Nmc =</span> <span class="fl">1e4</span> , </span>
+<span id="cb8-17"><a href="helpers-functions.html#cb8-17" tabindex="-1"></a>                           <span class="at">Nmc =</span> <span class="fl">1e4</span> , <span class="at">prior.prob =</span> <span class="fl">0.99</span>, </span>
 <span id="cb8-18"><a href="helpers-functions.html#cb8-18" tabindex="-1"></a>                         <span class="at">viz =</span> <span class="cn">FALSE</span>, <span class="at">n.cores =</span> <span class="dv">1</span>){</span>
 <span id="cb8-19"><a href="helpers-functions.html#cb8-19" tabindex="-1"></a>    <span class="do">## X is T x p </span></span>
 <span id="cb8-20"><a href="helpers-functions.html#cb8-20" tabindex="-1"></a>    <span class="do">## Basic setup</span></span>
@@ -502,7 +502,7 @@ first column is the lower cutoff, and the second column is the upper cutoff).</p
 <span id="cb8-62"><a href="helpers-functions.html#cb8-62" tabindex="-1"></a>    newy <span class="ot">=</span> res<span class="sc">$</span>y</span>
 <span id="cb8-63"><a href="helpers-functions.html#cb8-63" tabindex="-1"></a>    </span>
 <span id="cb8-64"><a href="helpers-functions.html#cb8-64" tabindex="-1"></a>    <span class="do">## Get closest point</span></span>
-<span id="cb8-65"><a href="helpers-functions.html#cb8-65" tabindex="-1"></a>    imin <span class="ot">=</span>  <span class="fu">which.min</span>(<span class="fu">abs</span>(newy <span class="sc">-</span> <span class="fl">0.95</span><span class="sc">^</span>(<span class="dv">1</span><span class="sc">/</span>numclust))) </span>
+<span id="cb8-65"><a href="helpers-functions.html#cb8-65" tabindex="-1"></a>    imin <span class="ot">=</span>  <span class="fu">which.min</span>(<span class="fu">abs</span>(newy <span class="sc">-</span> prior.prob <span class="sc">^</span>(<span class="dv">1</span><span class="sc">/</span>numclust))) </span>
 <span id="cb8-66"><a href="helpers-functions.html#cb8-66" tabindex="-1"></a>    </span>
 <span id="cb8-67"><a href="helpers-functions.html#cb8-67" tabindex="-1"></a>                                        <span class="co"># Make some plots to confirm</span></span>
 <span id="cb8-68"><a href="helpers-functions.html#cb8-68" tabindex="-1"></a>    <span class="cf">if</span>(viz){</span>

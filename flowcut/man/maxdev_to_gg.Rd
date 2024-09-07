@@ -11,6 +11,7 @@ maxdev_to_gg(
   numclust,
   ggvec,
   Nmc = 10000,
+  prior.prob = 0.99,
   viz = FALSE,
   n.cores = 1
 )
