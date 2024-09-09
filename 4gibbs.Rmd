@@ -265,8 +265,7 @@ run.Gibbs.fast <- function(ylist, countslist, X,
             mc.cores = n.cores, SIMPLIFY = FALSE)
 
         Z.list <- parallel::mclapply(logPiZ, function(pp) apply(pp,1, function(lpi)
-            sample(1:numclust, 1 ,
-                   prob = flowcut:::softmax(lpi))),
+            sample(1:numclust, 1 , prob = softmax(lpi))),
             mc.cores = n.cores)
 
 

@@ -12,7 +12,7 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="5 Gibbs sampler | Creating the flowcut R package">
 <meta name="author" content="Sheng Jiang, Sangwon Hyun">
-<meta name="date" content="2024-09-07">
+<meta name="date" content="2024-09-09">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -401,199 +401,198 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb14-250"><a href="gibbs-sampler.html#cb14-250" tabindex="-1"></a>            <span class="at">mc.cores =</span> n.cores, <span class="at">SIMPLIFY =</span> <span class="cn">FALSE</span>)</span>
 <span id="cb14-251"><a href="gibbs-sampler.html#cb14-251" tabindex="-1"></a></span>
 <span id="cb14-252"><a href="gibbs-sampler.html#cb14-252" tabindex="-1"></a>        Z.list <span class="ot">&lt;-</span> parallel<span class="sc">::</span><span class="fu">mclapply</span>(logPiZ, <span class="cf">function</span>(pp) <span class="fu">apply</span>(pp,<span class="dv">1</span>, <span class="cf">function</span>(lpi)</span>
-<span id="cb14-253"><a href="gibbs-sampler.html#cb14-253" tabindex="-1"></a>            <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span>numclust, <span class="dv">1</span> ,</span>
-<span id="cb14-254"><a href="gibbs-sampler.html#cb14-254" tabindex="-1"></a>                   <span class="at">prob =</span> flowcut<span class="sc">:::</span><a href="helpers-functions.html#softmax">softmax</a>(lpi))),</span>
-<span id="cb14-255"><a href="gibbs-sampler.html#cb14-255" tabindex="-1"></a>            <span class="at">mc.cores =</span> n.cores)</span>
+<span id="cb14-253"><a href="gibbs-sampler.html#cb14-253" tabindex="-1"></a>            <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span>numclust, <span class="dv">1</span> , <span class="at">prob =</span> <a href="helpers-functions.html#softmax">softmax</a>(lpi))),</span>
+<span id="cb14-254"><a href="gibbs-sampler.html#cb14-254" tabindex="-1"></a>            <span class="at">mc.cores =</span> n.cores)</span>
+<span id="cb14-255"><a href="gibbs-sampler.html#cb14-255" tabindex="-1"></a></span>
 <span id="cb14-256"><a href="gibbs-sampler.html#cb14-256" tabindex="-1"></a></span>
-<span id="cb14-257"><a href="gibbs-sampler.html#cb14-257" tabindex="-1"></a></span>
-<span id="cb14-258"><a href="gibbs-sampler.html#cb14-258" tabindex="-1"></a><span class="do">################################################ </span></span>
-<span id="cb14-259"><a href="gibbs-sampler.html#cb14-259" tabindex="-1"></a>            <span class="do">## censored data imputation</span></span>
-<span id="cb14-260"><a href="gibbs-sampler.html#cb14-260" tabindex="-1"></a><span class="do">################################################</span></span>
-<span id="cb14-261"><a href="gibbs-sampler.html#cb14-261" tabindex="-1"></a>        <span class="cf">if</span>((jj<span class="sc">&gt;</span> tt.impute <span class="sc">|</span> <span class="sc">!</span><span class="fu">is.null</span>(last.para)) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.null</span>(Cbox)){</span>
-<span id="cb14-262"><a href="gibbs-sampler.html#cb14-262" tabindex="-1"></a>            censored.Z.list <span class="ot">&lt;-</span> parallel<span class="sc">::</span><span class="fu">mcmapply</span>(<span class="cf">function</span>(c01,zz){zz[c01<span class="sc">==</span><span class="cn">TRUE</span>]},</span>
-<span id="cb14-263"><a href="gibbs-sampler.html#cb14-263" tabindex="-1"></a>                                                  <span class="at">c01 =</span> censor.<span class="fl">01.</span>list, <span class="at">zz=</span>Z.list,</span>
-<span id="cb14-264"><a href="gibbs-sampler.html#cb14-264" tabindex="-1"></a>                                                  <span class="at">mc.cores =</span> n.cores)  </span>
-<span id="cb14-265"><a href="gibbs-sampler.html#cb14-265" tabindex="-1"></a>            imputed.ylist <span class="ot">&lt;-</span> parallel<span class="sc">::</span><span class="fu">mclapply</span>(<span class="dv">1</span><span class="sc">:</span>TT, <span class="cf">function</span>(tt) {</span>
-<span id="cb14-266"><a href="gibbs-sampler.html#cb14-266" tabindex="-1"></a>                yy <span class="ot">=</span> <a href="helpers-functions.html#impute.censored">impute.censored</a>(<span class="at">ww =</span> censored.W.list[[tt]], </span>
-<span id="cb14-267"><a href="gibbs-sampler.html#cb14-267" tabindex="-1"></a>                                     <span class="at">yy =</span> censored.ylist[[tt]],</span>
-<span id="cb14-268"><a href="gibbs-sampler.html#cb14-268" tabindex="-1"></a>                                     <span class="at">zz =</span> censored.Z.list[[tt]],</span>
-<span id="cb14-269"><a href="gibbs-sampler.html#cb14-269" tabindex="-1"></a>                                     <span class="at">cc.info.mat =</span>  censored.C.list[[tt]],</span>
-<span id="cb14-270"><a href="gibbs-sampler.html#cb14-270" tabindex="-1"></a>                                     <span class="at">bounds.mat =</span> samp.region.list[[tt]],</span>
-<span id="cb14-271"><a href="gibbs-sampler.html#cb14-271" tabindex="-1"></a>                                     <span class="at">mu.mat =</span> mu.list[[tt]], <span class="at">Sigma.ell =</span> Sig.ell,</span>
-<span id="cb14-272"><a href="gibbs-sampler.html#cb14-272" tabindex="-1"></a>                                     <span class="at">dimdat =</span> dimdat)</span>
-<span id="cb14-273"><a href="gibbs-sampler.html#cb14-273" tabindex="-1"></a>                <span class="cf">if</span>(dimdat<span class="sc">==</span><span class="dv">1</span> <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.null</span>(yy)) yy <span class="ot">=</span> <span class="fu">t</span>(yy)</span>
-<span id="cb14-274"><a href="gibbs-sampler.html#cb14-274" tabindex="-1"></a>                <span class="fu">return</span>(yy)</span>
-<span id="cb14-275"><a href="gibbs-sampler.html#cb14-275" tabindex="-1"></a>            }, <span class="at">mc.cores =</span> n.cores, <span class="at">mc.preschedule =</span> <span class="cn">FALSE</span>)             </span>
-<span id="cb14-276"><a href="gibbs-sampler.html#cb14-276" tabindex="-1"></a>            <span class="cf">for</span>(tt <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>TT){</span>
-<span id="cb14-277"><a href="gibbs-sampler.html#cb14-277" tabindex="-1"></a>                censored_particles <span class="ot">=</span> <span class="fu">which</span>(censor.<span class="fl">01.</span>list[[tt]])</span>
-<span id="cb14-278"><a href="gibbs-sampler.html#cb14-278" tabindex="-1"></a>                <span class="do">##stopifnot(nrow(imputed.ylist[[tt]]) == length(censored_particles))</span></span>
-<span id="cb14-279"><a href="gibbs-sampler.html#cb14-279" tabindex="-1"></a>                ylist[[tt]][censored_particles,] <span class="ot">&lt;-</span> imputed.ylist[[tt]]</span>
-<span id="cb14-280"><a href="gibbs-sampler.html#cb14-280" tabindex="-1"></a>            }</span>
-<span id="cb14-281"><a href="gibbs-sampler.html#cb14-281" tabindex="-1"></a>        }</span>
-<span id="cb14-282"><a href="gibbs-sampler.html#cb14-282" tabindex="-1"></a></span>
-<span id="cb14-283"><a href="gibbs-sampler.html#cb14-283" tabindex="-1"></a>        loglik <span class="ot">&lt;-</span> <a href="helpers-functions.html#loglik_eval">loglik_eval</a>(mu.list, chol.Sig.list, </span>
-<span id="cb14-284"><a href="gibbs-sampler.html#cb14-284" tabindex="-1"></a>                              W.list, X.list, ylist, Z.list, </span>
-<span id="cb14-285"><a href="gibbs-sampler.html#cb14-285" tabindex="-1"></a>                              <span class="fu">as.list</span>(ntlist),</span>
-<span id="cb14-286"><a href="gibbs-sampler.html#cb14-286" tabindex="-1"></a>                              <span class="at">simple =</span> <span class="cn">TRUE</span>) </span>
-<span id="cb14-287"><a href="gibbs-sampler.html#cb14-287" tabindex="-1"></a>        <span class="do">## print(sort(round(n.ell/NN,3)))</span></span>
-<span id="cb14-288"><a href="gibbs-sampler.html#cb14-288" tabindex="-1"></a>        <span class="do">## print(sort(round(m.ell/MM,3)))</span></span>
-<span id="cb14-289"><a href="gibbs-sampler.html#cb14-289" tabindex="-1"></a>        <span class="cf">if</span>(jj <span class="sc">%%</span> <span class="dv">10</span> <span class="sc">==</span> <span class="dv">0</span>) <span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"avg loglikelihood: "</span>, <span class="fu">round</span>(loglik,<span class="dv">2</span>), <span class="at">sep=</span><span class="st">" "</span>))</span>
-<span id="cb14-290"><a href="gibbs-sampler.html#cb14-290" tabindex="-1"></a></span>
-<span id="cb14-291"><a href="gibbs-sampler.html#cb14-291" tabindex="-1"></a>   <span class="do">################################################ </span></span>
-<span id="cb14-292"><a href="gibbs-sampler.html#cb14-292" tabindex="-1"></a>        <span class="do">## SBMN-logit parameter estimation </span><span class="al">###</span></span>
-<span id="cb14-293"><a href="gibbs-sampler.html#cb14-293" tabindex="-1"></a>   <span class="do">################################################</span></span>
-<span id="cb14-294"><a href="gibbs-sampler.html#cb14-294" tabindex="-1"></a></span>
-<span id="cb14-295"><a href="gibbs-sampler.html#cb14-295" tabindex="-1"></a>        mt.ell <span class="ot">&lt;-</span> parallel<span class="sc">::</span><span class="fu">mcmapply</span>(<span class="cf">function</span>(ww,zz){</span>
-<span id="cb14-296"><a href="gibbs-sampler.html#cb14-296" tabindex="-1"></a>            <span class="fu">sapply</span>(<span class="dv">1</span><span class="sc">:</span>numclust, <span class="cf">function</span>(kk) <span class="fu">sum</span>(ww[zz<span class="sc">==</span>kk]))},</span>
-<span id="cb14-297"><a href="gibbs-sampler.html#cb14-297" tabindex="-1"></a>            <span class="at">ww =</span> W.list, <span class="at">zz =</span> Z.list, <span class="at">SIMPLIFY =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb14-298"><a href="gibbs-sampler.html#cb14-298" tabindex="-1"></a>            <span class="at">mc.cores =</span> n.cores)</span>
-<span id="cb14-299"><a href="gibbs-sampler.html#cb14-299" tabindex="-1"></a>        m.ell <span class="ot">&lt;-</span>  Rfast<span class="sc">::</span><span class="fu">rowsums</span>(mt.ell)</span>
-<span id="cb14-300"><a href="gibbs-sampler.html#cb14-300" tabindex="-1"></a>        </span>
-<span id="cb14-301"><a href="gibbs-sampler.html#cb14-301" tabindex="-1"></a>        XpGamma.abs <span class="ot">&lt;-</span> Rfast<span class="sc">::</span><span class="fu">Crossprod</span>(gamma.ell, Xp) <span class="sc">%&gt;%</span> <span class="fu">abs</span>() <span class="do">## numclust-1 x TT   </span></span>
-<span id="cb14-302"><a href="gibbs-sampler.html#cb14-302" tabindex="-1"></a>        mt.cumsum <span class="ot">&lt;-</span> Rfast<span class="sc">::</span><span class="fu">colCumSums</span>(<span class="fu">as.matrix</span>(mt.ell))  </span>
-<span id="cb14-303"><a href="gibbs-sampler.html#cb14-303" tabindex="-1"></a>        Mt.ell <span class="ot">&lt;-</span> <span class="fu">rbind</span>(mt,</span>
-<span id="cb14-304"><a href="gibbs-sampler.html#cb14-304" tabindex="-1"></a>                        <span class="sc">-</span><span class="fu">sweep</span>(mt.cumsum[<span class="sc">-</span>numclust,,<span class="at">drop=</span><span class="cn">FALSE</span>], <span class="dv">2</span>,</span>
-<span id="cb14-305"><a href="gibbs-sampler.html#cb14-305" tabindex="-1"></a>                               mt.cumsum[numclust, , <span class="at">drop=</span><span class="cn">FALSE</span>])) </span>
-<span id="cb14-306"><a href="gibbs-sampler.html#cb14-306" tabindex="-1"></a>        <span class="do">#### omega.tell &lt;- matrix(parallel::mcmapply(pgdraw::pgdraw,</span></span>
-<span id="cb14-307"><a href="gibbs-sampler.html#cb14-307" tabindex="-1"></a>        omega.tell <span class="ot">&lt;-</span> <span class="fu">matrix</span>(parallel<span class="sc">::</span><span class="fu">mcmapply</span>(pgdraw.mod, <span class="do">### mod here </span></span>
-<span id="cb14-308"><a href="gibbs-sampler.html#cb14-308" tabindex="-1"></a>                                                <span class="fu">round</span>(Mt.ell[<span class="sc">-</span>numclust,]), XpGamma.abs,</span>
-<span id="cb14-309"><a href="gibbs-sampler.html#cb14-309" tabindex="-1"></a>                                                <span class="at">mc.cores =</span> n.cores),</span>
-<span id="cb14-310"><a href="gibbs-sampler.html#cb14-310" tabindex="-1"></a>                             <span class="at">nrow=</span>numclust<span class="dv">-1</span>, <span class="at">ncol =</span> TT)</span>
-<span id="cb14-311"><a href="gibbs-sampler.html#cb14-311" tabindex="-1"></a>        kappa <span class="ot">&lt;-</span> mt.ell[<span class="sc">-</span>numclust, , drop<span class="ot">=</span><span class="cn">FALSE</span>] <span class="sc">-</span> Mt.ell[<span class="sc">-</span>numclust, , drop<span class="ot">=</span><span class="cn">FALSE</span>]<span class="sc">/</span><span class="dv">2</span></span>
-<span id="cb14-312"><a href="gibbs-sampler.html#cb14-312" tabindex="-1"></a></span>
-<span id="cb14-313"><a href="gibbs-sampler.html#cb14-313" tabindex="-1"></a>        <span class="do">##        inv.Omega &lt;- Rfast::spdinv(Omega)</span></span>
-<span id="cb14-314"><a href="gibbs-sampler.html#cb14-314" tabindex="-1"></a>        <span class="cf">for</span>(ell <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>(numclust<span class="dv">-1</span>)){</span>
-<span id="cb14-315"><a href="gibbs-sampler.html#cb14-315" tabindex="-1"></a>            V.omell <span class="ot">&lt;-</span> Rfast<span class="sc">::</span><span class="fu">spdinv</span>(<span class="fu">Reduce</span>(<span class="st">'+'</span>, <span class="fu">Map</span>(<span class="st">'*'</span>, XtXtTp, omega.tell[ell,]))</span>
-<span id="cb14-316"><a href="gibbs-sampler.html#cb14-316" tabindex="-1"></a>                                     <span class="sc">+</span> <span class="fu">diag</span>(p<span class="sc">+</span><span class="dv">1</span>) <span class="sc">*</span> invNugget) </span>
-<span id="cb14-317"><a href="gibbs-sampler.html#cb14-317" tabindex="-1"></a>            m.omell <span class="ot">&lt;-</span> V.omell <span class="sc">%*%</span> <span class="fu">Reduce</span>(<span class="st">'+'</span>, <span class="fu">Map</span>(<span class="st">'*'</span>, Xp.list , kappa[ell,]) )</span>
-<span id="cb14-318"><a href="gibbs-sampler.html#cb14-318" tabindex="-1"></a>            gamma.ell[,ell] <span class="ot">&lt;-</span> Rfast<span class="sc">::</span><span class="fu">rmvnorm</span>(<span class="dv">1</span>, m.omell, V.omell) </span>
-<span id="cb14-319"><a href="gibbs-sampler.html#cb14-319" tabindex="-1"></a>        }</span>
-<span id="cb14-320"><a href="gibbs-sampler.html#cb14-320" tabindex="-1"></a>            </span>
-<span id="cb14-321"><a href="gibbs-sampler.html#cb14-321" tabindex="-1"></a>        a_gamma_n <span class="ot">&lt;-</span> numclust<span class="dv">-1</span><span class="sc">+</span>a_gamma</span>
-<span id="cb14-322"><a href="gibbs-sampler.html#cb14-322" tabindex="-1"></a>        b_gamma_n <span class="ot">&lt;-</span> <span class="fu">apply</span>(gamma.ell, <span class="dv">2</span>, crossprod) <span class="sc">%&gt;%</span> <span class="fu">sum</span>() <span class="sc">+</span> b_gamma</span>
-<span id="cb14-323"><a href="gibbs-sampler.html#cb14-323" tabindex="-1"></a>        invNugget <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">/</span> stats<span class="sc">::</span><span class="fu">rgamma</span>(<span class="dv">1</span>, a_gamma_n<span class="sc">/</span><span class="dv">2</span>, b_gamma_n<span class="sc">/</span><span class="dv">2</span>)</span>
-<span id="cb14-324"><a href="gibbs-sampler.html#cb14-324" tabindex="-1"></a></span>
-<span id="cb14-325"><a href="gibbs-sampler.html#cb14-325" tabindex="-1"></a>   <span class="do">################################################ </span></span>
-<span id="cb14-326"><a href="gibbs-sampler.html#cb14-326" tabindex="-1"></a>        <span class="do">## experts' estimation </span><span class="al">###</span></span>
-<span id="cb14-327"><a href="gibbs-sampler.html#cb14-327" tabindex="-1"></a>   <span class="do">################################################ </span></span>
-<span id="cb14-328"><a href="gibbs-sampler.html#cb14-328" tabindex="-1"></a>        </span>
-<span id="cb14-329"><a href="gibbs-sampler.html#cb14-329" tabindex="-1"></a>        <span class="cf">for</span>(ell <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>numclust){</span>
-<span id="cb14-330"><a href="gibbs-sampler.html#cb14-330" tabindex="-1"></a>            <span class="do">## sample beta (including the intercept) jointly</span></span>
-<span id="cb14-331"><a href="gibbs-sampler.html#cb14-331" tabindex="-1"></a>            SX.ell <span class="ot">&lt;-</span> XTX0<span class="sc">/</span>gg <span class="sc">+</span> <span class="fu">Reduce</span>(<span class="st">'+'</span>, <span class="fu">Map</span>(<span class="st">`</span><span class="at">*</span><span class="st">`</span>, XtXtTp, mt.ell[ell,]))</span>
-<span id="cb14-332"><a href="gibbs-sampler.html#cb14-332" tabindex="-1"></a>            inv.SX.ell <span class="ot">&lt;-</span> Rfast<span class="sc">::</span><span class="fu">spdinv</span>(SX.ell) <span class="do">## (p+1) x (p+1)</span></span>
-<span id="cb14-333"><a href="gibbs-sampler.html#cb14-333" tabindex="-1"></a>            Sy.ell <span class="ot">&lt;-</span> parallel<span class="sc">::</span><span class="fu">mcmapply</span>(<span class="cf">function</span>(yy,zz,ww){</span>
-<span id="cb14-334"><a href="gibbs-sampler.html#cb14-334" tabindex="-1"></a>                Rfast<span class="sc">::</span><span class="fu">Crossprod</span>(<span class="fu">as.matrix</span>(ww[zz<span class="sc">==</span>ell]),</span>
-<span id="cb14-335"><a href="gibbs-sampler.html#cb14-335" tabindex="-1"></a>                                 yy[zz<span class="sc">==</span>ell,,<span class="at">drop=</span><span class="cn">FALSE</span>])},</span>
-<span id="cb14-336"><a href="gibbs-sampler.html#cb14-336" tabindex="-1"></a>                <span class="at">ww =</span> W.list, <span class="at">yy =</span> ylist, <span class="at">zz =</span> Z.list, <span class="at">SIMPLIFY =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb14-337"><a href="gibbs-sampler.html#cb14-337" tabindex="-1"></a>                <span class="at">mc.cores =</span> n.cores)</span>
-<span id="cb14-338"><a href="gibbs-sampler.html#cb14-338" tabindex="-1"></a>            <span class="cf">if</span>(dimdat<span class="sc">==</span><span class="dv">1</span>){</span>
-<span id="cb14-339"><a href="gibbs-sampler.html#cb14-339" tabindex="-1"></a>                Sxy.ell <span class="ot">&lt;-</span>  Xp <span class="sc">%*%</span> <span class="fu">as.matrix</span>(Sy.ell)  <span class="do">## (p+1) x 1</span></span>
-<span id="cb14-340"><a href="gibbs-sampler.html#cb14-340" tabindex="-1"></a>            }<span class="cf">else</span>{</span>
-<span id="cb14-341"><a href="gibbs-sampler.html#cb14-341" tabindex="-1"></a>                Sxy.ell <span class="ot">&lt;-</span>  Rfast<span class="sc">::</span><span class="fu">Tcrossprod</span>(Xp, Sy.ell)  <span class="do">## (p+1) x d</span></span>
-<span id="cb14-342"><a href="gibbs-sampler.html#cb14-342" tabindex="-1"></a>            }</span>
-<span id="cb14-343"><a href="gibbs-sampler.html#cb14-343" tabindex="-1"></a>            beta.ell[,,ell] <span class="ot">&lt;-</span> <a href="helpers-functions.html#rmatnorm.fast">rmatnorm.fast</a>(<span class="at">M =</span> <span class="fu">crossprod</span>(Sxy.ell,inv.SX.ell), </span>
-<span id="cb14-344"><a href="gibbs-sampler.html#cb14-344" tabindex="-1"></a>                                             <span class="at">U =</span> Sig.ell[,,ell], </span>
-<span id="cb14-345"><a href="gibbs-sampler.html#cb14-345" tabindex="-1"></a>                                             <span class="at">V =</span> inv.SX.ell)</span>
-<span id="cb14-346"><a href="gibbs-sampler.html#cb14-346" tabindex="-1"></a>            </span>
-<span id="cb14-347"><a href="gibbs-sampler.html#cb14-347" tabindex="-1"></a>            sse <span class="ot">&lt;-</span> parallel<span class="sc">::</span><span class="fu">mcmapply</span>(<span class="cf">function</span>(ww,xx,yy,zz) {</span>
-<span id="cb14-348"><a href="gibbs-sampler.html#cb14-348" tabindex="-1"></a>                <a href="helpers-functions.html#wcrossprod.fast">wcrossprod.fast</a>(Rfast<span class="sc">::</span><span class="fu">eachrow</span>(<span class="fu">as.matrix</span>(yy[zz<span class="sc">==</span>ell,,<span class="at">drop=</span><span class="cn">FALSE</span>]),</span>
-<span id="cb14-349"><a href="gibbs-sampler.html#cb14-349" tabindex="-1"></a>                                               beta.ell[,,ell]<span class="sc">%*%</span>xx, <span class="st">'-'</span>),</span>
-<span id="cb14-350"><a href="gibbs-sampler.html#cb14-350" tabindex="-1"></a>                                ww[zz<span class="sc">==</span>ell], <span class="at">weighting =</span> <span class="cn">TRUE</span>)},</span>
-<span id="cb14-351"><a href="gibbs-sampler.html#cb14-351" tabindex="-1"></a>                <span class="at">xx =</span> Xp.list, <span class="at">yy =</span> ylist, <span class="at">zz=</span>Z.list, <span class="at">ww =</span> W.sq.list, </span>
-<span id="cb14-352"><a href="gibbs-sampler.html#cb14-352" tabindex="-1"></a>                <span class="at">SIMPLIFY =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb14-353"><a href="gibbs-sampler.html#cb14-353" tabindex="-1"></a>                <span class="at">mc.cores =</span> n.cores) </span>
-<span id="cb14-354"><a href="gibbs-sampler.html#cb14-354" tabindex="-1"></a>            <span class="cf">if</span>(dimdat <span class="sc">==</span> <span class="dv">1</span>) Sn.ell <span class="ot">=</span> <span class="fu">sum</span>(<span class="fu">unlist</span>(sse))</span>
-<span id="cb14-355"><a href="gibbs-sampler.html#cb14-355" tabindex="-1"></a>            <span class="cf">if</span>(dimdat <span class="sc">&gt;</span> <span class="dv">1</span>) Sn.ell <span class="ot">&lt;-</span> <span class="fu">Reduce</span>(<span class="st">'+'</span>,sse[<span class="fu">sapply</span>(sse,length)<span class="sc">&gt;</span><span class="dv">0</span>])</span>
-<span id="cb14-356"><a href="gibbs-sampler.html#cb14-356" tabindex="-1"></a>            Sig.ell[,,ell] <span class="ot">&lt;-</span> matrixsampling<span class="sc">::</span><span class="fu">rinvwishart</span>(<span class="dv">1</span>,nu0<span class="sc">+</span>dimdat <span class="sc">+</span> m.ell[ell], S0 <span class="sc">+</span> Sn.ell)[,,<span class="dv">1</span>]</span>
-<span id="cb14-357"><a href="gibbs-sampler.html#cb14-357" tabindex="-1"></a>        }</span>
-<span id="cb14-358"><a href="gibbs-sampler.html#cb14-358" tabindex="-1"></a>            </span>
-<span id="cb14-359"><a href="gibbs-sampler.html#cb14-359" tabindex="-1"></a>   <span class="do">############################################### </span></span>
-<span id="cb14-360"><a href="gibbs-sampler.html#cb14-360" tabindex="-1"></a>   <span class="do">## collecting posterior samples </span></span>
-<span id="cb14-361"><a href="gibbs-sampler.html#cb14-361" tabindex="-1"></a>   <span class="do">############################################## </span></span>
-<span id="cb14-362"><a href="gibbs-sampler.html#cb14-362" tabindex="-1"></a>        </span>
-<span id="cb14-363"><a href="gibbs-sampler.html#cb14-363" tabindex="-1"></a>            <span class="cf">if</span>(jj <span class="sc">&gt;</span>Nburn){</span>
-<span id="cb14-364"><a href="gibbs-sampler.html#cb14-364" tabindex="-1"></a>                pos.beta[,,,jj<span class="sc">-</span>Nburn] <span class="ot">&lt;-</span> beta.ell</span>
-<span id="cb14-365"><a href="gibbs-sampler.html#cb14-365" tabindex="-1"></a>                pos.Sigma[,,,jj<span class="sc">-</span>Nburn] <span class="ot">&lt;-</span> Sig.ell</span>
-<span id="cb14-366"><a href="gibbs-sampler.html#cb14-366" tabindex="-1"></a>                pos.gamma[,,jj<span class="sc">-</span>Nburn] <span class="ot">&lt;-</span> gamma.ell</span>
-<span id="cb14-367"><a href="gibbs-sampler.html#cb14-367" tabindex="-1"></a>                pos.invNugget[ jj<span class="sc">-</span>Nburn ]  <span class="ot">&lt;-</span> invNugget       </span>
-<span id="cb14-368"><a href="gibbs-sampler.html#cb14-368" tabindex="-1"></a>                pos.avgloglik[jj<span class="sc">-</span>Nburn] <span class="ot">&lt;-</span> loglik</span>
-<span id="cb14-369"><a href="gibbs-sampler.html#cb14-369" tabindex="-1"></a>            } <span class="cf">else</span>{</span>
-<span id="cb14-370"><a href="gibbs-sampler.html#cb14-370" tabindex="-1"></a>                burn.beta[,,,jj] <span class="ot">&lt;-</span> beta.ell</span>
-<span id="cb14-371"><a href="gibbs-sampler.html#cb14-371" tabindex="-1"></a>                burn.Sigma[,,,jj] <span class="ot">&lt;-</span> Sig.ell</span>
-<span id="cb14-372"><a href="gibbs-sampler.html#cb14-372" tabindex="-1"></a>                burn.gamma[,,jj] <span class="ot">&lt;-</span> gamma.ell</span>
-<span id="cb14-373"><a href="gibbs-sampler.html#cb14-373" tabindex="-1"></a>                burn.invNugget[jj]  <span class="ot">&lt;-</span> invNugget </span>
-<span id="cb14-374"><a href="gibbs-sampler.html#cb14-374" tabindex="-1"></a>                burn.avgloglik[jj] <span class="ot">&lt;-</span> loglik</span>
-<span id="cb14-375"><a href="gibbs-sampler.html#cb14-375" tabindex="-1"></a>            }</span>
-<span id="cb14-376"><a href="gibbs-sampler.html#cb14-376" tabindex="-1"></a>         }</span>
-<span id="cb14-377"><a href="gibbs-sampler.html#cb14-377" tabindex="-1"></a><span class="do">########## MCMC stops here. </span></span>
-<span id="cb14-378"><a href="gibbs-sampler.html#cb14-378" tabindex="-1"></a>            </span>
-<span id="cb14-379"><a href="gibbs-sampler.html#cb14-379" tabindex="-1"></a>            <span class="cf">if</span>(verbose ){</span>
-<span id="cb14-380"><a href="gibbs-sampler.html#cb14-380" tabindex="-1"></a>                <span class="fu">print</span>(<span class="st">"All work is done."</span>)</span>
-<span id="cb14-381"><a href="gibbs-sampler.html#cb14-381" tabindex="-1"></a>                <span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"Stored MCMC sample size: "</span>, Nmc, <span class="at">sep =</span> <span class="st">" "</span>)) </span>
-<span id="cb14-382"><a href="gibbs-sampler.html#cb14-382" tabindex="-1"></a>                <span class="fu">print</span>(<span class="fu">Sys.time</span>())                </span>
-<span id="cb14-383"><a href="gibbs-sampler.html#cb14-383" tabindex="-1"></a>                <span class="fu">print</span>(<span class="st">"total time cost, in min"</span>)</span>
-<span id="cb14-384"><a href="gibbs-sampler.html#cb14-384" tabindex="-1"></a>                <span class="fu">print</span>(<span class="fu">round</span>((<span class="fu">proc.time</span>()<span class="sc">-</span>ptm)<span class="sc">/</span><span class="dv">60</span>,<span class="dv">1</span>))</span>
-<span id="cb14-385"><a href="gibbs-sampler.html#cb14-385" tabindex="-1"></a>                <span class="fu">print</span>(<span class="st">"total time cost, in hours"</span>)</span>
-<span id="cb14-386"><a href="gibbs-sampler.html#cb14-386" tabindex="-1"></a>                <span class="fu">print</span>(<span class="fu">round</span>((<span class="fu">proc.time</span>()<span class="sc">-</span>ptm)<span class="sc">/</span><span class="dv">60</span><span class="sc">/</span><span class="dv">60</span>,<span class="dv">2</span>))</span>
-<span id="cb14-387"><a href="gibbs-sampler.html#cb14-387" tabindex="-1"></a>                <span class="fu">print</span>(<span class="st">"time cost per iteration, in seconds"</span>) </span>
-<span id="cb14-388"><a href="gibbs-sampler.html#cb14-388" tabindex="-1"></a>                <span class="fu">print</span>((<span class="fu">proc.time</span>()<span class="sc">-</span>ptm)<span class="sc">/</span>(Nburn<span class="sc">+</span>Nmc <span class="sc">-</span> tt.impute))</span>
-<span id="cb14-389"><a href="gibbs-sampler.html#cb14-389" tabindex="-1"></a>            }</span>
-<span id="cb14-390"><a href="gibbs-sampler.html#cb14-390" tabindex="-1"></a>            last.imputed <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">last.ylist =</span> ylist,</span>
-<span id="cb14-391"><a href="gibbs-sampler.html#cb14-391" tabindex="-1"></a>                                 <span class="at">last.Z.list =</span> Z.list)</span>
-<span id="cb14-392"><a href="gibbs-sampler.html#cb14-392" tabindex="-1"></a>            last.para <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">last.gamma =</span> gamma.ell,</span>
-<span id="cb14-393"><a href="gibbs-sampler.html#cb14-393" tabindex="-1"></a>                              <span class="at">last.beta =</span> beta.ell, </span>
-<span id="cb14-394"><a href="gibbs-sampler.html#cb14-394" tabindex="-1"></a>                              <span class="at">last.Sigma =</span> Sig.ell,</span>
-<span id="cb14-395"><a href="gibbs-sampler.html#cb14-395" tabindex="-1"></a>                              <span class="at">last.invNugget =</span> invNugget)</span>
-<span id="cb14-396"><a href="gibbs-sampler.html#cb14-396" tabindex="-1"></a>            </span>
-<span id="cb14-397"><a href="gibbs-sampler.html#cb14-397" tabindex="-1"></a>            <span class="cf">if</span>(<span class="fu">is.null</span>(Cbox)){</span>
-<span id="cb14-398"><a href="gibbs-sampler.html#cb14-398" tabindex="-1"></a>                ret <span class="ot">&lt;-</span> <span class="fu">list</span>( <span class="do">## burn.beta0=burn.beta0,</span></span>
-<span id="cb14-399"><a href="gibbs-sampler.html#cb14-399" tabindex="-1"></a>                    <span class="at">burn.beta=</span>burn.beta,<span class="at">burn.Sigma=</span>burn.Sigma,</span>
-<span id="cb14-400"><a href="gibbs-sampler.html#cb14-400" tabindex="-1"></a>                    <span class="at">burn.gamma=</span>burn.gamma, <span class="do">## burn.Omega=burn.Omega,</span></span>
-<span id="cb14-401"><a href="gibbs-sampler.html#cb14-401" tabindex="-1"></a>                    <span class="do">## pos.beta0=pos.beta0,</span></span>
-<span id="cb14-402"><a href="gibbs-sampler.html#cb14-402" tabindex="-1"></a>                    <span class="at">pos.beta=</span>pos.beta, <span class="at">pos.Sigma=</span>pos.Sigma,</span>
-<span id="cb14-403"><a href="gibbs-sampler.html#cb14-403" tabindex="-1"></a>                    <span class="at">pos.gamma=</span>pos.gamma, <span class="do">## pos.Omega=pos.Omega,</span></span>
-<span id="cb14-404"><a href="gibbs-sampler.html#cb14-404" tabindex="-1"></a>                    <span class="at">burn.avgloglik=</span>burn.avgloglik,</span>
-<span id="cb14-405"><a href="gibbs-sampler.html#cb14-405" tabindex="-1"></a>                    <span class="at">pos.avgloglik=</span>pos.avgloglik,</span>
-<span id="cb14-406"><a href="gibbs-sampler.html#cb14-406" tabindex="-1"></a>                    <span class="at">burn.invNugget =</span> burn.invNugget,</span>
-<span id="cb14-407"><a href="gibbs-sampler.html#cb14-407" tabindex="-1"></a>                    <span class="at">pos.invNugget=</span>pos.invNugget,</span>
-<span id="cb14-408"><a href="gibbs-sampler.html#cb14-408" tabindex="-1"></a>                    <span class="at">dat.info =</span> dat.info , </span>
-<span id="cb14-409"><a href="gibbs-sampler.html#cb14-409" tabindex="-1"></a>                    <span class="at">last.imputed =</span> last.imputed,</span>
-<span id="cb14-410"><a href="gibbs-sampler.html#cb14-410" tabindex="-1"></a>                    <span class="at">last.para =</span> last.para, </span>
-<span id="cb14-411"><a href="gibbs-sampler.html#cb14-411" tabindex="-1"></a>                    <span class="at">prior.spec =</span> prior.spec.list)</span>
-<span id="cb14-412"><a href="gibbs-sampler.html#cb14-412" tabindex="-1"></a>            }<span class="cf">else</span>{</span>
-<span id="cb14-413"><a href="gibbs-sampler.html#cb14-413" tabindex="-1"></a>                ret <span class="ot">&lt;-</span> <span class="fu">list</span>( <span class="do">## burn.beta0 = burn.beta0,</span></span>
-<span id="cb14-414"><a href="gibbs-sampler.html#cb14-414" tabindex="-1"></a>                    <span class="at">burn.beta =</span> burn.beta,</span>
-<span id="cb14-415"><a href="gibbs-sampler.html#cb14-415" tabindex="-1"></a>                    <span class="at">burn.Sigma =</span> burn.Sigma,</span>
-<span id="cb14-416"><a href="gibbs-sampler.html#cb14-416" tabindex="-1"></a>                    <span class="at">burn.gamma =</span> burn.gamma,</span>
-<span id="cb14-417"><a href="gibbs-sampler.html#cb14-417" tabindex="-1"></a>                    <span class="at">pos.beta =</span> pos.beta,</span>
-<span id="cb14-418"><a href="gibbs-sampler.html#cb14-418" tabindex="-1"></a>                    <span class="at">pos.Sigma =</span> pos.Sigma,</span>
-<span id="cb14-419"><a href="gibbs-sampler.html#cb14-419" tabindex="-1"></a>                    <span class="at">pos.gamma =</span> pos.gamma,</span>
-<span id="cb14-420"><a href="gibbs-sampler.html#cb14-420" tabindex="-1"></a>                    <span class="at">pos.imputed.Y =</span> <span class="fu">do.call</span>(rbind, imputed.ylist),</span>
-<span id="cb14-421"><a href="gibbs-sampler.html#cb14-421" tabindex="-1"></a>                    <span class="at">burn.invNugget =</span> burn.invNugget,</span>
-<span id="cb14-422"><a href="gibbs-sampler.html#cb14-422" tabindex="-1"></a>                    <span class="at">pos.invNugget=</span>pos.invNugget,</span>
-<span id="cb14-423"><a href="gibbs-sampler.html#cb14-423" tabindex="-1"></a>                    <span class="at">burn.avgloglik =</span> burn.avgloglik,</span>
-<span id="cb14-424"><a href="gibbs-sampler.html#cb14-424" tabindex="-1"></a>                    <span class="at">pos.avgloglik =</span> pos.avgloglik,</span>
-<span id="cb14-425"><a href="gibbs-sampler.html#cb14-425" tabindex="-1"></a>                    <span class="at">dat.info =</span> dat.info , </span>
-<span id="cb14-426"><a href="gibbs-sampler.html#cb14-426" tabindex="-1"></a>                    <span class="at">last.imputed =</span> last.imputed,</span>
-<span id="cb14-427"><a href="gibbs-sampler.html#cb14-427" tabindex="-1"></a>                    <span class="at">last.para =</span> last.para, </span>
-<span id="cb14-428"><a href="gibbs-sampler.html#cb14-428" tabindex="-1"></a>                    <span class="at">prior.spec =</span> prior.spec.list)</span>
-<span id="cb14-429"><a href="gibbs-sampler.html#cb14-429" tabindex="-1"></a>            }</span>
-<span id="cb14-430"><a href="gibbs-sampler.html#cb14-430" tabindex="-1"></a>            </span>
-<span id="cb14-431"><a href="gibbs-sampler.html#cb14-431" tabindex="-1"></a>            <span class="fu">return</span>(ret)</span>
-<span id="cb14-432"><a href="gibbs-sampler.html#cb14-432" tabindex="-1"></a>}</span>
+<span id="cb14-257"><a href="gibbs-sampler.html#cb14-257" tabindex="-1"></a><span class="do">################################################ </span></span>
+<span id="cb14-258"><a href="gibbs-sampler.html#cb14-258" tabindex="-1"></a>            <span class="do">## censored data imputation</span></span>
+<span id="cb14-259"><a href="gibbs-sampler.html#cb14-259" tabindex="-1"></a><span class="do">################################################</span></span>
+<span id="cb14-260"><a href="gibbs-sampler.html#cb14-260" tabindex="-1"></a>        <span class="cf">if</span>((jj<span class="sc">&gt;</span> tt.impute <span class="sc">|</span> <span class="sc">!</span><span class="fu">is.null</span>(last.para)) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.null</span>(Cbox)){</span>
+<span id="cb14-261"><a href="gibbs-sampler.html#cb14-261" tabindex="-1"></a>            censored.Z.list <span class="ot">&lt;-</span> parallel<span class="sc">::</span><span class="fu">mcmapply</span>(<span class="cf">function</span>(c01,zz){zz[c01<span class="sc">==</span><span class="cn">TRUE</span>]},</span>
+<span id="cb14-262"><a href="gibbs-sampler.html#cb14-262" tabindex="-1"></a>                                                  <span class="at">c01 =</span> censor.<span class="fl">01.</span>list, <span class="at">zz=</span>Z.list,</span>
+<span id="cb14-263"><a href="gibbs-sampler.html#cb14-263" tabindex="-1"></a>                                                  <span class="at">mc.cores =</span> n.cores)  </span>
+<span id="cb14-264"><a href="gibbs-sampler.html#cb14-264" tabindex="-1"></a>            imputed.ylist <span class="ot">&lt;-</span> parallel<span class="sc">::</span><span class="fu">mclapply</span>(<span class="dv">1</span><span class="sc">:</span>TT, <span class="cf">function</span>(tt) {</span>
+<span id="cb14-265"><a href="gibbs-sampler.html#cb14-265" tabindex="-1"></a>                yy <span class="ot">=</span> <a href="helpers-functions.html#impute.censored">impute.censored</a>(<span class="at">ww =</span> censored.W.list[[tt]], </span>
+<span id="cb14-266"><a href="gibbs-sampler.html#cb14-266" tabindex="-1"></a>                                     <span class="at">yy =</span> censored.ylist[[tt]],</span>
+<span id="cb14-267"><a href="gibbs-sampler.html#cb14-267" tabindex="-1"></a>                                     <span class="at">zz =</span> censored.Z.list[[tt]],</span>
+<span id="cb14-268"><a href="gibbs-sampler.html#cb14-268" tabindex="-1"></a>                                     <span class="at">cc.info.mat =</span>  censored.C.list[[tt]],</span>
+<span id="cb14-269"><a href="gibbs-sampler.html#cb14-269" tabindex="-1"></a>                                     <span class="at">bounds.mat =</span> samp.region.list[[tt]],</span>
+<span id="cb14-270"><a href="gibbs-sampler.html#cb14-270" tabindex="-1"></a>                                     <span class="at">mu.mat =</span> mu.list[[tt]], <span class="at">Sigma.ell =</span> Sig.ell,</span>
+<span id="cb14-271"><a href="gibbs-sampler.html#cb14-271" tabindex="-1"></a>                                     <span class="at">dimdat =</span> dimdat)</span>
+<span id="cb14-272"><a href="gibbs-sampler.html#cb14-272" tabindex="-1"></a>                <span class="cf">if</span>(dimdat<span class="sc">==</span><span class="dv">1</span> <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.null</span>(yy)) yy <span class="ot">=</span> <span class="fu">t</span>(yy)</span>
+<span id="cb14-273"><a href="gibbs-sampler.html#cb14-273" tabindex="-1"></a>                <span class="fu">return</span>(yy)</span>
+<span id="cb14-274"><a href="gibbs-sampler.html#cb14-274" tabindex="-1"></a>            }, <span class="at">mc.cores =</span> n.cores, <span class="at">mc.preschedule =</span> <span class="cn">FALSE</span>)             </span>
+<span id="cb14-275"><a href="gibbs-sampler.html#cb14-275" tabindex="-1"></a>            <span class="cf">for</span>(tt <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>TT){</span>
+<span id="cb14-276"><a href="gibbs-sampler.html#cb14-276" tabindex="-1"></a>                censored_particles <span class="ot">=</span> <span class="fu">which</span>(censor.<span class="fl">01.</span>list[[tt]])</span>
+<span id="cb14-277"><a href="gibbs-sampler.html#cb14-277" tabindex="-1"></a>                <span class="do">##stopifnot(nrow(imputed.ylist[[tt]]) == length(censored_particles))</span></span>
+<span id="cb14-278"><a href="gibbs-sampler.html#cb14-278" tabindex="-1"></a>                ylist[[tt]][censored_particles,] <span class="ot">&lt;-</span> imputed.ylist[[tt]]</span>
+<span id="cb14-279"><a href="gibbs-sampler.html#cb14-279" tabindex="-1"></a>            }</span>
+<span id="cb14-280"><a href="gibbs-sampler.html#cb14-280" tabindex="-1"></a>        }</span>
+<span id="cb14-281"><a href="gibbs-sampler.html#cb14-281" tabindex="-1"></a></span>
+<span id="cb14-282"><a href="gibbs-sampler.html#cb14-282" tabindex="-1"></a>        loglik <span class="ot">&lt;-</span> <a href="helpers-functions.html#loglik_eval">loglik_eval</a>(mu.list, chol.Sig.list, </span>
+<span id="cb14-283"><a href="gibbs-sampler.html#cb14-283" tabindex="-1"></a>                              W.list, X.list, ylist, Z.list, </span>
+<span id="cb14-284"><a href="gibbs-sampler.html#cb14-284" tabindex="-1"></a>                              <span class="fu">as.list</span>(ntlist),</span>
+<span id="cb14-285"><a href="gibbs-sampler.html#cb14-285" tabindex="-1"></a>                              <span class="at">simple =</span> <span class="cn">TRUE</span>) </span>
+<span id="cb14-286"><a href="gibbs-sampler.html#cb14-286" tabindex="-1"></a>        <span class="do">## print(sort(round(n.ell/NN,3)))</span></span>
+<span id="cb14-287"><a href="gibbs-sampler.html#cb14-287" tabindex="-1"></a>        <span class="do">## print(sort(round(m.ell/MM,3)))</span></span>
+<span id="cb14-288"><a href="gibbs-sampler.html#cb14-288" tabindex="-1"></a>        <span class="cf">if</span>(jj <span class="sc">%%</span> <span class="dv">10</span> <span class="sc">==</span> <span class="dv">0</span>) <span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"avg loglikelihood: "</span>, <span class="fu">round</span>(loglik,<span class="dv">2</span>), <span class="at">sep=</span><span class="st">" "</span>))</span>
+<span id="cb14-289"><a href="gibbs-sampler.html#cb14-289" tabindex="-1"></a></span>
+<span id="cb14-290"><a href="gibbs-sampler.html#cb14-290" tabindex="-1"></a>   <span class="do">################################################ </span></span>
+<span id="cb14-291"><a href="gibbs-sampler.html#cb14-291" tabindex="-1"></a>        <span class="do">## SBMN-logit parameter estimation </span><span class="al">###</span></span>
+<span id="cb14-292"><a href="gibbs-sampler.html#cb14-292" tabindex="-1"></a>   <span class="do">################################################</span></span>
+<span id="cb14-293"><a href="gibbs-sampler.html#cb14-293" tabindex="-1"></a></span>
+<span id="cb14-294"><a href="gibbs-sampler.html#cb14-294" tabindex="-1"></a>        mt.ell <span class="ot">&lt;-</span> parallel<span class="sc">::</span><span class="fu">mcmapply</span>(<span class="cf">function</span>(ww,zz){</span>
+<span id="cb14-295"><a href="gibbs-sampler.html#cb14-295" tabindex="-1"></a>            <span class="fu">sapply</span>(<span class="dv">1</span><span class="sc">:</span>numclust, <span class="cf">function</span>(kk) <span class="fu">sum</span>(ww[zz<span class="sc">==</span>kk]))},</span>
+<span id="cb14-296"><a href="gibbs-sampler.html#cb14-296" tabindex="-1"></a>            <span class="at">ww =</span> W.list, <span class="at">zz =</span> Z.list, <span class="at">SIMPLIFY =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb14-297"><a href="gibbs-sampler.html#cb14-297" tabindex="-1"></a>            <span class="at">mc.cores =</span> n.cores)</span>
+<span id="cb14-298"><a href="gibbs-sampler.html#cb14-298" tabindex="-1"></a>        m.ell <span class="ot">&lt;-</span>  Rfast<span class="sc">::</span><span class="fu">rowsums</span>(mt.ell)</span>
+<span id="cb14-299"><a href="gibbs-sampler.html#cb14-299" tabindex="-1"></a>        </span>
+<span id="cb14-300"><a href="gibbs-sampler.html#cb14-300" tabindex="-1"></a>        XpGamma.abs <span class="ot">&lt;-</span> Rfast<span class="sc">::</span><span class="fu">Crossprod</span>(gamma.ell, Xp) <span class="sc">%&gt;%</span> <span class="fu">abs</span>() <span class="do">## numclust-1 x TT   </span></span>
+<span id="cb14-301"><a href="gibbs-sampler.html#cb14-301" tabindex="-1"></a>        mt.cumsum <span class="ot">&lt;-</span> Rfast<span class="sc">::</span><span class="fu">colCumSums</span>(<span class="fu">as.matrix</span>(mt.ell))  </span>
+<span id="cb14-302"><a href="gibbs-sampler.html#cb14-302" tabindex="-1"></a>        Mt.ell <span class="ot">&lt;-</span> <span class="fu">rbind</span>(mt,</span>
+<span id="cb14-303"><a href="gibbs-sampler.html#cb14-303" tabindex="-1"></a>                        <span class="sc">-</span><span class="fu">sweep</span>(mt.cumsum[<span class="sc">-</span>numclust,,<span class="at">drop=</span><span class="cn">FALSE</span>], <span class="dv">2</span>,</span>
+<span id="cb14-304"><a href="gibbs-sampler.html#cb14-304" tabindex="-1"></a>                               mt.cumsum[numclust, , <span class="at">drop=</span><span class="cn">FALSE</span>])) </span>
+<span id="cb14-305"><a href="gibbs-sampler.html#cb14-305" tabindex="-1"></a>        <span class="do">#### omega.tell &lt;- matrix(parallel::mcmapply(pgdraw::pgdraw,</span></span>
+<span id="cb14-306"><a href="gibbs-sampler.html#cb14-306" tabindex="-1"></a>        omega.tell <span class="ot">&lt;-</span> <span class="fu">matrix</span>(parallel<span class="sc">::</span><span class="fu">mcmapply</span>(pgdraw.mod, <span class="do">### mod here </span></span>
+<span id="cb14-307"><a href="gibbs-sampler.html#cb14-307" tabindex="-1"></a>                                                <span class="fu">round</span>(Mt.ell[<span class="sc">-</span>numclust,]), XpGamma.abs,</span>
+<span id="cb14-308"><a href="gibbs-sampler.html#cb14-308" tabindex="-1"></a>                                                <span class="at">mc.cores =</span> n.cores),</span>
+<span id="cb14-309"><a href="gibbs-sampler.html#cb14-309" tabindex="-1"></a>                             <span class="at">nrow=</span>numclust<span class="dv">-1</span>, <span class="at">ncol =</span> TT)</span>
+<span id="cb14-310"><a href="gibbs-sampler.html#cb14-310" tabindex="-1"></a>        kappa <span class="ot">&lt;-</span> mt.ell[<span class="sc">-</span>numclust, , drop<span class="ot">=</span><span class="cn">FALSE</span>] <span class="sc">-</span> Mt.ell[<span class="sc">-</span>numclust, , drop<span class="ot">=</span><span class="cn">FALSE</span>]<span class="sc">/</span><span class="dv">2</span></span>
+<span id="cb14-311"><a href="gibbs-sampler.html#cb14-311" tabindex="-1"></a></span>
+<span id="cb14-312"><a href="gibbs-sampler.html#cb14-312" tabindex="-1"></a>        <span class="do">##        inv.Omega &lt;- Rfast::spdinv(Omega)</span></span>
+<span id="cb14-313"><a href="gibbs-sampler.html#cb14-313" tabindex="-1"></a>        <span class="cf">for</span>(ell <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>(numclust<span class="dv">-1</span>)){</span>
+<span id="cb14-314"><a href="gibbs-sampler.html#cb14-314" tabindex="-1"></a>            V.omell <span class="ot">&lt;-</span> Rfast<span class="sc">::</span><span class="fu">spdinv</span>(<span class="fu">Reduce</span>(<span class="st">'+'</span>, <span class="fu">Map</span>(<span class="st">'*'</span>, XtXtTp, omega.tell[ell,]))</span>
+<span id="cb14-315"><a href="gibbs-sampler.html#cb14-315" tabindex="-1"></a>                                     <span class="sc">+</span> <span class="fu">diag</span>(p<span class="sc">+</span><span class="dv">1</span>) <span class="sc">*</span> invNugget) </span>
+<span id="cb14-316"><a href="gibbs-sampler.html#cb14-316" tabindex="-1"></a>            m.omell <span class="ot">&lt;-</span> V.omell <span class="sc">%*%</span> <span class="fu">Reduce</span>(<span class="st">'+'</span>, <span class="fu">Map</span>(<span class="st">'*'</span>, Xp.list , kappa[ell,]) )</span>
+<span id="cb14-317"><a href="gibbs-sampler.html#cb14-317" tabindex="-1"></a>            gamma.ell[,ell] <span class="ot">&lt;-</span> Rfast<span class="sc">::</span><span class="fu">rmvnorm</span>(<span class="dv">1</span>, m.omell, V.omell) </span>
+<span id="cb14-318"><a href="gibbs-sampler.html#cb14-318" tabindex="-1"></a>        }</span>
+<span id="cb14-319"><a href="gibbs-sampler.html#cb14-319" tabindex="-1"></a>            </span>
+<span id="cb14-320"><a href="gibbs-sampler.html#cb14-320" tabindex="-1"></a>        a_gamma_n <span class="ot">&lt;-</span> numclust<span class="dv">-1</span><span class="sc">+</span>a_gamma</span>
+<span id="cb14-321"><a href="gibbs-sampler.html#cb14-321" tabindex="-1"></a>        b_gamma_n <span class="ot">&lt;-</span> <span class="fu">apply</span>(gamma.ell, <span class="dv">2</span>, crossprod) <span class="sc">%&gt;%</span> <span class="fu">sum</span>() <span class="sc">+</span> b_gamma</span>
+<span id="cb14-322"><a href="gibbs-sampler.html#cb14-322" tabindex="-1"></a>        invNugget <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">/</span> stats<span class="sc">::</span><span class="fu">rgamma</span>(<span class="dv">1</span>, a_gamma_n<span class="sc">/</span><span class="dv">2</span>, b_gamma_n<span class="sc">/</span><span class="dv">2</span>)</span>
+<span id="cb14-323"><a href="gibbs-sampler.html#cb14-323" tabindex="-1"></a></span>
+<span id="cb14-324"><a href="gibbs-sampler.html#cb14-324" tabindex="-1"></a>   <span class="do">################################################ </span></span>
+<span id="cb14-325"><a href="gibbs-sampler.html#cb14-325" tabindex="-1"></a>        <span class="do">## experts' estimation </span><span class="al">###</span></span>
+<span id="cb14-326"><a href="gibbs-sampler.html#cb14-326" tabindex="-1"></a>   <span class="do">################################################ </span></span>
+<span id="cb14-327"><a href="gibbs-sampler.html#cb14-327" tabindex="-1"></a>        </span>
+<span id="cb14-328"><a href="gibbs-sampler.html#cb14-328" tabindex="-1"></a>        <span class="cf">for</span>(ell <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>numclust){</span>
+<span id="cb14-329"><a href="gibbs-sampler.html#cb14-329" tabindex="-1"></a>            <span class="do">## sample beta (including the intercept) jointly</span></span>
+<span id="cb14-330"><a href="gibbs-sampler.html#cb14-330" tabindex="-1"></a>            SX.ell <span class="ot">&lt;-</span> XTX0<span class="sc">/</span>gg <span class="sc">+</span> <span class="fu">Reduce</span>(<span class="st">'+'</span>, <span class="fu">Map</span>(<span class="st">`</span><span class="at">*</span><span class="st">`</span>, XtXtTp, mt.ell[ell,]))</span>
+<span id="cb14-331"><a href="gibbs-sampler.html#cb14-331" tabindex="-1"></a>            inv.SX.ell <span class="ot">&lt;-</span> Rfast<span class="sc">::</span><span class="fu">spdinv</span>(SX.ell) <span class="do">## (p+1) x (p+1)</span></span>
+<span id="cb14-332"><a href="gibbs-sampler.html#cb14-332" tabindex="-1"></a>            Sy.ell <span class="ot">&lt;-</span> parallel<span class="sc">::</span><span class="fu">mcmapply</span>(<span class="cf">function</span>(yy,zz,ww){</span>
+<span id="cb14-333"><a href="gibbs-sampler.html#cb14-333" tabindex="-1"></a>                Rfast<span class="sc">::</span><span class="fu">Crossprod</span>(<span class="fu">as.matrix</span>(ww[zz<span class="sc">==</span>ell]),</span>
+<span id="cb14-334"><a href="gibbs-sampler.html#cb14-334" tabindex="-1"></a>                                 yy[zz<span class="sc">==</span>ell,,<span class="at">drop=</span><span class="cn">FALSE</span>])},</span>
+<span id="cb14-335"><a href="gibbs-sampler.html#cb14-335" tabindex="-1"></a>                <span class="at">ww =</span> W.list, <span class="at">yy =</span> ylist, <span class="at">zz =</span> Z.list, <span class="at">SIMPLIFY =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb14-336"><a href="gibbs-sampler.html#cb14-336" tabindex="-1"></a>                <span class="at">mc.cores =</span> n.cores)</span>
+<span id="cb14-337"><a href="gibbs-sampler.html#cb14-337" tabindex="-1"></a>            <span class="cf">if</span>(dimdat<span class="sc">==</span><span class="dv">1</span>){</span>
+<span id="cb14-338"><a href="gibbs-sampler.html#cb14-338" tabindex="-1"></a>                Sxy.ell <span class="ot">&lt;-</span>  Xp <span class="sc">%*%</span> <span class="fu">as.matrix</span>(Sy.ell)  <span class="do">## (p+1) x 1</span></span>
+<span id="cb14-339"><a href="gibbs-sampler.html#cb14-339" tabindex="-1"></a>            }<span class="cf">else</span>{</span>
+<span id="cb14-340"><a href="gibbs-sampler.html#cb14-340" tabindex="-1"></a>                Sxy.ell <span class="ot">&lt;-</span>  Rfast<span class="sc">::</span><span class="fu">Tcrossprod</span>(Xp, Sy.ell)  <span class="do">## (p+1) x d</span></span>
+<span id="cb14-341"><a href="gibbs-sampler.html#cb14-341" tabindex="-1"></a>            }</span>
+<span id="cb14-342"><a href="gibbs-sampler.html#cb14-342" tabindex="-1"></a>            beta.ell[,,ell] <span class="ot">&lt;-</span> <a href="helpers-functions.html#rmatnorm.fast">rmatnorm.fast</a>(<span class="at">M =</span> <span class="fu">crossprod</span>(Sxy.ell,inv.SX.ell), </span>
+<span id="cb14-343"><a href="gibbs-sampler.html#cb14-343" tabindex="-1"></a>                                             <span class="at">U =</span> Sig.ell[,,ell], </span>
+<span id="cb14-344"><a href="gibbs-sampler.html#cb14-344" tabindex="-1"></a>                                             <span class="at">V =</span> inv.SX.ell)</span>
+<span id="cb14-345"><a href="gibbs-sampler.html#cb14-345" tabindex="-1"></a>            </span>
+<span id="cb14-346"><a href="gibbs-sampler.html#cb14-346" tabindex="-1"></a>            sse <span class="ot">&lt;-</span> parallel<span class="sc">::</span><span class="fu">mcmapply</span>(<span class="cf">function</span>(ww,xx,yy,zz) {</span>
+<span id="cb14-347"><a href="gibbs-sampler.html#cb14-347" tabindex="-1"></a>                <a href="helpers-functions.html#wcrossprod.fast">wcrossprod.fast</a>(Rfast<span class="sc">::</span><span class="fu">eachrow</span>(<span class="fu">as.matrix</span>(yy[zz<span class="sc">==</span>ell,,<span class="at">drop=</span><span class="cn">FALSE</span>]),</span>
+<span id="cb14-348"><a href="gibbs-sampler.html#cb14-348" tabindex="-1"></a>                                               beta.ell[,,ell]<span class="sc">%*%</span>xx, <span class="st">'-'</span>),</span>
+<span id="cb14-349"><a href="gibbs-sampler.html#cb14-349" tabindex="-1"></a>                                ww[zz<span class="sc">==</span>ell], <span class="at">weighting =</span> <span class="cn">TRUE</span>)},</span>
+<span id="cb14-350"><a href="gibbs-sampler.html#cb14-350" tabindex="-1"></a>                <span class="at">xx =</span> Xp.list, <span class="at">yy =</span> ylist, <span class="at">zz=</span>Z.list, <span class="at">ww =</span> W.sq.list, </span>
+<span id="cb14-351"><a href="gibbs-sampler.html#cb14-351" tabindex="-1"></a>                <span class="at">SIMPLIFY =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb14-352"><a href="gibbs-sampler.html#cb14-352" tabindex="-1"></a>                <span class="at">mc.cores =</span> n.cores) </span>
+<span id="cb14-353"><a href="gibbs-sampler.html#cb14-353" tabindex="-1"></a>            <span class="cf">if</span>(dimdat <span class="sc">==</span> <span class="dv">1</span>) Sn.ell <span class="ot">=</span> <span class="fu">sum</span>(<span class="fu">unlist</span>(sse))</span>
+<span id="cb14-354"><a href="gibbs-sampler.html#cb14-354" tabindex="-1"></a>            <span class="cf">if</span>(dimdat <span class="sc">&gt;</span> <span class="dv">1</span>) Sn.ell <span class="ot">&lt;-</span> <span class="fu">Reduce</span>(<span class="st">'+'</span>,sse[<span class="fu">sapply</span>(sse,length)<span class="sc">&gt;</span><span class="dv">0</span>])</span>
+<span id="cb14-355"><a href="gibbs-sampler.html#cb14-355" tabindex="-1"></a>            Sig.ell[,,ell] <span class="ot">&lt;-</span> matrixsampling<span class="sc">::</span><span class="fu">rinvwishart</span>(<span class="dv">1</span>,nu0<span class="sc">+</span>dimdat <span class="sc">+</span> m.ell[ell], S0 <span class="sc">+</span> Sn.ell)[,,<span class="dv">1</span>]</span>
+<span id="cb14-356"><a href="gibbs-sampler.html#cb14-356" tabindex="-1"></a>        }</span>
+<span id="cb14-357"><a href="gibbs-sampler.html#cb14-357" tabindex="-1"></a>            </span>
+<span id="cb14-358"><a href="gibbs-sampler.html#cb14-358" tabindex="-1"></a>   <span class="do">############################################### </span></span>
+<span id="cb14-359"><a href="gibbs-sampler.html#cb14-359" tabindex="-1"></a>   <span class="do">## collecting posterior samples </span></span>
+<span id="cb14-360"><a href="gibbs-sampler.html#cb14-360" tabindex="-1"></a>   <span class="do">############################################## </span></span>
+<span id="cb14-361"><a href="gibbs-sampler.html#cb14-361" tabindex="-1"></a>        </span>
+<span id="cb14-362"><a href="gibbs-sampler.html#cb14-362" tabindex="-1"></a>            <span class="cf">if</span>(jj <span class="sc">&gt;</span>Nburn){</span>
+<span id="cb14-363"><a href="gibbs-sampler.html#cb14-363" tabindex="-1"></a>                pos.beta[,,,jj<span class="sc">-</span>Nburn] <span class="ot">&lt;-</span> beta.ell</span>
+<span id="cb14-364"><a href="gibbs-sampler.html#cb14-364" tabindex="-1"></a>                pos.Sigma[,,,jj<span class="sc">-</span>Nburn] <span class="ot">&lt;-</span> Sig.ell</span>
+<span id="cb14-365"><a href="gibbs-sampler.html#cb14-365" tabindex="-1"></a>                pos.gamma[,,jj<span class="sc">-</span>Nburn] <span class="ot">&lt;-</span> gamma.ell</span>
+<span id="cb14-366"><a href="gibbs-sampler.html#cb14-366" tabindex="-1"></a>                pos.invNugget[ jj<span class="sc">-</span>Nburn ]  <span class="ot">&lt;-</span> invNugget       </span>
+<span id="cb14-367"><a href="gibbs-sampler.html#cb14-367" tabindex="-1"></a>                pos.avgloglik[jj<span class="sc">-</span>Nburn] <span class="ot">&lt;-</span> loglik</span>
+<span id="cb14-368"><a href="gibbs-sampler.html#cb14-368" tabindex="-1"></a>            } <span class="cf">else</span>{</span>
+<span id="cb14-369"><a href="gibbs-sampler.html#cb14-369" tabindex="-1"></a>                burn.beta[,,,jj] <span class="ot">&lt;-</span> beta.ell</span>
+<span id="cb14-370"><a href="gibbs-sampler.html#cb14-370" tabindex="-1"></a>                burn.Sigma[,,,jj] <span class="ot">&lt;-</span> Sig.ell</span>
+<span id="cb14-371"><a href="gibbs-sampler.html#cb14-371" tabindex="-1"></a>                burn.gamma[,,jj] <span class="ot">&lt;-</span> gamma.ell</span>
+<span id="cb14-372"><a href="gibbs-sampler.html#cb14-372" tabindex="-1"></a>                burn.invNugget[jj]  <span class="ot">&lt;-</span> invNugget </span>
+<span id="cb14-373"><a href="gibbs-sampler.html#cb14-373" tabindex="-1"></a>                burn.avgloglik[jj] <span class="ot">&lt;-</span> loglik</span>
+<span id="cb14-374"><a href="gibbs-sampler.html#cb14-374" tabindex="-1"></a>            }</span>
+<span id="cb14-375"><a href="gibbs-sampler.html#cb14-375" tabindex="-1"></a>         }</span>
+<span id="cb14-376"><a href="gibbs-sampler.html#cb14-376" tabindex="-1"></a><span class="do">########## MCMC stops here. </span></span>
+<span id="cb14-377"><a href="gibbs-sampler.html#cb14-377" tabindex="-1"></a>            </span>
+<span id="cb14-378"><a href="gibbs-sampler.html#cb14-378" tabindex="-1"></a>            <span class="cf">if</span>(verbose ){</span>
+<span id="cb14-379"><a href="gibbs-sampler.html#cb14-379" tabindex="-1"></a>                <span class="fu">print</span>(<span class="st">"All work is done."</span>)</span>
+<span id="cb14-380"><a href="gibbs-sampler.html#cb14-380" tabindex="-1"></a>                <span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"Stored MCMC sample size: "</span>, Nmc, <span class="at">sep =</span> <span class="st">" "</span>)) </span>
+<span id="cb14-381"><a href="gibbs-sampler.html#cb14-381" tabindex="-1"></a>                <span class="fu">print</span>(<span class="fu">Sys.time</span>())                </span>
+<span id="cb14-382"><a href="gibbs-sampler.html#cb14-382" tabindex="-1"></a>                <span class="fu">print</span>(<span class="st">"total time cost, in min"</span>)</span>
+<span id="cb14-383"><a href="gibbs-sampler.html#cb14-383" tabindex="-1"></a>                <span class="fu">print</span>(<span class="fu">round</span>((<span class="fu">proc.time</span>()<span class="sc">-</span>ptm)<span class="sc">/</span><span class="dv">60</span>,<span class="dv">1</span>))</span>
+<span id="cb14-384"><a href="gibbs-sampler.html#cb14-384" tabindex="-1"></a>                <span class="fu">print</span>(<span class="st">"total time cost, in hours"</span>)</span>
+<span id="cb14-385"><a href="gibbs-sampler.html#cb14-385" tabindex="-1"></a>                <span class="fu">print</span>(<span class="fu">round</span>((<span class="fu">proc.time</span>()<span class="sc">-</span>ptm)<span class="sc">/</span><span class="dv">60</span><span class="sc">/</span><span class="dv">60</span>,<span class="dv">2</span>))</span>
+<span id="cb14-386"><a href="gibbs-sampler.html#cb14-386" tabindex="-1"></a>                <span class="fu">print</span>(<span class="st">"time cost per iteration, in seconds"</span>) </span>
+<span id="cb14-387"><a href="gibbs-sampler.html#cb14-387" tabindex="-1"></a>                <span class="fu">print</span>((<span class="fu">proc.time</span>()<span class="sc">-</span>ptm)<span class="sc">/</span>(Nburn<span class="sc">+</span>Nmc <span class="sc">-</span> tt.impute))</span>
+<span id="cb14-388"><a href="gibbs-sampler.html#cb14-388" tabindex="-1"></a>            }</span>
+<span id="cb14-389"><a href="gibbs-sampler.html#cb14-389" tabindex="-1"></a>            last.imputed <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">last.ylist =</span> ylist,</span>
+<span id="cb14-390"><a href="gibbs-sampler.html#cb14-390" tabindex="-1"></a>                                 <span class="at">last.Z.list =</span> Z.list)</span>
+<span id="cb14-391"><a href="gibbs-sampler.html#cb14-391" tabindex="-1"></a>            last.para <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">last.gamma =</span> gamma.ell,</span>
+<span id="cb14-392"><a href="gibbs-sampler.html#cb14-392" tabindex="-1"></a>                              <span class="at">last.beta =</span> beta.ell, </span>
+<span id="cb14-393"><a href="gibbs-sampler.html#cb14-393" tabindex="-1"></a>                              <span class="at">last.Sigma =</span> Sig.ell,</span>
+<span id="cb14-394"><a href="gibbs-sampler.html#cb14-394" tabindex="-1"></a>                              <span class="at">last.invNugget =</span> invNugget)</span>
+<span id="cb14-395"><a href="gibbs-sampler.html#cb14-395" tabindex="-1"></a>            </span>
+<span id="cb14-396"><a href="gibbs-sampler.html#cb14-396" tabindex="-1"></a>            <span class="cf">if</span>(<span class="fu">is.null</span>(Cbox)){</span>
+<span id="cb14-397"><a href="gibbs-sampler.html#cb14-397" tabindex="-1"></a>                ret <span class="ot">&lt;-</span> <span class="fu">list</span>( <span class="do">## burn.beta0=burn.beta0,</span></span>
+<span id="cb14-398"><a href="gibbs-sampler.html#cb14-398" tabindex="-1"></a>                    <span class="at">burn.beta=</span>burn.beta,<span class="at">burn.Sigma=</span>burn.Sigma,</span>
+<span id="cb14-399"><a href="gibbs-sampler.html#cb14-399" tabindex="-1"></a>                    <span class="at">burn.gamma=</span>burn.gamma, <span class="do">## burn.Omega=burn.Omega,</span></span>
+<span id="cb14-400"><a href="gibbs-sampler.html#cb14-400" tabindex="-1"></a>                    <span class="do">## pos.beta0=pos.beta0,</span></span>
+<span id="cb14-401"><a href="gibbs-sampler.html#cb14-401" tabindex="-1"></a>                    <span class="at">pos.beta=</span>pos.beta, <span class="at">pos.Sigma=</span>pos.Sigma,</span>
+<span id="cb14-402"><a href="gibbs-sampler.html#cb14-402" tabindex="-1"></a>                    <span class="at">pos.gamma=</span>pos.gamma, <span class="do">## pos.Omega=pos.Omega,</span></span>
+<span id="cb14-403"><a href="gibbs-sampler.html#cb14-403" tabindex="-1"></a>                    <span class="at">burn.avgloglik=</span>burn.avgloglik,</span>
+<span id="cb14-404"><a href="gibbs-sampler.html#cb14-404" tabindex="-1"></a>                    <span class="at">pos.avgloglik=</span>pos.avgloglik,</span>
+<span id="cb14-405"><a href="gibbs-sampler.html#cb14-405" tabindex="-1"></a>                    <span class="at">burn.invNugget =</span> burn.invNugget,</span>
+<span id="cb14-406"><a href="gibbs-sampler.html#cb14-406" tabindex="-1"></a>                    <span class="at">pos.invNugget=</span>pos.invNugget,</span>
+<span id="cb14-407"><a href="gibbs-sampler.html#cb14-407" tabindex="-1"></a>                    <span class="at">dat.info =</span> dat.info , </span>
+<span id="cb14-408"><a href="gibbs-sampler.html#cb14-408" tabindex="-1"></a>                    <span class="at">last.imputed =</span> last.imputed,</span>
+<span id="cb14-409"><a href="gibbs-sampler.html#cb14-409" tabindex="-1"></a>                    <span class="at">last.para =</span> last.para, </span>
+<span id="cb14-410"><a href="gibbs-sampler.html#cb14-410" tabindex="-1"></a>                    <span class="at">prior.spec =</span> prior.spec.list)</span>
+<span id="cb14-411"><a href="gibbs-sampler.html#cb14-411" tabindex="-1"></a>            }<span class="cf">else</span>{</span>
+<span id="cb14-412"><a href="gibbs-sampler.html#cb14-412" tabindex="-1"></a>                ret <span class="ot">&lt;-</span> <span class="fu">list</span>( <span class="do">## burn.beta0 = burn.beta0,</span></span>
+<span id="cb14-413"><a href="gibbs-sampler.html#cb14-413" tabindex="-1"></a>                    <span class="at">burn.beta =</span> burn.beta,</span>
+<span id="cb14-414"><a href="gibbs-sampler.html#cb14-414" tabindex="-1"></a>                    <span class="at">burn.Sigma =</span> burn.Sigma,</span>
+<span id="cb14-415"><a href="gibbs-sampler.html#cb14-415" tabindex="-1"></a>                    <span class="at">burn.gamma =</span> burn.gamma,</span>
+<span id="cb14-416"><a href="gibbs-sampler.html#cb14-416" tabindex="-1"></a>                    <span class="at">pos.beta =</span> pos.beta,</span>
+<span id="cb14-417"><a href="gibbs-sampler.html#cb14-417" tabindex="-1"></a>                    <span class="at">pos.Sigma =</span> pos.Sigma,</span>
+<span id="cb14-418"><a href="gibbs-sampler.html#cb14-418" tabindex="-1"></a>                    <span class="at">pos.gamma =</span> pos.gamma,</span>
+<span id="cb14-419"><a href="gibbs-sampler.html#cb14-419" tabindex="-1"></a>                    <span class="at">pos.imputed.Y =</span> <span class="fu">do.call</span>(rbind, imputed.ylist),</span>
+<span id="cb14-420"><a href="gibbs-sampler.html#cb14-420" tabindex="-1"></a>                    <span class="at">burn.invNugget =</span> burn.invNugget,</span>
+<span id="cb14-421"><a href="gibbs-sampler.html#cb14-421" tabindex="-1"></a>                    <span class="at">pos.invNugget=</span>pos.invNugget,</span>
+<span id="cb14-422"><a href="gibbs-sampler.html#cb14-422" tabindex="-1"></a>                    <span class="at">burn.avgloglik =</span> burn.avgloglik,</span>
+<span id="cb14-423"><a href="gibbs-sampler.html#cb14-423" tabindex="-1"></a>                    <span class="at">pos.avgloglik =</span> pos.avgloglik,</span>
+<span id="cb14-424"><a href="gibbs-sampler.html#cb14-424" tabindex="-1"></a>                    <span class="at">dat.info =</span> dat.info , </span>
+<span id="cb14-425"><a href="gibbs-sampler.html#cb14-425" tabindex="-1"></a>                    <span class="at">last.imputed =</span> last.imputed,</span>
+<span id="cb14-426"><a href="gibbs-sampler.html#cb14-426" tabindex="-1"></a>                    <span class="at">last.para =</span> last.para, </span>
+<span id="cb14-427"><a href="gibbs-sampler.html#cb14-427" tabindex="-1"></a>                    <span class="at">prior.spec =</span> prior.spec.list)</span>
+<span id="cb14-428"><a href="gibbs-sampler.html#cb14-428" tabindex="-1"></a>            }</span>
+<span id="cb14-429"><a href="gibbs-sampler.html#cb14-429" tabindex="-1"></a>            </span>
+<span id="cb14-430"><a href="gibbs-sampler.html#cb14-430" tabindex="-1"></a>            <span class="fu">return</span>(ret)</span>
+<span id="cb14-431"><a href="gibbs-sampler.html#cb14-431" tabindex="-1"></a>}</span>
+<span id="cb14-432"><a href="gibbs-sampler.html#cb14-432" tabindex="-1"></a></span>
 <span id="cb14-433"><a href="gibbs-sampler.html#cb14-433" tabindex="-1"></a></span>
 <span id="cb14-434"><a href="gibbs-sampler.html#cb14-434" tabindex="-1"></a></span>
-<span id="cb14-435"><a href="gibbs-sampler.html#cb14-435" tabindex="-1"></a></span>
-<span id="cb14-436"><a href="gibbs-sampler.html#cb14-436" tabindex="-1"></a><span class="do">## benchmark("ss"={sapply(1:TT, function(t) sapply(1:(numclust-1), function(kk)</span></span>
-<span id="cb14-437"><a href="gibbs-sampler.html#cb14-437" tabindex="-1"></a><span class="do">##     pgdraw(Nt.ell[kk,t],abs(XpGamma[kk,t]))))},</span></span>
-<span id="cb14-438"><a href="gibbs-sampler.html#cb14-438" tabindex="-1"></a><span class="do">##     "mcmapp"={matrix(mcmapply(pgdraw, Nt.ell[-numclust,], abs(XpGamma),</span></span>
-<span id="cb14-439"><a href="gibbs-sampler.html#cb14-439" tabindex="-1"></a><span class="do">##                               mc.cores = n.cores),</span></span>
-<span id="cb14-440"><a href="gibbs-sampler.html#cb14-440" tabindex="-1"></a><span class="do">##                      nrow=numclust-1, ncol = TT)},</span></span>
-<span id="cb14-441"><a href="gibbs-sampler.html#cb14-441" tabindex="-1"></a><span class="do">##     "mapp"={matrix(mapply(pgdraw, Nt.ell[-numclust,], abs(XpGamma)),</span></span>
-<span id="cb14-442"><a href="gibbs-sampler.html#cb14-442" tabindex="-1"></a><span class="do">##                    nrow=numclust-1, ncol = TT)},</span></span>
-<span id="cb14-443"><a href="gibbs-sampler.html#cb14-443" tabindex="-1"></a><span class="do">##     replications = 10,</span></span>
-<span id="cb14-444"><a href="gibbs-sampler.html#cb14-444" tabindex="-1"></a><span class="do">##     columns = c("test", "replications", "elapsed",</span></span>
-<span id="cb14-445"><a href="gibbs-sampler.html#cb14-445" tabindex="-1"></a><span class="do">##               "relative", "user.self", "sys.self"))</span></span></code></pre></div>
+<span id="cb14-435"><a href="gibbs-sampler.html#cb14-435" tabindex="-1"></a><span class="do">## benchmark("ss"={sapply(1:TT, function(t) sapply(1:(numclust-1), function(kk)</span></span>
+<span id="cb14-436"><a href="gibbs-sampler.html#cb14-436" tabindex="-1"></a><span class="do">##     pgdraw(Nt.ell[kk,t],abs(XpGamma[kk,t]))))},</span></span>
+<span id="cb14-437"><a href="gibbs-sampler.html#cb14-437" tabindex="-1"></a><span class="do">##     "mcmapp"={matrix(mcmapply(pgdraw, Nt.ell[-numclust,], abs(XpGamma),</span></span>
+<span id="cb14-438"><a href="gibbs-sampler.html#cb14-438" tabindex="-1"></a><span class="do">##                               mc.cores = n.cores),</span></span>
+<span id="cb14-439"><a href="gibbs-sampler.html#cb14-439" tabindex="-1"></a><span class="do">##                      nrow=numclust-1, ncol = TT)},</span></span>
+<span id="cb14-440"><a href="gibbs-sampler.html#cb14-440" tabindex="-1"></a><span class="do">##     "mapp"={matrix(mapply(pgdraw, Nt.ell[-numclust,], abs(XpGamma)),</span></span>
+<span id="cb14-441"><a href="gibbs-sampler.html#cb14-441" tabindex="-1"></a><span class="do">##                    nrow=numclust-1, ncol = TT)},</span></span>
+<span id="cb14-442"><a href="gibbs-sampler.html#cb14-442" tabindex="-1"></a><span class="do">##     replications = 10,</span></span>
+<span id="cb14-443"><a href="gibbs-sampler.html#cb14-443" tabindex="-1"></a><span class="do">##     columns = c("test", "replications", "elapsed",</span></span>
+<span id="cb14-444"><a href="gibbs-sampler.html#cb14-444" tabindex="-1"></a><span class="do">##               "relative", "user.self", "sys.self"))</span></span></code></pre></div>
 
 </div>
 </div>
