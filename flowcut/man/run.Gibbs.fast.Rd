@@ -15,6 +15,7 @@ run.Gibbs.fast(
   Cbox = NULL,
   user.prior = NULL,
   gg = 1,
+  sig2_gamma = 1,
   prior_spec.list = NULL,
   verbose = FALSE,
   last.imputed = NULL,

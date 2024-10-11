@@ -27,7 +27,8 @@ run.Gibbs.fast <- function(ylist, countslist, X,
                            Nburn = 500,
                            Cbox = NULL,  
                            user.prior = NULL,
-                           gg=1,
+                           gg = 1,
+                           sig2_gamma = 1, 
                            prior_spec.list = NULL,
                            verbose = FALSE,
                            last.imputed = NULL, 
@@ -43,6 +44,7 @@ run.Gibbs.fast <- function(ylist, countslist, X,
     NN <- sum(ntlist)
     tt.impute <- min(20,floor(Nburn/5))
     n.cores = min(n.cores, TT)
+    numclust <- as.integer(numclust) 
     
     dat.info <- list(ylist = ylist, 
                      X= X,
@@ -51,7 +53,7 @@ run.Gibbs.fast <- function(ylist, countslist, X,
                      Cbox = Cbox) ## store raw data 
    ##### pre computed quantities
     X.list <- as.list(as.data.frame(X))
-    Xp <- rbind(1,X) 
+    Xp <- rbind(1,X)  ## p+1 x TT 
     Xp.list <- as.list(as.data.frame(Xp))
     
     countsTotal <- sapply(countslist,sum) %>% sum() 
@@ -71,6 +73,7 @@ run.Gibbs.fast <- function(ylist, countslist, X,
     inv.XTXp <- Rfast::spdinv(XTXp)
     X0 <- rbind(0, X) 
     XTX0 <- X0%*%t(X0)
+    XXp.inv.sig <- XTXp / sig2_gamma
     
   ## Build censored box
     if(!is.null(Cbox)){
@@ -114,12 +117,14 @@ run.Gibbs.fast <- function(ylist, countslist, X,
         nu1=p+1 
         S0=diag(dimdat)
         S1=diag(p+1)
-        a_gamma <- 3
-        b_gamma <- 3
+        ## a_gamma <- gamma.ab[1]  
+        ## b_gamma <- gamma.ab[2]
+        invNugget <- 1/sig2_gamma  
         prior.spec.list <- list(nu0 = nu0,
                                 S0 = S0,
-                                a_gamma = a_gamma,
-                                b_gamma = b_gamma,
+                                ## a_gamma = a_gamma,
+                                ## b_gamma = b_gamma,
+                                sig2_gamma  = sig2_gamma, 
                                 gg = gg)
         ## inv.Omega <- solve(S1)
     }
@@ -132,7 +137,7 @@ run.Gibbs.fast <- function(ylist, countslist, X,
         beta.ell <-  last.para$beta 
         gamma.ell <- last.para$gamma
         Sig.ell <- last.para$Sigma  
-        invNugget <- last.para$invNugget 
+        ## invNugget <- last.para$invNugget 
 
         Nburn <- 0 ## no need of burn-in 
         tt.impute <- 0 
@@ -141,8 +146,7 @@ run.Gibbs.fast <- function(ylist, countslist, X,
         
         beta.ell <-  array(stats::rnorm(numclust*(p+1)*dimdat), c(dimdat,p+1,numclust))
         gamma.ell <- matrix(stats::rnorm((p+1)*(numclust-1)),nrow=p+1,ncol=numclust-1)  
-        Sig.ell <- matrixsampling::rinvwishart(numclust,nu0+dimdat,S0)## %>% as.matrix()
-        invNugget <- 1 
+        Sig.ell <- matrixsampling::rinvwishart(numclust,nu0+dimdat,S0)## %>% as.matrix()        
     }
     
     if(!is.null(last.imputed)){
@@ -164,7 +168,7 @@ run.Gibbs.fast <- function(ylist, countslist, X,
     burn.beta <- array(0,c(dimdat,p+1,numclust,Nburn))
     burn.Sigma <- array(0,c(dimdat,dimdat,numclust,Nburn)) 
     burn.gamma <- array(0,c(p+1,numclust-1,Nburn))
-    burn.invNugget  <- rep(NA, Nburn) 
+    ## burn.invNugget  <- rep(NA, Nburn) 
     ## burn.Omega <- array(0,c(p+1,p+1,Nburn))
     burn.avgloglik <- rep(NA, Nburn)
     
@@ -174,7 +178,7 @@ run.Gibbs.fast <- function(ylist, countslist, X,
     pos.Sigma <- array(0,c(dimdat,dimdat,numclust,Nmc)) 
     pos.gamma <- array(0,c(p+1,numclust-1,Nmc))
     ##pos.Omega <- array(0,c(p+1,p+1,Nmc))
-    pos.invNugget <- rep(NA, Nmc) 
+    ##pos.invNugget <- rep(NA, Nmc) 
     pos.avgloglik <- rep(NA, Nmc) 
     ## if(is.null(Cbox)==FALSE){
     ##     pos.imputedimdat.Y <- array(0,c(dimdat,sum(nt.censor),Nmc))
@@ -233,16 +237,20 @@ run.Gibbs.fast <- function(ylist, countslist, X,
         chol.Sig.ell <- apply(Sig.ell,3, chol)
         if(dimdat == 1) chol.Sig.ell = rbind(chol.Sig.ell)
         chol.Sig.list <- lapply(1:numclust,function(kk) matrix(chol.Sig.ell[,kk], nrow = dimdat))
-        mu.list <- lapply(1:TT, function(tt){
-          one_mu = sapply(1:numclust, function(kk){
-              if(dimdat == 1){
-                  beta.ell[,,kk,drop=FALSE] %*% Xp[,tt,drop=FALSE]}
-              else{
-                      beta.ell[,,kk] %*% Xp[,tt,drop=FALSE]}
-          })
-          if(dimdat==1) one_mu = rbind(one_mu)
-          return(one_mu)
-        })
+##         mu.list <- lapply(1:TT, function(tt){
+##           one_mu = sapply(1:numclust, function(kk){
+## ##              if(dimdat == 1){
+## ##                  beta.ell[,,kk,drop=FALSE] %*% Xp[,tt,drop=FALSE]}
+## ##              else{
+##                       beta.ell[,,kk] %*% Xp[,tt,drop=FALSE] ## }
+##           })
+##           if(dimdat==1) one_mu = rbind(one_mu)
+##           return(one_mu)
+##         })
+
+        mu.list <- parallel::mclapply(Xp.list, function(xx){
+            apply(beta.ell, c(1,3), function(bb) bb %*% xx)
+        }, mc.cores= n.cores)
         
         logPiZ <- parallel::mcmapply(function(xx, yy, mm, pp){
             sapply(1:numclust, function(kk)
@@ -252,7 +260,7 @@ run.Gibbs.fast <- function(ylist, countslist, X,
             mc.cores = n.cores, SIMPLIFY = FALSE)
 
         Z.list <- parallel::mclapply(logPiZ, function(pp) apply(pp,1, function(lpi)
-            sample(1:numclust, 1 , prob = softmax(lpi))),
+            .Internal(sample(numclust, 1, TRUE, prob = softmax(lpi)))), 
             mc.cores = n.cores)
 
 
@@ -312,17 +320,26 @@ run.Gibbs.fast <- function(ylist, countslist, X,
         kappa <- mt.ell[-numclust, , drop=FALSE] - Mt.ell[-numclust, , drop=FALSE]/2
 
         ##        inv.Omega <- Rfast::spdinv(Omega)
-        for(ell in 1:(numclust-1)){
-            V.omell <- Rfast::spdinv(Reduce('+', Map('*', XtXtTp, omega.tell[ell,]))
-                                     + diag(p+1) * invNugget) 
-            m.omell <- V.omell %*% Reduce('+', Map('*', Xp.list , kappa[ell,]) )
-            gamma.ell[,ell] <- Rfast::rmvnorm(1, m.omell, V.omell) 
-        }
-            
-        a_gamma_n <- numclust-1+a_gamma
-        b_gamma_n <- apply(gamma.ell, 2, crossprod) %>% sum() + b_gamma
-        invNugget <- 1 / stats::rgamma(1, a_gamma_n/2, b_gamma_n/2)
+        ## for(ell in 1:(numclust-1)){
+        ##     V.omell <- Rfast::spdinv(Reduce('+', Map('*', XtXtTp, omega.tell[ell,]))
+        ##                              + XXp.inv.sig) 
+        ##     m.omell <- V.omell %*% Reduce('+', Map('*', Xp.list , kappa[ell,]) )
+        ##     gamma.ell[,ell] <- Rfast::rmvnorm(1, m.omell, V.omell) 
+        ## }
 
+        V.omell <- parallel::mclapply(1:(numclust-1), function(ell){
+            Rfast::spdinv(Reduce('+', Map('*', XtXtTp, omega.tell[ell,])) + XXp.inv.sig)},
+            mc.cores = n.cores)
+        gamma.ell.list <- parallel::mclapply(1:(numclust-1), function(ell){
+            Rfast::rmvnorm(1,
+                           V.omell[[ell]] %*% Reduce('+', Map('*', Xp.list , kappa[ell,]) ),
+                           V.omell[[ell]])} , mc.cores = n.cores) 
+        gamma.ell <- gamma.ell.list %>% unlist() %>% matrix(., nrow = p+1, ncol = numclust -1) 
+            
+        ## a_gamma_n <- numclust-1+a_gamma
+        ## b_gamma_n <- apply(t(X0) %*% gamma.ell, 2, crossprod) %>% sum() + b_gamma
+        ## invNugget <- 1 / stats::rgamma(1, a_gamma_n/2, b_gamma_n/2)
+        
    ################################################ 
         ## experts' estimation ###
    ################################################ 
@@ -354,7 +371,7 @@ run.Gibbs.fast <- function(ylist, countslist, X,
                 mc.cores = n.cores) 
             if(dimdat == 1) Sn.ell = sum(unlist(sse))
             if(dimdat > 1) Sn.ell <- Reduce('+',sse[sapply(sse,length)>0])
-            Sig.ell[,,ell] <- matrixsampling::rinvwishart(1,nu0+dimdat + m.ell[ell], S0 + Sn.ell)[,,1]
+            Sig.ell[,,ell] <- matrixsampling::rinvwishart(1, nu0+dimdat + m.ell[ell], S0 + Sn.ell)[,,1]
         }
             
    ############################################### 
@@ -365,13 +382,13 @@ run.Gibbs.fast <- function(ylist, countslist, X,
                 pos.beta[,,,jj-Nburn] <- beta.ell
                 pos.Sigma[,,,jj-Nburn] <- Sig.ell
                 pos.gamma[,,jj-Nburn] <- gamma.ell
-                pos.invNugget[ jj-Nburn ]  <- invNugget       
+                ## pos.invNugget[ jj-Nburn ]  <- invNugget       
                 pos.avgloglik[jj-Nburn] <- loglik
             } else{
                 burn.beta[,,,jj] <- beta.ell
                 burn.Sigma[,,,jj] <- Sig.ell
                 burn.gamma[,,jj] <- gamma.ell
-                burn.invNugget[jj]  <- invNugget 
+                ## burn.invNugget[jj]  <- invNugget 
                 burn.avgloglik[jj] <- loglik
             }
          }
@@ -392,8 +409,9 @@ run.Gibbs.fast <- function(ylist, countslist, X,
                                  last.Z.list = Z.list)
             last.para <- list(last.gamma = gamma.ell,
                               last.beta = beta.ell, 
-                              last.Sigma = Sig.ell,
-                              last.invNugget = invNugget)
+                              last.Sigma = Sig.ell
+                              ## last.invNugget = invNugget
+                              )
             
             if(is.null(Cbox)){
                 ret <- list( ## burn.beta0=burn.beta0,
@@ -404,8 +422,8 @@ run.Gibbs.fast <- function(ylist, countslist, X,
                     pos.gamma=pos.gamma, ## pos.Omega=pos.Omega,
                     burn.avgloglik=burn.avgloglik,
                     pos.avgloglik=pos.avgloglik,
-                    burn.invNugget = burn.invNugget,
-                    pos.invNugget=pos.invNugget,
+                    ## burn.invNugget = burn.invNugget,
+                    ## pos.invNugget=pos.invNugget,
                     dat.info = dat.info , 
                     last.imputed = last.imputed,
                     last.para = last.para, 
@@ -419,8 +437,8 @@ run.Gibbs.fast <- function(ylist, countslist, X,
                     pos.Sigma = pos.Sigma,
                     pos.gamma = pos.gamma,
                     pos.imputed.Y = do.call(rbind, imputed.ylist),
-                    burn.invNugget = burn.invNugget,
-                    pos.invNugget=pos.invNugget,
+                    ## burn.invNugget = burn.invNugget,
+                    ## pos.invNugget=pos.invNugget,
                     burn.avgloglik = burn.avgloglik,
                     pos.avgloglik = pos.avgloglik,
                     dat.info = dat.info , 

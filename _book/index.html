@@ -12,7 +12,7 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Creating the flowcut R package">
 <meta name="author" content="Sheng Jiang, Sangwon Hyun">
-<meta name="date" content="2024-09-09">
+<meta name="date" content="2024-10-11">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -136,7 +136,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-"><div id="header">
 <h1 class="title">Creating the <code>flowcut</code> R package</h1>
 <p class="author"><em>Sheng Jiang, Sangwon Hyun</em></p>
-<p class="date"><em>2024-09-09</em></p>
+<p class="date"><em>2024-10-11</em></p>
 </div>
 <div id="introduction" class="section level1 hasAnchor" number="1">
 <h1>
@@ -145,7 +145,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>This package implements <code>flowcut</code>, a Bayesian mixture of experts model used for
 censored data (specialized for ocean flow cytometry). The documentation and
 package are both created using one simple command:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="index.html#cb1-1" tabindex="-1"></a>litr<span class="sc">::</span><span class="fu">render</span>(<span class="st">"index.Rmd"</span>, <span class="at">output_format =</span> litr<span class="sc">::</span><span class="fu">litr_gitbook</span>())</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="index.html#cb1-1" tabindex="-1"></a>litr<span class="sc">::</span><span class="fu">render</span>(<span class="st">"index.Rmd"</span>, <span class="at">output_format =</span> litr<span class="sc">::</span><span class="fu">litr_gitbook</span>())</span>
+<span id="cb1-2"><a href="index.html#cb1-2" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="index.html#cb1-3" tabindex="-1"></a><span class="do">## install.packages("./flowcut/", repos = NULL, type="source")</span></span></code></pre></div>
 <p>This line is purely for testing (to be deleted later!).</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="index.html#cb2-1" tabindex="-1"></a>litr<span class="sc">::</span><span class="fu">load_all</span>(<span class="st">"index.Rmd"</span>)<span class="do">##, output_format = litr::litr_gitbook())</span></span>
 <span id="cb2-2"><a href="index.html#cb2-2" tabindex="-1"></a><span id="my_load">my_load</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(){</span>
