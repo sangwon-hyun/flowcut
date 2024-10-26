@@ -74,7 +74,12 @@ pgdraw.mod <- function(b,c){
     return(ret)
 }
 
-#'
+#' Helper to change stick-breaking vector |pi.sb| to regular probabilities.
+#' @param pi.sb Stickbreaking probability vector.
+#' 
+#' @return same sized vector of size K.
+#' 
+#' @export
 SB2MN <- function(pi.sb){
     pi.sb <- c(pi.sb,1) ## append 1
     K <- length(pi.sb)
@@ -86,7 +91,14 @@ SB2MN <- function(pi.sb){
     return(pi.mn)
 }
 
+#' Helper to change stick-breaking vector |pi.sb| to regular probabilities. The
+#' opposite function of SB2MN.
+
+#' @param pi.mn Probability vector.
 #'
+#' @return same sized vector of size K.
+#'
+#' @export
 MN2SB <- function(pi.mn){
     K <- length(pi.mn)
     pi.sb <- rep(0,K-1)
@@ -312,9 +324,7 @@ get_Cbox <- function(ylist){
 
 ```
 
-Obtain the g parameter by simulation. 
-
-```{r, send_to = 'R/all-helpers.R'}
+```{r}
 #' Obtain the g parameter by simulation. 
 #' 
 #' @param X the design matrix, TT by p, (that doesn't include the intercept) 
@@ -326,11 +336,11 @@ Obtain the g parameter by simulation.
 #' @param n.cores the number of CPU cores to be used for parallelization 
 #' @param viz show the plot of the fitted relationship between the g parameter and the prior probability.
 #'
- #' 
+#' 
 #' @return the g parameter with desired prior probability on maxdev 
 #'
 #' @export 
-  maxdev_to_gg <- function(X, dimdat, maxdev, numclust, ggvec,
+maxdev_to_gg <- function(X, dimdat, maxdev, numclust, ggvec,
                            Nmc = 1e4 , prior.prob = 0.99, 
                          viz = FALSE, n.cores = 1){
     ## X is T x p 
@@ -393,6 +403,22 @@ Obtain the g parameter by simulation.
     
     return(newx[imin])
   }
-   
+``` 
 
+Here's a function to take the stick-breaking $\gamma$ parameters (with $X$) and
+transform them to a probability vector.
+
+```{r}
+#' Description goes here
+#' 
+#' @param ga document this carefully
+#' @param Xp 1 vector appended to left of covariate matrix X.
+#' 
+#' @export
+#' @return (OO x OO) matrix with each row..
+post_process_pie <- function(Xp,ga){
+  Xga <- Xp %*% ga 
+  pie.SB <- 1/(1+exp(-Xga))
+  return(t(apply(pie.SB,1, SB2MN)))
+}
 ```
