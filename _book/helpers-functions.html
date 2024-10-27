@@ -515,70 +515,71 @@ first column is the lower cutoff, and the second column is the upper cutoff).</p
 <span id="cb8-16"><a href="helpers-functions.html#cb8-16" tabindex="-1"></a><span id="maxdev_to_gg">maxdev_to_gg</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(X, dimdat, maxdev, numclust, ggvec,</span>
 <span id="cb8-17"><a href="helpers-functions.html#cb8-17" tabindex="-1"></a>                           <span class="at">Nmc =</span> <span class="fl">1e4</span> , <span class="at">prior.prob =</span> <span class="fl">0.99</span>, </span>
 <span id="cb8-18"><a href="helpers-functions.html#cb8-18" tabindex="-1"></a>                         <span class="at">viz =</span> <span class="cn">FALSE</span>, <span class="at">n.cores =</span> <span class="dv">1</span>, <span class="at">verbose =</span> <span class="cn">FALSE</span>){</span>
-<span id="cb8-19"><a href="helpers-functions.html#cb8-19" tabindex="-1"></a>    <span class="do">## X is T x p </span></span>
-<span id="cb8-20"><a href="helpers-functions.html#cb8-20" tabindex="-1"></a>    <span class="do">## Basic setup</span></span>
-<span id="cb8-21"><a href="helpers-functions.html#cb8-21" tabindex="-1"></a>    p <span class="ot">=</span> <span class="fu">ncol</span>(X) <span class="do">## 39</span></span>
-<span id="cb8-22"><a href="helpers-functions.html#cb8-22" tabindex="-1"></a>    d <span class="ot">=</span> dimdat</span>
-<span id="cb8-23"><a href="helpers-functions.html#cb8-23" tabindex="-1"></a>    </span>
-<span id="cb8-24"><a href="helpers-functions.html#cb8-24" tabindex="-1"></a>  <span class="co"># Helper function</span></span>
-<span id="cb8-25"><a href="helpers-functions.html#cb8-25" tabindex="-1"></a>  <span class="co"># @param tX is the transpose of X</span></span>
-<span id="cb8-26"><a href="helpers-functions.html#cb8-26" tabindex="-1"></a>    <span id="ball.deviance">ball.deviance</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(gg, rr, tX, </span>
-<span id="cb8-27"><a href="helpers-functions.html#cb8-27" tabindex="-1"></a>                              <span class="at">Nmc=</span><span class="dv">5000</span>,</span>
-<span id="cb8-28"><a href="helpers-functions.html#cb8-28" tabindex="-1"></a>                              <span class="at">nu0=</span>d,</span>
-<span id="cb8-29"><a href="helpers-functions.html#cb8-29" tabindex="-1"></a>                              <span class="at">nu1=</span>p<span class="sc">+</span><span class="dv">1</span>,</span>
-<span id="cb8-30"><a href="helpers-functions.html#cb8-30" tabindex="-1"></a>                              <span class="at">S0=</span><span class="fu">diag</span>(d),</span>
-<span id="cb8-31"><a href="helpers-functions.html#cb8-31" tabindex="-1"></a>                              <span class="at">S1=</span><span class="fu">diag</span>(p<span class="sc">+</span><span class="dv">1</span>)){</span>
-<span id="cb8-32"><a href="helpers-functions.html#cb8-32" tabindex="-1"></a>        inv.XTX  <span class="ot">&lt;-</span> <span class="fu">solve</span>(<span class="fu">tcrossprod</span>(tX))</span>
-<span id="cb8-33"><a href="helpers-functions.html#cb8-33" tabindex="-1"></a>        max.deviance <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="cn">NA</span>,Nmc) </span>
-<span id="cb8-34"><a href="helpers-functions.html#cb8-34" tabindex="-1"></a>        </span>
-<span id="cb8-35"><a href="helpers-functions.html#cb8-35" tabindex="-1"></a>        Sig.ell <span class="ot">&lt;-</span> matrixsampling<span class="sc">::</span><span class="fu">rinvwishart</span>(Nmc,nu0<span class="sc">+</span>d,S0)</span>
-<span id="cb8-36"><a href="helpers-functions.html#cb8-36" tabindex="-1"></a>        beta.ell <span class="ot">&lt;-</span> <span class="fu">apply</span>(Sig.ell,<span class="dv">3</span>,<span class="cf">function</span>(xx)</span>
-<span id="cb8-37"><a href="helpers-functions.html#cb8-37" tabindex="-1"></a>            <span class="fu">as.matrix</span>(matrixNormal<span class="sc">::</span><span class="fu">rmatnorm</span>(<span class="at">M =</span> <span class="fu">matrix</span>(<span class="dv">0</span>,d,p), </span>
-<span id="cb8-38"><a href="helpers-functions.html#cb8-38" tabindex="-1"></a>                                             <span class="at">U =</span> xx, </span>
-<span id="cb8-39"><a href="helpers-functions.html#cb8-39" tabindex="-1"></a>                                             <span class="at">V =</span> inv.XTX<span class="sc">*</span>gg, </span>
-<span id="cb8-40"><a href="helpers-functions.html#cb8-40" tabindex="-1"></a>                                             <span class="at">tol =</span> .Machine<span class="sc">$</span>double.eps<span class="sc">^</span><span class="fl">0.5</span>)),</span>
-<span id="cb8-41"><a href="helpers-functions.html#cb8-41" tabindex="-1"></a>            <span class="at">simplify =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb8-42"><a href="helpers-functions.html#cb8-42" tabindex="-1"></a>        xb <span class="ot">&lt;-</span> <span class="fu">lapply</span>(beta.ell, <span class="cf">function</span>(bb) bb<span class="sc">%*%</span> tX) </span>
-<span id="cb8-43"><a href="helpers-functions.html#cb8-43" tabindex="-1"></a>                                        <span class="co"># length of list: Nmc </span></span>
-<span id="cb8-44"><a href="helpers-functions.html#cb8-44" tabindex="-1"></a>                                        <span class="co"># each element: d x T </span></span>
-<span id="cb8-45"><a href="helpers-functions.html#cb8-45" tabindex="-1"></a>        max.deviance <span class="ot">&lt;-</span> <span class="fu">lapply</span>(xb, <span class="cf">function</span>(mat){</span>
-<span id="cb8-46"><a href="helpers-functions.html#cb8-46" tabindex="-1"></a>            <span class="fu">apply</span>(mat,<span class="dv">2</span>,<span class="cf">function</span>(cols) <span class="fu">crossprod</span>(cols)) <span class="sc">%&gt;%</span> <span class="fu">max</span>()</span>
-<span id="cb8-47"><a href="helpers-functions.html#cb8-47" tabindex="-1"></a>        }) <span class="sc">%&gt;%</span> <span class="fu">unlist</span>()</span>
-<span id="cb8-48"><a href="helpers-functions.html#cb8-48" tabindex="-1"></a>        prob <span class="ot">&lt;-</span> <span class="fu">mean</span>(max.deviance <span class="sc">&lt;=</span> rr<span class="sc">^</span><span class="dv">2</span>)  </span>
-<span id="cb8-49"><a href="helpers-functions.html#cb8-49" tabindex="-1"></a>        <span class="fu">return</span>(<span class="fu">list</span>(<span class="at">gg =</span> gg, <span class="at">rr =</span> rr, <span class="at">prob =</span> prob))</span>
-<span id="cb8-50"><a href="helpers-functions.html#cb8-50" tabindex="-1"></a>    }</span>
-<span id="cb8-51"><a href="helpers-functions.html#cb8-51" tabindex="-1"></a>    </span>
-<span id="cb8-52"><a href="helpers-functions.html#cb8-52" tabindex="-1"></a>    gglist <span class="ot">&lt;-</span> <span class="fu">as.list</span>(ggvec)<span class="do">##as.list(1:40/100)</span></span>
-<span id="cb8-53"><a href="helpers-functions.html#cb8-53" tabindex="-1"></a>    n.cores <span class="ot">&lt;-</span> <span class="fu">min</span>(n.cores, <span class="fu">length</span>(gglist))</span>
+<span id="cb8-19"><a href="helpers-functions.html#cb8-19" tabindex="-1"></a>  <span class="do">## Basic setup</span></span>
+<span id="cb8-20"><a href="helpers-functions.html#cb8-20" tabindex="-1"></a>  p <span class="ot">=</span> <span class="fu">ncol</span>(X) <span class="do">## Remember, X is T x p </span></span>
+<span id="cb8-21"><a href="helpers-functions.html#cb8-21" tabindex="-1"></a>  d <span class="ot">=</span> dimdat</span>
+<span id="cb8-22"><a href="helpers-functions.html#cb8-22" tabindex="-1"></a>  </span>
+<span id="cb8-23"><a href="helpers-functions.html#cb8-23" tabindex="-1"></a>  <span class="do">## Helper function</span></span>
+<span id="cb8-24"><a href="helpers-functions.html#cb8-24" tabindex="-1"></a>  <span class="do">## @param tX is the transpose of X</span></span>
+<span id="cb8-25"><a href="helpers-functions.html#cb8-25" tabindex="-1"></a>  <span id="ball.deviance">ball.deviance</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(gg, rr, tX, </span>
+<span id="cb8-26"><a href="helpers-functions.html#cb8-26" tabindex="-1"></a>                            <span class="at">Nmc=</span><span class="dv">5000</span>,</span>
+<span id="cb8-27"><a href="helpers-functions.html#cb8-27" tabindex="-1"></a>                            <span class="at">nu0=</span>d,</span>
+<span id="cb8-28"><a href="helpers-functions.html#cb8-28" tabindex="-1"></a>                            <span class="at">nu1=</span>p<span class="sc">+</span><span class="dv">1</span>,</span>
+<span id="cb8-29"><a href="helpers-functions.html#cb8-29" tabindex="-1"></a>                            <span class="at">S0=</span><span class="fu">diag</span>(d),</span>
+<span id="cb8-30"><a href="helpers-functions.html#cb8-30" tabindex="-1"></a>                            <span class="at">S1=</span><span class="fu">diag</span>(p<span class="sc">+</span><span class="dv">1</span>)){</span>
+<span id="cb8-31"><a href="helpers-functions.html#cb8-31" tabindex="-1"></a>      inv.XTX  <span class="ot">&lt;-</span> <span class="fu">solve</span>(<span class="fu">tcrossprod</span>(tX))</span>
+<span id="cb8-32"><a href="helpers-functions.html#cb8-32" tabindex="-1"></a>      max.deviance <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="cn">NA</span>,Nmc) </span>
+<span id="cb8-33"><a href="helpers-functions.html#cb8-33" tabindex="-1"></a>      </span>
+<span id="cb8-34"><a href="helpers-functions.html#cb8-34" tabindex="-1"></a>      Sig.ell <span class="ot">&lt;-</span> matrixsampling<span class="sc">::</span><span class="fu">rinvwishart</span>(Nmc,nu0<span class="sc">+</span>d,S0)</span>
+<span id="cb8-35"><a href="helpers-functions.html#cb8-35" tabindex="-1"></a>      beta.ell <span class="ot">&lt;-</span> <span class="fu">apply</span>(Sig.ell,<span class="dv">3</span>,<span class="cf">function</span>(xx)</span>
+<span id="cb8-36"><a href="helpers-functions.html#cb8-36" tabindex="-1"></a>          <span class="fu">as.matrix</span>(matrixNormal<span class="sc">::</span><span class="fu">rmatnorm</span>(<span class="at">M =</span> <span class="fu">matrix</span>(<span class="dv">0</span>,d,p), </span>
+<span id="cb8-37"><a href="helpers-functions.html#cb8-37" tabindex="-1"></a>                                           <span class="at">U =</span> xx, </span>
+<span id="cb8-38"><a href="helpers-functions.html#cb8-38" tabindex="-1"></a>                                           <span class="at">V =</span> inv.XTX<span class="sc">*</span>gg, </span>
+<span id="cb8-39"><a href="helpers-functions.html#cb8-39" tabindex="-1"></a>                                           <span class="at">tol =</span> .Machine<span class="sc">$</span>double.eps<span class="sc">^</span><span class="fl">0.5</span>)),</span>
+<span id="cb8-40"><a href="helpers-functions.html#cb8-40" tabindex="-1"></a>          <span class="at">simplify =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb8-41"><a href="helpers-functions.html#cb8-41" tabindex="-1"></a>      xb <span class="ot">&lt;-</span> <span class="fu">lapply</span>(beta.ell, <span class="cf">function</span>(bb) bb<span class="sc">%*%</span> tX) </span>
+<span id="cb8-42"><a href="helpers-functions.html#cb8-42" tabindex="-1"></a>                                      <span class="co"># length of list: Nmc </span></span>
+<span id="cb8-43"><a href="helpers-functions.html#cb8-43" tabindex="-1"></a>                                      <span class="co"># each element: d x T </span></span>
+<span id="cb8-44"><a href="helpers-functions.html#cb8-44" tabindex="-1"></a>      max.deviance <span class="ot">&lt;-</span> <span class="fu">lapply</span>(xb, <span class="cf">function</span>(mat){</span>
+<span id="cb8-45"><a href="helpers-functions.html#cb8-45" tabindex="-1"></a>          <span class="fu">apply</span>(mat,<span class="dv">2</span>,<span class="cf">function</span>(cols) <span class="fu">crossprod</span>(cols)) <span class="sc">%&gt;%</span> <span class="fu">max</span>()</span>
+<span id="cb8-46"><a href="helpers-functions.html#cb8-46" tabindex="-1"></a>      }) <span class="sc">%&gt;%</span> <span class="fu">unlist</span>()</span>
+<span id="cb8-47"><a href="helpers-functions.html#cb8-47" tabindex="-1"></a>      prob <span class="ot">&lt;-</span> <span class="fu">mean</span>(max.deviance <span class="sc">&lt;=</span> rr<span class="sc">^</span><span class="dv">2</span>)  </span>
+<span id="cb8-48"><a href="helpers-functions.html#cb8-48" tabindex="-1"></a>      <span class="fu">return</span>(<span class="fu">list</span>(<span class="at">gg =</span> gg, <span class="at">rr =</span> rr, <span class="at">prob =</span> prob))</span>
+<span id="cb8-49"><a href="helpers-functions.html#cb8-49" tabindex="-1"></a>  }</span>
+<span id="cb8-50"><a href="helpers-functions.html#cb8-50" tabindex="-1"></a>  </span>
+<span id="cb8-51"><a href="helpers-functions.html#cb8-51" tabindex="-1"></a>  gglist <span class="ot">&lt;-</span> <span class="fu">as.list</span>(ggvec)<span class="do">##as.list(1:40/100)</span></span>
+<span id="cb8-52"><a href="helpers-functions.html#cb8-52" tabindex="-1"></a>  n.cores <span class="ot">&lt;-</span> <span class="fu">min</span>(n.cores, <span class="fu">length</span>(gglist))</span>
+<span id="cb8-53"><a href="helpers-functions.html#cb8-53" tabindex="-1"></a>  <span class="cf">if</span>(verbose) <span class="fu">cat</span>(<span class="st">"Calculating gg value numerically"</span>, <span class="at">fill=</span><span class="cn">TRUE</span>)</span>
 <span id="cb8-54"><a href="helpers-functions.html#cb8-54" tabindex="-1"></a>    plist <span class="ot">&lt;-</span> parallel<span class="sc">::</span><span class="fu">mclapply</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(gglist), <span class="cf">function</span>(igg){</span>
-<span id="cb8-55"><a href="helpers-functions.html#cb8-55" tabindex="-1"></a>      <span class="cf">if</span>(verbose) <a href="helpers-functions.html#printprogress">printprogress</a>(igg, <span class="fu">length</span>(gglist))</span>
+<span id="cb8-55"><a href="helpers-functions.html#cb8-55" tabindex="-1"></a>      <span class="cf">if</span>(verbose) <a href="helpers-functions.html#printprogress">printprogress</a>(igg, <span class="fu">length</span>(gglist), <span class="st">"Candidate values"</span>)</span>
 <span id="cb8-56"><a href="helpers-functions.html#cb8-56" tabindex="-1"></a>      gg <span class="ot">=</span> gglist[[igg]]</span>
 <span id="cb8-57"><a href="helpers-functions.html#cb8-57" tabindex="-1"></a>      <a href="helpers-functions.html#ball.deviance">ball.deviance</a>(gg, maxdev, <span class="fu">t</span>(X), <span class="at">Nmc =</span> Nmc)<span class="sc">$</span>prob</span>
 <span id="cb8-58"><a href="helpers-functions.html#cb8-58" tabindex="-1"></a>    },</span>
-<span id="cb8-59"><a href="helpers-functions.html#cb8-59" tabindex="-1"></a>    <span class="at">mc.cores =</span> n.cores)</span>
-<span id="cb8-60"><a href="helpers-functions.html#cb8-60" tabindex="-1"></a></span>
-<span id="cb8-61"><a href="helpers-functions.html#cb8-61" tabindex="-1"></a>    </span>
-<span id="cb8-62"><a href="helpers-functions.html#cb8-62" tabindex="-1"></a>    <span class="do">## Make linear interpolation at a fine grid</span></span>
-<span id="cb8-63"><a href="helpers-functions.html#cb8-63" tabindex="-1"></a>    res <span class="ot">=</span> stats<span class="sc">::</span><span class="fu">approx</span>(<span class="at">x =</span> <span class="fu">unlist</span>(gglist), <span class="at">y =</span> <span class="fu">unlist</span>(plist), <span class="at">method=</span><span class="st">"linear"</span>, <span class="at">n =</span> <span class="dv">100</span>)</span>
-<span id="cb8-64"><a href="helpers-functions.html#cb8-64" tabindex="-1"></a>    newx <span class="ot">=</span>  res<span class="sc">$</span>x</span>
-<span id="cb8-65"><a href="helpers-functions.html#cb8-65" tabindex="-1"></a>    newy <span class="ot">=</span> res<span class="sc">$</span>y</span>
-<span id="cb8-66"><a href="helpers-functions.html#cb8-66" tabindex="-1"></a>    </span>
-<span id="cb8-67"><a href="helpers-functions.html#cb8-67" tabindex="-1"></a>    <span class="do">## Get closest point</span></span>
-<span id="cb8-68"><a href="helpers-functions.html#cb8-68" tabindex="-1"></a>    imin <span class="ot">=</span>  <span class="fu">which.min</span>(<span class="fu">abs</span>(newy <span class="sc">-</span> prior.prob <span class="sc">^</span>(<span class="dv">1</span><span class="sc">/</span>numclust))) </span>
-<span id="cb8-69"><a href="helpers-functions.html#cb8-69" tabindex="-1"></a>    </span>
-<span id="cb8-70"><a href="helpers-functions.html#cb8-70" tabindex="-1"></a>  <span class="do">## Make some plots to confirm</span></span>
-<span id="cb8-71"><a href="helpers-functions.html#cb8-71" tabindex="-1"></a>    <span class="cf">if</span>(viz){</span>
-<span id="cb8-72"><a href="helpers-functions.html#cb8-72" tabindex="-1"></a>        <span class="fu">plot</span>(gglist,plist,<span class="at">type =</span> <span class="st">"l"</span>,</span>
-<span id="cb8-73"><a href="helpers-functions.html#cb8-73" tabindex="-1"></a>             <span class="at">ylab =</span> <span class="st">"Prob outside of </span><span class="sc">\n</span><span class="st"> radius r"</span>, <span class="at">xlab =</span> <span class="st">"Value of |gg|"</span>)</span>
-<span id="cb8-74"><a href="helpers-functions.html#cb8-74" tabindex="-1"></a>        graphics<span class="sc">::</span><span class="fu">abline</span>(<span class="at">h=</span><span class="fl">0.05</span>,<span class="at">lwd=</span><span class="dv">2</span>,<span class="at">col =</span> <span class="st">"red"</span>)</span>
-<span id="cb8-75"><a href="helpers-functions.html#cb8-75" tabindex="-1"></a>        graphics<span class="sc">::</span><span class="fu">abline</span>(<span class="at">h=</span><span class="fl">0.01</span>,<span class="at">lwd=</span><span class="dv">2</span>,<span class="at">col =</span> <span class="st">"red"</span>)</span>
-<span id="cb8-76"><a href="helpers-functions.html#cb8-76" tabindex="-1"></a>        <span class="do">## lines(y=newy, x=newx,lwd=2,col="blue")</span></span>
-<span id="cb8-77"><a href="helpers-functions.html#cb8-77" tabindex="-1"></a>        <span class="do">## abline(v=newx[imin])</span></span>
-<span id="cb8-78"><a href="helpers-functions.html#cb8-78" tabindex="-1"></a>    }</span>
-<span id="cb8-79"><a href="helpers-functions.html#cb8-79" tabindex="-1"></a>    </span>
-<span id="cb8-80"><a href="helpers-functions.html#cb8-80" tabindex="-1"></a>    <span class="fu">return</span>(newx[imin])</span>
-<span id="cb8-81"><a href="helpers-functions.html#cb8-81" tabindex="-1"></a>  }</span>
-<span id="cb8-82"><a href="helpers-functions.html#cb8-82" tabindex="-1"></a></span></code></pre></div>
+<span id="cb8-59"><a href="helpers-functions.html#cb8-59" tabindex="-1"></a>  <span class="at">mc.cores =</span> n.cores)</span>
+<span id="cb8-60"><a href="helpers-functions.html#cb8-60" tabindex="-1"></a>  <span class="cf">if</span>(verbose) <span class="fu">cat</span>(<span class="at">fill=</span><span class="cn">TRUE</span>)</span>
+<span id="cb8-61"><a href="helpers-functions.html#cb8-61" tabindex="-1"></a></span>
+<span id="cb8-62"><a href="helpers-functions.html#cb8-62" tabindex="-1"></a>    </span>
+<span id="cb8-63"><a href="helpers-functions.html#cb8-63" tabindex="-1"></a>  <span class="do">## Make linear interpolation at a fine grid</span></span>
+<span id="cb8-64"><a href="helpers-functions.html#cb8-64" tabindex="-1"></a>  res <span class="ot">=</span> stats<span class="sc">::</span><span class="fu">approx</span>(<span class="at">x =</span> <span class="fu">unlist</span>(gglist), <span class="at">y =</span> <span class="fu">unlist</span>(plist), <span class="at">method=</span><span class="st">"linear"</span>, <span class="at">n =</span> <span class="dv">100</span>)</span>
+<span id="cb8-65"><a href="helpers-functions.html#cb8-65" tabindex="-1"></a>  newx <span class="ot">=</span>  res<span class="sc">$</span>x</span>
+<span id="cb8-66"><a href="helpers-functions.html#cb8-66" tabindex="-1"></a>  newy <span class="ot">=</span> res<span class="sc">$</span>y</span>
+<span id="cb8-67"><a href="helpers-functions.html#cb8-67" tabindex="-1"></a>  </span>
+<span id="cb8-68"><a href="helpers-functions.html#cb8-68" tabindex="-1"></a>  <span class="do">## Get closest point</span></span>
+<span id="cb8-69"><a href="helpers-functions.html#cb8-69" tabindex="-1"></a>  imin <span class="ot">=</span>  <span class="fu">which.min</span>(<span class="fu">abs</span>(newy <span class="sc">-</span> prior.prob <span class="sc">^</span>(<span class="dv">1</span><span class="sc">/</span>numclust))) </span>
+<span id="cb8-70"><a href="helpers-functions.html#cb8-70" tabindex="-1"></a>    </span>
+<span id="cb8-71"><a href="helpers-functions.html#cb8-71" tabindex="-1"></a>  <span class="do">## Make some plots to confirm</span></span>
+<span id="cb8-72"><a href="helpers-functions.html#cb8-72" tabindex="-1"></a>  <span class="cf">if</span>(viz){</span>
+<span id="cb8-73"><a href="helpers-functions.html#cb8-73" tabindex="-1"></a>      <span class="fu">plot</span>(gglist,plist,<span class="at">type =</span> <span class="st">"l"</span>,</span>
+<span id="cb8-74"><a href="helpers-functions.html#cb8-74" tabindex="-1"></a>           <span class="at">ylab =</span> <span class="st">"Prob outside of </span><span class="sc">\n</span><span class="st"> radius r"</span>, <span class="at">xlab =</span> <span class="st">"Value of |gg|"</span>)</span>
+<span id="cb8-75"><a href="helpers-functions.html#cb8-75" tabindex="-1"></a>      graphics<span class="sc">::</span><span class="fu">abline</span>(<span class="at">h=</span><span class="fl">0.05</span>,<span class="at">lwd=</span><span class="dv">2</span>,<span class="at">col =</span> <span class="st">"red"</span>)</span>
+<span id="cb8-76"><a href="helpers-functions.html#cb8-76" tabindex="-1"></a>      graphics<span class="sc">::</span><span class="fu">abline</span>(<span class="at">h=</span><span class="fl">0.01</span>,<span class="at">lwd=</span><span class="dv">2</span>,<span class="at">col =</span> <span class="st">"red"</span>)</span>
+<span id="cb8-77"><a href="helpers-functions.html#cb8-77" tabindex="-1"></a>      <span class="do">## lines(y=newy, x=newx,lwd=2,col="blue")</span></span>
+<span id="cb8-78"><a href="helpers-functions.html#cb8-78" tabindex="-1"></a>      <span class="do">## abline(v=newx[imin])</span></span>
+<span id="cb8-79"><a href="helpers-functions.html#cb8-79" tabindex="-1"></a>  }</span>
+<span id="cb8-80"><a href="helpers-functions.html#cb8-80" tabindex="-1"></a>  </span>
+<span id="cb8-81"><a href="helpers-functions.html#cb8-81" tabindex="-1"></a>  <span class="fu">return</span>(newx[imin])</span>
+<span id="cb8-82"><a href="helpers-functions.html#cb8-82" tabindex="-1"></a>}</span>
+<span id="cb8-83"><a href="helpers-functions.html#cb8-83" tabindex="-1"></a></span></code></pre></div>
 <p>Here’s a function to take the stick-breaking <span class="math inline">\(\gamma\)</span> parameters (with <span class="math inline">\(X\)</span>) and
 transform them to a probability vector.</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="helpers-functions.html#cb9-1" tabindex="-1"></a><span class="co">#' Description goes here</span></span>

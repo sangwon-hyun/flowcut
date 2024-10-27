@@ -14,7 +14,9 @@ run.Gibbs.fast(
   Nburn = 500,
   Cbox = NULL,
   user.prior = NULL,
-  gg = 1,
+  gg = NULL,
+  maxdev = NULL,
+  maxdev_prob = 0.99,
   sig2_gamma = 1,
   prior_spec.list = NULL,
   verbose = FALSE,
@@ -41,7 +43,14 @@ run.Gibbs.fast(
 
 \item{user.prior}{User-supplied prior. Otherwise, prior defaults to ___.}
 
-\item{gg}{Size of Normal prior.}
+\item{gg}{Size of Normal prior on the beta parameters. Defaults to NULL, in
+which case the |maxdev| is used to calculate |gg|. See maxdev_to_gg() for
+details. If a value is provided, |maxdev| and |maxdev_prob| are ignored.}
+
+\item{maxdev}{Maximum deviation of the cluster means.}
+
+\item{maxdev_prob}{The probability of a cluster mean deviating from their
+overall mean, over time t=1,.., T. Defaults to 0.99.}
 
 \item{verbose}{Whether to be loud.}
 
