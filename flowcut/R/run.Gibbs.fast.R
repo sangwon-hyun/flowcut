@@ -53,6 +53,7 @@ run.Gibbs.fast <- function(ylist, countslist, X,
   n.cores = min(n.cores, TT)
   numclust <- as.integer(numclust) 
   assertthat::assert_that(!is.null(maxdev) | !is.null(gg))
+  assertthat::assert_that(all(sapply(ylist, nrow)==sapply(countslist, length)))
 
   ## Get the mean ball constraint hyperparameter |gg|
   if(is.null(gg)){
@@ -306,6 +307,7 @@ run.Gibbs.fast <- function(ylist, countslist, X,
         ## sample beta (including the intercept) jointly
         SX.ell <- XTX0/gg + Reduce('+', Map(`*`, XtXtTp, mt.ell[ell,]))
         inv.SX.ell <- Rfast::spdinv(SX.ell) ## (p+1) x (p+1)
+
         Sy.ell <- parallel::mcmapply(function(yy,zz,ww){
           Rfast::Crossprod(as.matrix(ww[zz==ell]),
                            yy[zz==ell,,drop=FALSE])},
