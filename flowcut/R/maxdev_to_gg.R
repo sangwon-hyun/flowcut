@@ -23,8 +23,8 @@ maxdev_to_gg <- function(X, dimdat, maxdev, numclust, ggvec,
     p = ncol(X) ## 39
     d = dimdat
     
-  #' Helper function
-  #' @param tX is the transpose of X
+  # Helper function
+  # @param tX is the transpose of X
     ball.deviance <- function(gg, rr, tX, 
                               Nmc=5000,
                               nu0=d,
@@ -54,11 +54,12 @@ maxdev_to_gg <- function(X, dimdat, maxdev, numclust, ggvec,
     gglist <- as.list(ggvec)##as.list(1:40/100)
     n.cores <- min(n.cores, length(gglist))
     plist <- parallel::mclapply(1:length(gglist), function(igg){
-      if(verbose) printprogress(igg)
+      if(verbose) printprogress(igg, length(gglist))
       gg = gglist[[igg]]
       ball.deviance(gg, maxdev, t(X), Nmc = Nmc)$prob
     },
     mc.cores = n.cores)
+
     
     ## Make linear interpolation at a fine grid
     res = stats::approx(x = unlist(gglist), y = unlist(plist), method="linear", n = 100)
@@ -80,3 +81,5 @@ maxdev_to_gg <- function(X, dimdat, maxdev, numclust, ggvec,
     
     return(newx[imin])
   }
+
+

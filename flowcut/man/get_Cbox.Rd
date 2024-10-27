@@ -7,10 +7,10 @@
 get_Cbox(ylist)
 }
 \arguments{
-\item{ylist}{List of d-dimensional cytogram data.}
+\item{ylist}{Data (list of d-column matrices) including censored particles.}
 }
 \value{
-dimdat by 2 matrix
+|dimdat| by 2 matrix.
 }
 \description{
 Helper to obtain the censoring limits |Cbox|, which is a 2-colum matrix with columns |bounds.lower| and |bounds.upper|.
