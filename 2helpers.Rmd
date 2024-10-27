@@ -378,9 +378,11 @@ maxdev_to_gg <- function(X, dimdat, maxdev, numclust, ggvec,
     
     gglist <- as.list(ggvec)##as.list(1:40/100)
     n.cores <- min(n.cores, length(gglist))
-    plist <- parallel::mclapply(gglist, function(gg){
-        ball.deviance(gg, maxdev, t(X), Nmc = Nmc)$prob},
-        mc.cores = n.cores )
+    plist <- parallel::mclapply(1:length(gglist), function(igg){
+      gg = gglist[[igg]]
+      ball.deviance(gg, maxdev, t(X), Nmc = Nmc)$prob
+    },
+    mc.cores = n.cores)
     
     ## Make linear interpolation at a fine grid
     res = stats::approx(x = unlist(gglist), y = unlist(plist), method="linear", n = 100)
