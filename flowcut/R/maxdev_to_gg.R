@@ -17,7 +17,7 @@
 #' @export 
 maxdev_to_gg <- function(X, dimdat, maxdev, numclust, ggvec,
                            Nmc = 1e4 , prior.prob = 0.99, 
-                         viz = FALSE, n.cores = 1){
+                         viz = FALSE, n.cores = 1, verbose = FALSE){
     ## X is T x p 
     ## Basic setup
     p = ncol(X) ## 39
@@ -54,6 +54,7 @@ maxdev_to_gg <- function(X, dimdat, maxdev, numclust, ggvec,
     gglist <- as.list(ggvec)##as.list(1:40/100)
     n.cores <- min(n.cores, length(gglist))
     plist <- parallel::mclapply(1:length(gglist), function(igg){
+      if(verbose) printprogress(igg)
       gg = gglist[[igg]]
       ball.deviance(gg, maxdev, t(X), Nmc = Nmc)$prob
     },
