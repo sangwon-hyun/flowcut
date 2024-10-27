@@ -23,8 +23,8 @@ maxdev_to_gg <- function(X, dimdat, maxdev, numclust, ggvec,
     p = ncol(X) ## 39
     d = dimdat
     
-                                        # Helper function
-                                        # @param tX is the transpose of X
+  #' Helper function
+  #' @param tX is the transpose of X
     ball.deviance <- function(gg, rr, tX, 
                               Nmc=5000,
                               nu0=d,
@@ -54,7 +54,6 @@ maxdev_to_gg <- function(X, dimdat, maxdev, numclust, ggvec,
     gglist <- as.list(ggvec)##as.list(1:40/100)
     n.cores <- min(n.cores, length(gglist))
     plist <- parallel::mclapply(gglist, function(gg){
-        print('here')
         ball.deviance(gg, maxdev, t(X), Nmc = Nmc)$prob},
         mc.cores = n.cores )
     
@@ -66,7 +65,7 @@ maxdev_to_gg <- function(X, dimdat, maxdev, numclust, ggvec,
     ## Get closest point
     imin =  which.min(abs(newy - prior.prob ^(1/numclust))) 
     
-                                        # Make some plots to confirm
+  ## Make some plots to confirm
     if(viz){
         plot(gglist,plist,type = "l",
              ylab = "Prob outside of \n radius r", xlab = "Value of |gg|")

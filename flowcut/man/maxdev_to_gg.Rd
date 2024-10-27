@@ -32,6 +32,8 @@ maxdev_to_gg(
 \item{viz}{show the plot of the fitted relationship between the g parameter and the prior probability.}
 
 \item{n.cores}{the number of CPU cores to be used for parallelization}
+
+\item{tX}{is the transpose of X}
 }
 \value{
 the g parameter with desired prior probability on maxdev
