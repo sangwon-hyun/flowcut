@@ -33,4 +33,5 @@ my_load <- function(){
 my_load()
 
 devtools::check("~/repos/flowcut/flowcut", document = FALSE)
+
 ```

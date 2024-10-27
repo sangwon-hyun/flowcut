@@ -51,6 +51,7 @@ run.Gibbs.fast <- function(ylist, countslist, X,
 
     ## Basic setup
     TT <- length(ylist)
+    stopifnot(TT == ncol(X))
     p <- dim(X)[1]
     dimdat = ncol(ylist[[1]])
     ntlist = sapply(ylist, nrow)
