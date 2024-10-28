@@ -19,9 +19,7 @@ package are both created using one simple command:
 
 ```{r render, eval = FALSE}
 litr::render("index.Rmd", output_format = litr::litr_gitbook())
-
-####  install.packages("./flowcut/", repos = NULL, type="source")
-
+## install.packages("./flowcut/", repos = NULL, type="source")
 ```
 
 This line is purely for testing (to be deleted later!).
@@ -32,7 +30,8 @@ my_load <- function(){
   litr::render("~/repos/flowcut/index.Rmd", output_format = litr::litr_gitbook(minimal_eval = TRUE))
   devtools::load_all("~/repos/flowcut/flowcut")
 }
-my_load() 
+my_load()
 
 devtools::check("~/repos/flowcut/flowcut", document = FALSE)
+
 ```

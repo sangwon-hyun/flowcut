@@ -22,7 +22,7 @@ First load existing cytogram data and flowmix model estimates.
 [flowmix R package](https://github.com/sangwon-hyun/flowmix/tree/master/paper-data), is assumed to be in `inst/data` from the base directory of the repository.)
 
 ```{r load-data}
-## dat_1d = readRDS("~/Downloads/paper-data/MGL1704-hourly-paper-1d-diam.RDS")
+## dat_1d = readRDS("~/Downloads/paper-data/MGL1704-hourly-paper-1d-diam.RDS") 
 ## res = readRDS("~/Downloads/paper-data/1d-cvres.rds") %>% .$bestres
 datadir = "../inst/data"
 dat_1d = readRDS(file.path(datadir, "MGL1704-hourly-paper-1d-diam.RDS"))

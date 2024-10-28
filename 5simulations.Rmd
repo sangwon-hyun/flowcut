@@ -4,7 +4,7 @@ Refer back to the data generation in \@ref{syntheticdata}. We will be
 top-censoring the data at 0.5. Before censoring, this is what the data looks
 like.
 
-```{r, fig.width = 6, fig.height = 4, eval = FALSE}
+```{r load-data2, fig.width = 6, fig.height = 4, eval = FALSE}
 ## Load the "original" model
 orig_model = readRDS(file=file.path("~/repos/flowcut/inst/output", "orig_model.RDS"))
 
@@ -50,7 +50,6 @@ too much across time.
 (code copy-pasted as-is for now, not meant to be run)
 
 ```{r, eval = FALSE}
-
 gg <- maxdev_to_gg(datobj$X, 
                    dimdat = 3,
                    maxdev = 0.5,
@@ -58,9 +57,7 @@ gg <- maxdev_to_gg(datobj$X,
                    ggvec = (1:40)/200, 
                    n.cores = detectCores(),
                    Nmc = 1e4, viz=FALSE)
-
 gg <- 0.01287879
-
 ## hist(ball.deviance(0.01,0.5,t(X))$msd, breaks = "FD")
 ## hist(ball.deviance(0.1,0.5,X)$msd, breaks = "FD")
 ## hist(ball.deviance(0.2,0.5,X)$msd, breaks = "FD")

@@ -13,7 +13,8 @@ maxdev_to_gg(
   Nmc = 10000,
   prior.prob = 0.99,
   viz = FALSE,
-  n.cores = 1
+  n.cores = 1,
+  verbose = FALSE
 )
 }
 \arguments{
