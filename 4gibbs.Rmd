@@ -95,6 +95,8 @@ run.Gibbs.fast <- function(ylist, countslist, X,
         censor.01.list <- parallel::mclapply(Censor.list, function(x)
             apply(x,1, function(xx)
                 sum(abs(xx))>0), mc.cores = n.cores)
+        censor.which.list <- parallel::mclapply(censor.01.list, function(cc) which(cc==TRUE),
+                                                mc.cores = n.cores) 
         censored.ylist <- parallel::mcmapply(function(yy,c01) {yy[c01==TRUE,,drop=FALSE]},
                                              yy = ylist, c01 = censor.01.list,
                                              mc.cores = n.cores)
@@ -102,34 +104,40 @@ run.Gibbs.fast <- function(ylist, countslist, X,
                                               c01 = censor.01.list, cc=Censor.list,
                                               mc.cores = n.cores)
         censored.W.list <- parallel::mcmapply(function(c01,ww){ww[c01==TRUE]},
-                                              c01 = censor.01.list, w=W.list,
+                                              c01 = censor.01.list, w=W.list, 
                                               mc.cores = n.cores)  
-        ntlist.censor <- sapply(censor.01.list, sum) 
-        samp.region.list <- lapply(1:TT, function(tt){
-            c01 <- censor.01.list[[tt]]
-            cc <- Censor.list[[tt]]
-            ## if(verbose){
-            ##    print(paste("Time=",tt,", censored obs.= ",sum(c01==TRUE),
-            ## ", censored ratio =", round(sum(c01==TRUE)/ntlist[tt],2), sep=" ")) 
-            ##}
-            
-            if(sum(c01==TRUE)>1){
-                apply(cc[c01==TRUE,,drop=FALSE],1,function(xx)
-                    ## flowcut:::sample.region(xx,Cbox))
-                    sample.region(xx,Cbox))
-            }else if(sum(c01==TRUE)==1){
-                matrix(sample.region(cc[c01==TRUE,,drop=FALSE],Cbox),ncol=1)
-            }else{
-                NULL
-            }}) 
+        ntlist.censor <- sapply(censor.01.list, sum)
+        nn.censor <- sum(ntlist.censor)
+        if( nn.censor >0){
+            samp.region.list <- lapply(1:TT, function(tt){
+                c01 <- censor.01.list[[tt]]
+                cc <- Censor.list[[tt]]
+                ## if(verbose){
+                ##    print(paste("Time=",tt,", censored obs.= ",sum(c01==TRUE),
+                ## ", censored ratio =", round(sum(c01==TRUE)/ntlist[tt],2), sep=" ")) 
+                ##}
+                
+                if(sum(c01==TRUE) > 1){
+                    apply(cc[c01==TRUE,,drop=FALSE],1,function(xx)
+                        ## flowcut:::sample.region(xx,Cbox))
+                        sample.region(xx,Cbox))
+                }else if(sum(c01==TRUE) == 1 ){
+                    matrix(sample.region(cc[c01==TRUE,,drop=FALSE],Cbox),ncol=1)
+                }else{
+                    NULL
+                }})
+        }else{ ## Cbox is not binding
+            print("No active censoring is found. Turn off censor data imputation.") 
+            Cbox <- NULL 
+        }
     }
 
    ##### prior specifications
     if(is.null(user.prior)){
-        nu0=dimdat
-        nu1=p+1 
-        S0=diag(dimdat)
-        S1=diag(p+1)
+        nu0 = dimdat + 4 ## such that var exists   
+        ## nu1=p+1 
+        S0 = diag(dimdat)*(nu0-dimdat-1) * (1.5 / qnorm(0.995))^2 
+        ## S1=diag(p+1)
         ## a_gamma <- gamma.ab[1]  
         ## b_gamma <- gamma.ab[2]
         invNugget <- 1/sig2_gamma  
@@ -140,6 +148,14 @@ run.Gibbs.fast <- function(ylist, countslist, X,
                                 sig2_gamma  = sig2_gamma, 
                                 gg = gg)
         ## inv.Omega <- solve(S1)
+    }else{
+        nu0 <- user.prior$nu0 
+        S0 <- user.prior$S0 
+        invNugget <- 1 / user.prior$sig2_gamma  
+        prior.spec.list <- list(nu0 = nu0,
+                                S0 = S0,
+                                sig2_gamma = sig2_gamma, 
+                                gg = gg )        
     }
 
    ##### initialize
@@ -280,9 +296,9 @@ run.Gibbs.fast <- function(ylist, countslist, X,
 ################################################ 
             ## censored data imputation
 ################################################
-        if((jj> tt.impute | !is.null(last.para)) & !is.null(Cbox)){
-            censored.Z.list <- parallel::mcmapply(function(c01,zz){zz[c01==TRUE]},
-                                                  c01 = censor.01.list, zz=Z.list,
+        if( ( jj > tt.impute | !is.null(last.para)) & !is.null(Cbox)){
+            censored.Z.list <- parallel::mcmapply(function(crow,zz){ zz[crow] },
+                                                  crow = censor.which.list, zz=Z.list,
                                                   mc.cores = n.cores)  
             imputed.ylist <- parallel::mclapply(1:TT, function(tt) {
                 yy = impute.censored(ww = censored.W.list[[tt]], 
@@ -294,12 +310,15 @@ run.Gibbs.fast <- function(ylist, countslist, X,
                                      dimdat = dimdat)
                 if(dimdat==1 & !is.null(yy)) yy = t(yy)
                 return(yy)
-            }, mc.cores = n.cores, mc.preschedule = FALSE)             
-            for(tt in 1:TT){
-                censored_particles = which(censor.01.list[[tt]])
-                ##stopifnot(nrow(imputed.ylist[[tt]]) == length(censored_particles))
-                ylist[[tt]][censored_particles,] <- imputed.ylist[[tt]]
-            }
+            }, mc.cores = n.cores, mc.preschedule = FALSE) 
+            ylist <- parallel::mcmapply(function(yy, c01, imp){replace(yy, c01, imp)}, 
+                            yy = ylist, c01 = censor.01.list, imp = imputed.ylist,
+                            mc.cores = n.cores)            
+            ## for(tt in 1:TT){
+            ##     censored_particles = censor.which.list[[tt]]
+            ##     ##stopifnot(nrow(imputed.ylist[[tt]]) == length(censored_particles))
+            ##     ylist[[tt]][censored_particles,] <- imputed.ylist[[tt]]
+            ## }
         }
 
         loglik <- loglik_eval(mu.list, chol.Sig.list, 
@@ -383,8 +402,20 @@ run.Gibbs.fast <- function(ylist, countslist, X,
                 SIMPLIFY = FALSE,
                 mc.cores = n.cores) 
             if(dimdat == 1) Sn.ell = sum(unlist(sse))
-            if(dimdat > 1) Sn.ell <- Reduce('+',sse[sapply(sse,length)>0])
-            Sig.ell[,,ell] <- matrixsampling::rinvwishart(1, nu0+dimdat + m.ell[ell], S0 + Sn.ell)[,,1]
+            if(dimdat > 1) {
+                Sn.ell <- Reduce('+',sse[sapply(sse,length)>0])
+                if(! isSymmetric(Sn.ell)){ ## check symmetry
+                    Sn.ell <- (Sn.ell+t(Sn.ell))/2 
+                    ## if(isSymmetric(Sn.ell, tol = 1e-10)){
+                    ##     Sn.ell <- (Sn.ell+t(Sn.ell))/2 
+                    ## }else{
+                    ##     browser("Sn.ell is not symmetric")
+                    ##     print(Sn.ell) 
+                    ## }
+                } 
+            }
+            Sig.ell[,,ell] <- matrixsampling::rinvwishart(1, nu00 + m.ell[ell], 
+                                                          S0 + Sn.ell , checkSymmetry=FALSE )[,,1]
         }
             
    ############################################### 
