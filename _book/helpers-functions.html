@@ -12,7 +12,7 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="3 Helpers functions | Creating the flowcut R package">
 <meta name="author" content="Sheng Jiang, Sangwon Hyun">
-<meta name="date" content="2024-10-27">
+<meta name="date" content="2024-10-31">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -594,6 +594,78 @@ transform them to a probability vector.</p>
 <span id="cb9-10"><a href="helpers-functions.html#cb9-10" tabindex="-1"></a>  pie.SB <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span>(<span class="dv">1</span><span class="sc">+</span><span class="fu">exp</span>(<span class="sc">-</span>Xga))</span>
 <span id="cb9-11"><a href="helpers-functions.html#cb9-11" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">t</span>(<span class="fu">apply</span>(pie.SB,<span class="dv">1</span>, SB2MN)))</span>
 <span id="cb9-12"><a href="helpers-functions.html#cb9-12" tabindex="-1"></a>}</span></code></pre></div>
+<p>Here’s a helper to change the results from an MCMC to a flowmix- (or flowtrend-)
+like object. This way, we can use the plotting helpers from those packages.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="helpers-functions.html#cb10-1" tabindex="-1"></a><span class="co">#' Reformatting the results from MCMC to create a flowmix-like object that</span></span>
+<span id="cb10-2"><a href="helpers-functions.html#cb10-2" tabindex="-1"></a><span class="co">#' contains of the posterior means of the model parametr. This allows you to use</span></span>
+<span id="cb10-3"><a href="helpers-functions.html#cb10-3" tabindex="-1"></a><span class="do">## plotting code from the flowmix and flowtrend package.</span></span>
+<span id="cb10-4"><a href="helpers-functions.html#cb10-4" tabindex="-1"></a><span class="co">#' </span></span>
+<span id="cb10-5"><a href="helpers-functions.html#cb10-5" tabindex="-1"></a><span class="co">#' @param res The result of doing MCMC.</span></span>
+<span id="cb10-6"><a href="helpers-functions.html#cb10-6" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb10-7"><a href="helpers-functions.html#cb10-7" tabindex="-1"></a><span class="co">#' @return posterior mean estimates of the cluster coefficients, mean, variance</span></span>
+<span id="cb10-8"><a href="helpers-functions.html#cb10-8" tabindex="-1"></a><span class="co">#'   and probability.</span></span>
+<span id="cb10-9"><a href="helpers-functions.html#cb10-9" tabindex="-1"></a><span class="co">#' </span></span>
+<span id="cb10-10"><a href="helpers-functions.html#cb10-10" tabindex="-1"></a><span id="mcmc_res_to_flowmix">mcmc_res_to_flowmix</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(res, <span class="at">last_draws_inds=</span><span class="cn">NULL</span>){</span>
+<span id="cb10-11"><a href="helpers-functions.html#cb10-11" tabindex="-1"></a></span>
+<span id="cb10-12"><a href="helpers-functions.html#cb10-12" tabindex="-1"></a>  <span class="do">## Setup</span></span>
+<span id="cb10-13"><a href="helpers-functions.html#cb10-13" tabindex="-1"></a>  X <span class="ot">=</span> <span class="fu">t</span>(res<span class="sc">$</span>dat.info<span class="sc">$</span>X)</span>
+<span id="cb10-14"><a href="helpers-functions.html#cb10-14" tabindex="-1"></a>  TT <span class="ot">=</span> <span class="fu">nrow</span>(X)</span>
+<span id="cb10-15"><a href="helpers-functions.html#cb10-15" tabindex="-1"></a>  p <span class="ot">=</span> <span class="fu">ncol</span>(X)</span>
+<span id="cb10-16"><a href="helpers-functions.html#cb10-16" tabindex="-1"></a>  dimdat <span class="ot">=</span> res<span class="sc">$</span>dat.info<span class="sc">$</span>ylist[[<span class="dv">1</span>]] <span class="sc">%&gt;%</span> <span class="fu">ncol</span>()</span>
+<span id="cb10-17"><a href="helpers-functions.html#cb10-17" tabindex="-1"></a>  obj <span class="ot">=</span> <span class="fu">list</span>()</span>
+<span id="cb10-18"><a href="helpers-functions.html#cb10-18" tabindex="-1"></a>  Nmc <span class="ot">=</span> res<span class="sc">$</span>pos.beta <span class="sc">%&gt;%</span> <span class="fu">dim</span>() <span class="sc">%&gt;%</span> <span class="fu">tail</span>(<span class="dv">1</span>)</span>
+<span id="cb10-19"><a href="helpers-functions.html#cb10-19" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">is.null</span>(last_draws_inds)) last_draws_inds <span class="ot">=</span> <span class="dv">1</span><span class="sc">:</span>Nmc</span>
+<span id="cb10-20"><a href="helpers-functions.html#cb10-20" tabindex="-1"></a>  <span class="cf">if</span>(<span class="sc">!</span><span class="fu">is.null</span>(last_draws_inds))<span class="fu">stopifnot</span>(<span class="fu">all</span>(last_draws_inds<span class="sc">&lt;=</span>Nmc))</span>
+<span id="cb10-21"><a href="helpers-functions.html#cb10-21" tabindex="-1"></a>  <span class="do">## last_draw_inds = 1:dim(res$pos.beta)[4]</span></span>
+<span id="cb10-22"><a href="helpers-functions.html#cb10-22" tabindex="-1"></a></span>
+<span id="cb10-23"><a href="helpers-functions.html#cb10-23" tabindex="-1"></a>  <span class="do">## Means</span></span>
+<span id="cb10-24"><a href="helpers-functions.html#cb10-24" tabindex="-1"></a>  pos.mn <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb10-25"><a href="helpers-functions.html#cb10-25" tabindex="-1"></a>  <span class="cf">for</span>(kk <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>numclust){</span>
+<span id="cb10-26"><a href="helpers-functions.html#cb10-26" tabindex="-1"></a>    last_draws_inds</span>
+<span id="cb10-27"><a href="helpers-functions.html#cb10-27" tabindex="-1"></a>    pos.mn[[kk]] <span class="ot">&lt;-</span> <span class="fu">mclapply</span>(last_draws_inds, <span class="cf">function</span>(mm){</span>
+<span id="cb10-28"><a href="helpers-functions.html#cb10-28" tabindex="-1"></a>      res<span class="sc">$</span>pos.beta[,,kk,mm,drop<span class="ot">=</span><span class="cn">TRUE</span>]<span class="sc">%*%</span> <span class="fu">rbind</span>(<span class="dv">1</span>,datobj<span class="sc">$</span>X)</span>
+<span id="cb10-29"><a href="helpers-functions.html#cb10-29" tabindex="-1"></a>    },</span>
+<span id="cb10-30"><a href="helpers-functions.html#cb10-30" tabindex="-1"></a>      <span class="at">mc.cores =</span> <span class="fu">detectCores</span>())<span class="sc">%&gt;%</span></span>
+<span id="cb10-31"><a href="helpers-functions.html#cb10-31" tabindex="-1"></a>      abind<span class="sc">::</span><span class="fu">abind</span>(.,<span class="at">along=</span><span class="dv">3</span>)</span>
+<span id="cb10-32"><a href="helpers-functions.html#cb10-32" tabindex="-1"></a>  }</span>
+<span id="cb10-33"><a href="helpers-functions.html#cb10-33" tabindex="-1"></a>  post.mn.mean <span class="ot">&lt;-</span> <span class="fu">lapply</span>(pos.mn, <span class="cf">function</span>(aa){</span>
+<span id="cb10-34"><a href="helpers-functions.html#cb10-34" tabindex="-1"></a>    <span class="fu">apply</span>(aa,<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>),mean)})</span>
+<span id="cb10-35"><a href="helpers-functions.html#cb10-35" tabindex="-1"></a>  obj<span class="sc">$</span>mn <span class="ot">=</span> <span class="fu">array</span>(<span class="cn">NA</span>, <span class="at">dim =</span> <span class="fu">c</span>(TT, dimdat,numclust))</span>
+<span id="cb10-36"><a href="helpers-functions.html#cb10-36" tabindex="-1"></a>  <span class="cf">for</span>(iclust <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>numclust){</span>
+<span id="cb10-37"><a href="helpers-functions.html#cb10-37" tabindex="-1"></a>    obj<span class="sc">$</span>mn[,,iclust] <span class="ot">=</span> <span class="fu">t</span>(post.mn.mean[[iclust]]) </span>
+<span id="cb10-38"><a href="helpers-functions.html#cb10-38" tabindex="-1"></a>  }</span>
+<span id="cb10-39"><a href="helpers-functions.html#cb10-39" tabindex="-1"></a></span>
+<span id="cb10-40"><a href="helpers-functions.html#cb10-40" tabindex="-1"></a>  <span class="do">## probabilities</span></span>
+<span id="cb10-41"><a href="helpers-functions.html#cb10-41" tabindex="-1"></a>  <span class="do">## pos.gamma.mean = res$pos.gamma[,,last_draws_inds] %&gt;% apply(c(1:2), mean)</span></span>
+<span id="cb10-42"><a href="helpers-functions.html#cb10-42" tabindex="-1"></a>  pos.SB <span class="ot">&lt;-</span> <span class="fu">apply</span>(res<span class="sc">$</span>pos.gamma[,,last_draws_inds], <span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">3</span>), <span class="cf">function</span>(ga)</span>
+<span id="cb10-43"><a href="helpers-functions.html#cb10-43" tabindex="-1"></a>    <span class="dv">1</span><span class="sc">/</span>(<span class="dv">1</span><span class="sc">+</span><span class="fu">exp</span>(<span class="sc">-</span><span class="fu">t</span>(ga) <span class="sc">%*%</span> <span class="fu">rbind</span>(<span class="dv">1</span>,datobj<span class="sc">$</span>X))))</span>
+<span id="cb10-44"><a href="helpers-functions.html#cb10-44" tabindex="-1"></a>  pos.MN <span class="ot">&lt;-</span> <span class="fu">apply</span>(pos.SB, <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>), flowcut<span class="sc">:::</span>SB2MN)  </span>
+<span id="cb10-45"><a href="helpers-functions.html#cb10-45" tabindex="-1"></a>  post.pi.mean <span class="ot">&lt;-</span> <span class="fu">apply</span>(pos.MN,<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>), mean)</span>
+<span id="cb10-46"><a href="helpers-functions.html#cb10-46" tabindex="-1"></a>  obj<span class="sc">$</span>prob <span class="ot">=</span> <span class="fu">t</span>(post.pi.mean)</span>
+<span id="cb10-47"><a href="helpers-functions.html#cb10-47" tabindex="-1"></a></span>
+<span id="cb10-48"><a href="helpers-functions.html#cb10-48" tabindex="-1"></a>  <span class="do">## cluster covariances</span></span>
+<span id="cb10-49"><a href="helpers-functions.html#cb10-49" tabindex="-1"></a>  obj<span class="sc">$</span>sigma <span class="ot">=</span> <span class="fu">array</span>(<span class="cn">NA</span>, <span class="at">dim =</span> <span class="fu">c</span>(numclust, dimdat, dimdat))</span>
+<span id="cb10-50"><a href="helpers-functions.html#cb10-50" tabindex="-1"></a>  obj<span class="sc">$</span>numclust <span class="ot">=</span> numclust</span>
+<span id="cb10-51"><a href="helpers-functions.html#cb10-51" tabindex="-1"></a>  res<span class="sc">$</span>pos.Sigma <span class="sc">%&gt;%</span> <span class="fu">dim</span>()</span>
+<span id="cb10-52"><a href="helpers-functions.html#cb10-52" tabindex="-1"></a>  <span class="do">## post.Sigma.mean &lt;- apply(res$pos.Sigma,c(1,2,3), mean) %&gt;% aperm(c(3,1,2))</span></span>
+<span id="cb10-53"><a href="helpers-functions.html#cb10-53" tabindex="-1"></a>  pos.Sigma.mean <span class="ot">=</span> res<span class="sc">$</span>pos.Sigma[,,,last_draws_inds] <span class="sc">%&gt;%</span> <span class="fu">apply</span>(<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>), mean) <span class="sc">%&gt;%</span> <span class="fu">aperm</span>(<span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">1</span>,<span class="dv">2</span>)) </span>
+<span id="cb10-54"><a href="helpers-functions.html#cb10-54" tabindex="-1"></a>  obj<span class="sc">$</span>sigma <span class="ot">=</span> pos.Sigma.mean</span>
+<span id="cb10-55"><a href="helpers-functions.html#cb10-55" tabindex="-1"></a></span>
+<span id="cb10-56"><a href="helpers-functions.html#cb10-56" tabindex="-1"></a>  <span class="do">## mean regression coefficients</span></span>
+<span id="cb10-57"><a href="helpers-functions.html#cb10-57" tabindex="-1"></a>  pos.beta <span class="ot">=</span> res<span class="sc">$</span>pos.beta[,,,last_draws_inds]</span>
+<span id="cb10-58"><a href="helpers-functions.html#cb10-58" tabindex="-1"></a>  pos.beta.mean <span class="ot">=</span> pos.beta <span class="sc">%&gt;%</span> <span class="fu">apply</span>(<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>), mean) </span>
+<span id="cb10-59"><a href="helpers-functions.html#cb10-59" tabindex="-1"></a>  obj<span class="sc">$</span>beta <span class="ot">=</span> pos.beta.mean</span>
+<span id="cb10-60"><a href="helpers-functions.html#cb10-60" tabindex="-1"></a>  </span>
+<span id="cb10-61"><a href="helpers-functions.html#cb10-61" tabindex="-1"></a>  <span class="do">## prob regression coefficients</span></span>
+<span id="cb10-62"><a href="helpers-functions.html#cb10-62" tabindex="-1"></a>  pos.gamma.mean <span class="ot">=</span> res<span class="sc">$</span>pos.gamma[,,last_draws_inds] <span class="sc">%&gt;%</span> <span class="fu">apply</span>(<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>), mean)</span>
+<span id="cb10-63"><a href="helpers-functions.html#cb10-63" tabindex="-1"></a>  obj<span class="sc">$</span>alpha <span class="ot">=</span> pos.gamma.mean</span>
+<span id="cb10-64"><a href="helpers-functions.html#cb10-64" tabindex="-1"></a></span>
+<span id="cb10-65"><a href="helpers-functions.html#cb10-65" tabindex="-1"></a>  <span class="do">## Bundle and return</span></span>
+<span id="cb10-66"><a href="helpers-functions.html#cb10-66" tabindex="-1"></a>  obj<span class="sc">$</span>numclust <span class="ot">=</span> numclust</span>
+<span id="cb10-67"><a href="helpers-functions.html#cb10-67" tabindex="-1"></a>  obj<span class="sc">$</span>TT <span class="ot">=</span> TT</span>
+<span id="cb10-68"><a href="helpers-functions.html#cb10-68" tabindex="-1"></a>  <span class="fu">class</span>(obj) <span class="ot">=</span> <span class="st">"flowmix"</span></span>
+<span id="cb10-69"><a href="helpers-functions.html#cb10-69" tabindex="-1"></a>  <span class="fu">return</span>(obj)</span>
+<span id="cb10-70"><a href="helpers-functions.html#cb10-70" tabindex="-1"></a>}</span></code></pre></div>
 
 </div>
             </section>
