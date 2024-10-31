@@ -114,6 +114,8 @@ run.Gibbs.fast <- function(ylist, countslist, X,
       Censor.list <- lapply(ylist, function(x) censorIndicator(x,Cbox))
       censor.01.list <- lapply(Censor.list, function(x) apply(x,1, function(xx){
         sum(abs(xx))>0}))
+      censor.which.list <- parallel::mclapply(censor.01.list, function(cc) which(cc==TRUE),
+                                                mc.cores = n.cores) 
       censored.ylist <- mapply(function(yy,c01) {yy[c01==TRUE,,drop=FALSE]},
                                            yy = ylist, c01 = censor.01.list)
       censored.C.list <- mapply(function(c01,cc){cc[c01==TRUE,,drop=FALSE]},
@@ -121,38 +123,49 @@ run.Gibbs.fast <- function(ylist, countslist, X,
       censored.W.list <- mapply(function(c01,ww){ww[c01==TRUE]},
                                             c01 = censor.01.list, w=W.list)
       ntlist.censor <- sapply(censor.01.list, sum) 
-      samp.region.list <- lapply(1:TT, function(tt){
-        c01 <- censor.01.list[[tt]]
-        cc <- Censor.list[[tt]]
-        if(sum(c01==TRUE)>1){
-          apply(cc[c01==TRUE,,drop=FALSE],1,function(xx)
-            ## flowcut:::sample.region(xx,Cbox))
-            sample.region(xx,Cbox))
-        }else if(sum(c01==TRUE)==1){
-          matrix(sample.region(cc[c01==TRUE,,drop=FALSE],Cbox),ncol=1)
-        }else{
-          NULL
-        }}) 
+      nn.censor <- sum(ntlist.censor)
+      if( nn.censor >0){
+          samp.region.list <- lapply(1:TT, function(tt){
+              c01 <- censor.01.list[[tt]]
+              cc <- Censor.list[[tt]]
+              if(sum(c01==TRUE)>1){
+                  apply(cc[c01==TRUE,,drop=FALSE],1,function(xx)
+                      ## flowcut:::sample.region(xx,Cbox))
+                      sample.region(xx,Cbox))
+              }else if(sum(c01==TRUE)==1){
+                  matrix(sample.region(cc[c01==TRUE,,drop=FALSE],Cbox),ncol=1)
+              }else{
+                  NULL
+              }})
+      }else{ ## Cbox is not binding
+          print("No active censoring is found. Turn off censor data imputation.") 
+          Cbox <- NULL 
+      }
   }
   
   ## prior specifications
-  if(is.null(user.prior)){
-    nu0=dimdat
-    nu1=p+1 
-    S0=diag(dimdat)
-    S1=diag(p+1)
-    ## a_gamma <- gamma.ab[1]  
-    ## b_gamma <- gamma.ab[2]
-    invNugget <- 1/sig2_gamma  
-    prior.spec.list <- list(nu0 = nu0,
-                            S0 = S0,
-                            ## a_gamma = a_gamma,
-                            ## b_gamma = b_gamma,
-                            sig2_gamma  = sig2_gamma, 
-                            gg = gg)
-    ## inv.Omega <- solve(S1)
-  }
+    if(is.null(user.prior)){
+        nu0 = dimdat + 4 ## such that var exists   
+        S0 = diag(dimdat)*(nu0-dimdat-1) * (1.5 / qnorm(0.975))^2 
+        ## a_gamma <- gamma.ab[1]  
+        ## b_gamma <- gamma.ab[2]
+        prior.spec.list <- list(nu0 = nu0,
+                                S0 = S0,
+                                ## a_gamma = a_gamma,
+                                ## b_gamma = b_gamma,
+                                sig2_gamma  = sig2_gamma, 
+                                gg = gg)
+        ## inv.Omega <- solve(S1)
+    }else{
+        nu0 <- user.prior$nu0 
+        S0 <- user.prior$S0 
+        prior.spec.list <- list(nu0 = nu0,
+                                S0 = S0,
+                                sig2_gamma = sig2_gamma, 
+                                gg = gg )        
+    }
 
+    
   ## initialize
   if(!is.null(last.para)){
       print("The MCMC continues with a previous draw of model parameters")  
@@ -273,11 +286,14 @@ run.Gibbs.fast <- function(ylist, countslist, X,
           if(dimdat==1 & !is.null(yy)) yy = t(yy)
           return(yy)
         }, mc.cores = n.cores, mc.preschedule = FALSE)             
-        for(tt in 1:TT){
-          censored_particles = which(censor.01.list[[tt]])
-          ##stopifnot(nrow(imputed.ylist[[tt]]) == length(censored_particles))
-          ylist[[tt]][censored_particles,] <- imputed.ylist[[tt]]
-        }
+        ylist <- parallel::mcmapply(function(yy, c01, imp){replace(yy, c01, imp)}, 
+                                    yy = ylist, c01 = censor.01.list, imp = imputed.ylist,
+                                    mc.cores = n.cores)            
+        ## for(tt in 1:TT){
+        ##     censored_particles = censor.which.list[[tt]]
+        ##     ##stopifnot(nrow(imputed.ylist[[tt]]) == length(censored_particles))
+        ##     ylist[[tt]][censored_particles,] <- imputed.ylist[[tt]]
+        ## }
       }
       loglik <- loglik_eval(mu.list, chol.Sig.list, 
                             W.list, X.list, ylist, Z.list, 
@@ -343,10 +359,22 @@ run.Gibbs.fast <- function(ylist, countslist, X,
           SIMPLIFY = FALSE,
           mc.cores = n.cores) 
         if(dimdat == 1) Sn.ell = sum(unlist(sse))
-        if(dimdat > 1) Sn.ell <- Reduce('+',sse[sapply(sse,length)>0])
-        Sig.ell[,,ell] <- matrixsampling::rinvwishart(1, nu0+dimdat + m.ell[ell], S0 + Sn.ell)[,,1]
-      }
-            
+        if(dimdat > 1) {
+            Sn.ell <- Reduce('+',sse[sapply(sse,length)>0])
+            if(! isSymmetric(Sn.ell)){ ## check symmetry
+                Sn.ell <- (Sn.ell+t(Sn.ell))/2 
+                ## if(isSymmetric(Sn.ell, tol = 1e-10)){
+                ##     Sn.ell <- (Sn.ell+t(Sn.ell))/2 
+                ## }else{
+                ##     browser("Sn.ell is not symmetric")
+                ##     print(Sn.ell) 
+                ## }
+            } 
+        }
+        Sig.ell[,,ell] <- matrixsampling::rinvwishart(1, nu0 + m.ell[ell], 
+                                                      S0 + Sn.ell , checkSymmetry=FALSE )[,,1]
+        }
+        
       ## collecting posterior samples 
       if(jj > Nburn){
           pos.beta[,,,jj-Nburn] <- beta.ell
@@ -373,31 +401,31 @@ run.Gibbs.fast <- function(ylist, countslist, X,
     print("time cost per iteration, in seconds") 
     print((proc.time()-ptm)/(Nburn+Nmc - tt.impute))
   }
-  last.imputed <- list(last.ylist = ylist,
-                       last.Z.list = Z.list)
-  last.para <- list(last.gamma = gamma.ell,
-                    last.beta = beta.ell,
-                    last.Sigma = Sig.ell)
-            
-  if(is.null(Cbox)){
-    pos.imputed.Y = NULL
-  } else {
-    pos.imputed.Y = do.call(rbind, imputed.ylist)
-  }
-  ret <- list( 
-        burn.beta = burn.beta,
-        burn.Sigma = burn.Sigma,
-        burn.gamma = burn.gamma,
-        pos.beta = pos.beta,
-        pos.Sigma = pos.Sigma,
-        pos.gamma = pos.gamma,
-        pos.imputed.Y = do.call(rbind, imputed.ylist),
-        burn.avgloglik = burn.avgloglik,
-        pos.avgloglik = pos.avgloglik,
-        dat.info = dat.info , 
-        last.imputed = last.imputed,
-        last.para = last.para, 
-        prior.spec = prior.spec.list)
-  return(ret)
+        last.imputed <- list(last.ylist = ylist,
+                             last.Z.list = Z.list)
+        last.para <- list(last.gamma = gamma.ell,
+                          last.beta = beta.ell,
+                          last.Sigma = Sig.ell)
+        
+        if(is.null(Cbox)){
+            pos.imputed.Y = NULL
+        } else {
+            pos.imputed.Y = do.call(rbind, imputed.ylist)
+        }
+        ret <- list( 
+            burn.beta = burn.beta,
+            burn.Sigma = burn.Sigma,
+            burn.gamma = burn.gamma,             
+            pos.beta = pos.beta,
+            pos.Sigma = pos.Sigma,
+            pos.gamma = pos.gamma, 
+            pos.imputed.Y = pos.imputed.Y ,
+            burn.avgloglik = burn.avgloglik,
+            pos.avgloglik = pos.avgloglik,
+            dat.info = dat.info , 
+            last.imputed = last.imputed,
+            last.para = last.para, 
+            prior.spec = prior.spec.list)
+        return(ret)
 }
 ```
