@@ -22,4 +22,8 @@ Depends:
 Imports: 
     magrittr
 LitrVersionUsed: 0.9.2
+<<<<<<< Updated upstream
 LitrId: fd94c085d9be2b81dbe5a5f611991f27
+=======
+LitrId: 09af60afa795d6bc9afb40c20f6e0b87
+>>>>>>> Stashed changes
