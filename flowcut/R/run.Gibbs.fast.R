@@ -35,6 +35,7 @@ run.Gibbs.fast <- function(ylist, countslist, X,
                            gg = NULL,
                            maxdev = NULL,
                            maxdev_prob = 0.99,
+                           sig2_gamma = 1, 
                            prior_spec.list = NULL,
                            verbose = FALSE,
                            last.imputed = NULL, 
@@ -81,7 +82,7 @@ run.Gibbs.fast <- function(ylist, countslist, X,
   W.list <- lapply(countslist, function(xx) xx*alpha.factor) 
   W.sq.list <- lapply(W.list, function(xx) sqrt(xx))
   
-  mt <- sapply(W.list, sum)
+  mt <- lapply(W.list, sum)%>%unlist()
   MM <- sum(mt) 
   
   XtXtT <- lapply(X.list,function(x) x%*%t(x))
@@ -93,6 +94,7 @@ run.Gibbs.fast <- function(ylist, countslist, X,
   inv.XTXp <- Rfast::spdinv(XTXp)
   X0 <- rbind(0, X) 
   XTX0 <- X0%*%t(X0)
+  XXp.inv.sig <- XTXp / sig2_gamma
     
   ## Build censored box
   if(!is.null(Cbox)){
@@ -132,23 +134,21 @@ run.Gibbs.fast <- function(ylist, countslist, X,
     if(is.null(user.prior)){
         nu0 = dimdat + 4 ## such that var exists   
         S0 = diag(dimdat)*(nu0-dimdat-1) * (1.5 / qnorm(0.975))^2 
-        a_gamma <- 5 ## IG(a/2, b/2) 
-        b_gamma <- (a_gamma - 2 ) * 0.5 ## IG(a/2, b/2)'s prior mean = 0.5 
+        ## a_gamma <- gamma.ab[1]  
+        ## b_gamma <- gamma.ab[2]
         prior.spec.list <- list(nu0 = nu0,
                                 S0 = S0,
-                                a_gamma = a_gamma, 
-                                b_gamma = b_gamma,
+                                ## a_gamma = a_gamma,
+                                ## b_gamma = b_gamma,
+                                sig2_gamma  = sig2_gamma, 
                                 gg = gg)
         ## inv.Omega <- solve(S1)
     }else{
         nu0 <- user.prior$nu0 
         S0 <- user.prior$S0 
-        a_gamma = user.prior$ab_gamma[1]
-        b_gamma =user.prior$ab_gamma[2]
         prior.spec.list <- list(nu0 = nu0,
                                 S0 = S0,
-                                a_gamma = a_gamma,
-                                b_gamma = b_gamma,
+                                sig2_gamma = sig2_gamma, 
                                 gg = gg )        
     }
 
@@ -159,7 +159,6 @@ run.Gibbs.fast <- function(ylist, countslist, X,
       beta.ell <-  last.para$beta 
       gamma.ell <- last.para$gamma
       Sig.ell <- last.para$Sigma  
-      sig2_gamma <- last.para$sig2_gamma 
       Nburn <- 0 ## no need of burn-in 
       tt.impute <- 0 
   }else{
@@ -167,11 +166,8 @@ run.Gibbs.fast <- function(ylist, countslist, X,
       
       beta.ell <-  array(stats::rnorm(numclust*(p+1)*dimdat), c(dimdat,p+1,numclust))
       gamma.ell <- matrix(stats::rnorm((p+1)*(numclust-1)),nrow=p+1,ncol=numclust-1)  
-      Sig.ell <- matrixsampling::rinvwishart(numclust,nu0+dimdat,S0)## %>% as.matrix()
-      sig2_gamma <- 1/stats::rgamma(1, a_gamma/2, b_gamma/2)
+      Sig.ell <- matrixsampling::rinvwishart(numclust,nu0+dimdat,S0)## %>% as.matrix()        
   }
-    inv_sig_gamma <- 1 / sig2_gamma
-
   
   if(!is.null(last.imputed)){
       print("continue with previously imputed latent variables.") 
@@ -190,56 +186,50 @@ run.Gibbs.fast <- function(ylist, countslist, X,
   burn.beta <- array(0,c(dimdat,p+1,numclust,Nburn))
   burn.Sigma <- array(0,c(dimdat,dimdat,numclust,Nburn)) 
   burn.gamma <- array(0,c(p+1,numclust-1,Nburn))
-  burn.sig2_gamma <- rep(NA, Nburn)
   burn.avgloglik <- rep(NA, Nburn)
   pos.beta <- array(0,c(dimdat,p+1,numclust,Nmc))
   pos.Sigma <- array(0,c(dimdat,dimdat,numclust,Nmc)) 
   pos.gamma <- array(0,c(p+1,numclust-1,Nmc))
-  pos.sig2_gamma <- rep(NA, Nmc) 
   pos.avgloglik <- rep(NA, Nmc) 
-    
+
     if(verbose){
         print("The Gibbs sampler starts now.")
         list.iter <- c(1, Nburn+1, 1:floor((Nmc+ Nburn-1)/100)*100, Nmc + Nburn)
         ptm <- NULL 
     }
     
-    ## posterior sampling starts here
+  ## posterior sampling starts here
     for(jj in 1:(Nburn+Nmc)) {
-        if(verbose){
-            if(jj > Nburn){
-                cat("MCMC iteration:", jj-Nburn, fill = TRUE)
-            }else{
-                cat("MCMC iteration:", jj, fill = TRUE) 
-            }
-            if(jj ==1 & Nburn > 0){
-                print("Burn-in period starts.")
-                print(Sys.time())                
-            }
-            if(jj == tt.impute + 1){
-                ptm <- proc.time()
-                print(Sys.time())                
-            }
-            if(jj ==Nburn+1 & Nburn > 0){
-                plot(burn.avgloglik[(tt.impute+1):Nburn], type="l",lwd=2)
-                print(paste("Burn-in sample size: ", Nburn, sep = " "))
-                print("Burn-in period ends.")
-                print("Burn-in time cost per iteration, in seconds")
-                burn.tc <- (proc.time()-ptm)/(Nburn - tt.impute) 
-                print(round(burn.tc,2))
-                print(Sys.time())
-                print("Collecting posterior samples......")
-                print(paste("Expected time to draw", Nmc, "posterior samples: ", 
-                            round(burn.tc[3]*Nmc/60/60,2), " hours", sep=" "))
-            }
-            if(jj %in% list.iter & jj > Nburn){
-                progress(jj - Nburn,Nmc)
-            }
-            if(jj %in% list.iter & jj < Nburn+1){
-                progress(jj,Nburn)
-            }
+      cat("MCMC iteration:", jj, fill = TRUE) 
+      if(verbose){
+        if(jj ==1 & Nburn > 0){
+          print("Burn-in period starts.")
+          print(Sys.time())                
         }
-        
+        if(jj == tt.impute + 1){
+          ptm <- proc.time()
+          print(Sys.time())                
+        }
+        if(jj ==Nburn+1 & Nburn > 0){
+          plot(burn.avgloglik[(tt.impute+1):Nburn], type="l",lwd=2)
+          print(paste("Burn-in sample size: ", Nburn, sep = " "))
+          print("Burn-in period ends.")
+          print("Burn-in time cost per iteration, in seconds")
+          burn.tc <- (proc.time()-ptm)/(Nburn - tt.impute) 
+          print(round(burn.tc,2))
+          print(Sys.time())
+          print("Collecting posterior samples......")
+          print(paste("Expected time to draw", Nmc, "posterior samples: ", 
+                      round(burn.tc[3]*Nmc/60/60,2), " hours", sep=" "))
+        }
+        if(jj %in% list.iter & jj > Nburn){
+          progress(jj - Nburn,Nmc)
+        }
+        if(jj %in% list.iter & jj < Nburn+1){
+          progress(jj,Nburn)
+        }
+      }
+      
       
       ## expert assignment ###
       XpGamma <- Rfast::Crossprod(gamma.ell, Xp) ## K-1 x TT 
@@ -250,7 +240,7 @@ run.Gibbs.fast <- function(ylist, countslist, X,
       
       chol.Sig.ell <- apply(Sig.ell,3, chol)
       if(dimdat == 1) chol.Sig.ell = rbind(chol.Sig.ell)
-      chol.Sig.list <- lapply(1:numclust, function(kk) matrix(chol.Sig.ell[,kk], nrow = dimdat))
+      chol.Sig.list <- lapply(1:numclust,function(kk) matrix(chol.Sig.ell[,kk], nrow = dimdat))
       mu.list <- parallel::mclapply(Xp.list, function(xx){
         apply(beta.ell, c(1,3), function(bb) bb %*% xx)
       }, mc.cores= n.cores)
@@ -318,17 +308,14 @@ run.Gibbs.fast <- function(ylist, countslist, X,
                            nrow=numclust-1, ncol = TT)
       kappa <- mt.ell[-numclust, , drop=FALSE] - Mt.ell[-numclust, , drop=FALSE]/2
 
-        V.omell <- parallel::mclapply(1:(numclust-1), function(ell){
-            Rfast::spdinv(Reduce('+', Map('*', XtXtTp, omega.tell[ell,])) + XTX0 * inv_sig_gamma)},
-            mc.cores = n.cores)
-        gamma.ell <- parallel::mclapply(1:(numclust-1), function(ell){
-            Rfast::rmvnorm(1, V.omell[[ell]] %*% Reduce('+', Map('*', Xp.list , kappa[ell,])), 
-                           V.omell[[ell]])} , mc.cores = n.cores)  %>% do.call(rbind, .) %>% t()
-        
-        a_gamma_n <- (numclust-1)*p + a_gamma
-        b_gamma_n <- apply(t(X0) %*% gamma.ell, 2, crossprod) %>% sum() + b_gamma
-        inv_sig_gamma  <- stats::rgamma(1, a_gamma_n/2, b_gamma_n/2)
-        sig2_gamma <- 1 / inv_sig_gamma
+      V.omell <- parallel::mclapply(1:(numclust-1), function(ell){
+        Rfast::spdinv(Reduce('+', Map('*', XtXtTp, omega.tell[ell,])) + XXp.inv.sig)},
+        mc.cores = n.cores)
+      gamma.ell.list <- parallel::mclapply(1:(numclust-1), function(ell){
+        Rfast::rmvnorm(1,
+                       V.omell[[ell]] %*% Reduce('+', Map('*', Xp.list , kappa[ell,]) ),
+                       V.omell[[ell]])} , mc.cores = n.cores) 
+      gamma.ell <- gamma.ell.list %>% unlist() %>% matrix(., nrow = p+1, ncol = numclust -1) 
         
       ## experts' estimation 
       for(ell in 1:numclust){
@@ -363,6 +350,12 @@ run.Gibbs.fast <- function(ylist, countslist, X,
             Sn.ell <- Reduce('+',sse[sapply(sse,length)>0])
             if(! isSymmetric(Sn.ell)){ ## check symmetry
                 Sn.ell <- (Sn.ell+t(Sn.ell))/2 
+                ## if(isSymmetric(Sn.ell, tol = 1e-10)){
+                ##     Sn.ell <- (Sn.ell+t(Sn.ell))/2 
+                ## }else{
+                ##     browser("Sn.ell is not symmetric")
+                ##     print(Sn.ell) 
+                ## }
             } 
         }
         Sig.ell[,,ell] <- matrixsampling::rinvwishart(1, nu0 + m.ell[ell], 
@@ -375,13 +368,11 @@ run.Gibbs.fast <- function(ylist, countslist, X,
           pos.Sigma[,,,jj-Nburn] <- Sig.ell
           pos.gamma[,,jj-Nburn] <- gamma.ell
           pos.avgloglik[jj-Nburn] <- loglik
-          pos.sig2_gamma[jj-Nburn] <- sig2_gamma 
       } else{
           burn.beta[,,,jj] <- beta.ell
           burn.Sigma[,,,jj] <- Sig.ell
           burn.gamma[,,jj] <- gamma.ell
           burn.avgloglik[jj] <- loglik
-          burn.sig2_gamma[jj] <- sig2_gamma
       }
     }
 
@@ -401,8 +392,7 @@ run.Gibbs.fast <- function(ylist, countslist, X,
                              last.Z.list = Z.list)
         last.para <- list(last.gamma = gamma.ell,
                           last.beta = beta.ell,
-                          last.Sigma = Sig.ell, 
-                          last.sig2_gamma = sig2_gamma) 
+                          last.Sigma = Sig.ell)
         
         if(is.null(Cbox)){
             pos.imputed.Y = NULL
@@ -413,12 +403,10 @@ run.Gibbs.fast <- function(ylist, countslist, X,
             burn.beta = burn.beta,
             burn.Sigma = burn.Sigma,
             burn.gamma = burn.gamma,             
-            burn.sig2_gamma = burn.sig2_gamma,             
             pos.beta = pos.beta,
             pos.Sigma = pos.Sigma,
             pos.gamma = pos.gamma, 
             pos.imputed.Y = pos.imputed.Y ,
-            pos.sig2_gamma = pos.sig2_gamma,
             burn.avgloglik = burn.avgloglik,
             pos.avgloglik = pos.avgloglik,
             dat.info = dat.info , 

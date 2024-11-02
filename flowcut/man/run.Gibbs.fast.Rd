@@ -17,6 +17,7 @@ run.Gibbs.fast(
   gg = NULL,
   maxdev = NULL,
   maxdev_prob = 0.99,
+  sig2_gamma = 1,
   prior_spec.list = NULL,
   verbose = FALSE,
   last.imputed = NULL,
