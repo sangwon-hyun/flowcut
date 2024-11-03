@@ -299,7 +299,7 @@ run.Gibbs.fast <- function(ylist, countslist, X,
         }, mc.cores = n.cores, mc.preschedule = FALSE)             
         ylist <- parallel::mcmapply(function(yy, c01, imp){replace(yy, c01, imp)}, 
                                     yy = ylist, c01 = censor.01.list, imp = imputed.ylist,
-                                    mc.cores = n.cores)            
+                                    mc.cores = n.cores, SIMPLIFY = FALSE)            
         ## for(tt in 1:TT){
         ##     censored_particles = censor.which.list[[tt]]
         ##     ##stopifnot(nrow(imputed.ylist[[tt]]) == length(censored_particles))

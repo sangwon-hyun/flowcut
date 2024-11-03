@@ -12,7 +12,7 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="5 Gibbs sampler | Creating the flowcut R package">
 <meta name="author" content="Sheng Jiang, Sangwon Hyun">
-<meta name="date" content="2024-11-02">
+<meta name="date" content="2024-11-03">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -435,7 +435,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb16-284"><a href="gibbs-sampler.html#cb16-284" tabindex="-1"></a>        }, <span class="at">mc.cores =</span> n.cores, <span class="at">mc.preschedule =</span> <span class="cn">FALSE</span>)             </span>
 <span id="cb16-285"><a href="gibbs-sampler.html#cb16-285" tabindex="-1"></a>        ylist <span class="ot">&lt;-</span> parallel<span class="sc">::</span><span class="fu">mcmapply</span>(<span class="cf">function</span>(yy, c01, imp){<span class="fu">replace</span>(yy, c01, imp)}, </span>
 <span id="cb16-286"><a href="gibbs-sampler.html#cb16-286" tabindex="-1"></a>                                    <span class="at">yy =</span> ylist, <span class="at">c01 =</span> censor.<span class="fl">01.</span>list, <span class="at">imp =</span> imputed.ylist,</span>
-<span id="cb16-287"><a href="gibbs-sampler.html#cb16-287" tabindex="-1"></a>                                    <span class="at">mc.cores =</span> n.cores)            </span>
+<span id="cb16-287"><a href="gibbs-sampler.html#cb16-287" tabindex="-1"></a>                                    <span class="at">mc.cores =</span> n.cores, <span class="at">SIMPLIFY =</span> <span class="cn">FALSE</span>)            </span>
 <span id="cb16-288"><a href="gibbs-sampler.html#cb16-288" tabindex="-1"></a>        <span class="do">## for(tt in 1:TT){</span></span>
 <span id="cb16-289"><a href="gibbs-sampler.html#cb16-289" tabindex="-1"></a>        <span class="do">##     censored_particles = censor.which.list[[tt]]</span></span>
 <span id="cb16-290"><a href="gibbs-sampler.html#cb16-290" tabindex="-1"></a>        <span class="do">##     ##stopifnot(nrow(imputed.ylist[[tt]]) == length(censored_particles))</span></span>
