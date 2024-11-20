@@ -241,7 +241,7 @@ samp.trunc.normal <- function(yy, zz, cc.info, bounds.info, mu.mat, Sigma.ell, d
     return(yy)
 }
 
-#'
+#' 
 impute.censored <- function(ww, yy, zz, cc.info.mat, bounds.mat,
                             mu.mat, Sigma.ell, dimdat){
   ## Setup

@@ -2,19 +2,24 @@
 
 #' Reformatting the results from MCMC to create a flowmix-like object that
 #' contains of the posterior means of the model parametr. This allows you to use
-## plotting code from the flowmix and flowtrend package.
+#' plotting code from the flowmix and flowtrend package.
 #' 
 #' @param res The result of doing MCMC.
+#' @param last_draws_inds The last few MCMC draws to take. Defaults to NULL.
 #'
 #' @return posterior mean estimates of the cluster coefficients, mean, variance
 #'   and probability.
+#' 
+#' @export
 #' 
 mcmc_res_to_flowmix <- function(res, last_draws_inds=NULL){
 
   ## Setup
   X = t(res$dat.info$X)
+  numclust = res$pos.Sigma %>% .[3]
   TT = nrow(X)
   p = ncol(X)
+  numclust = res$dat.info$numclust
   dimdat = res$dat.info$ylist[[1]] %>% ncol()
   obj = list()
   Nmc = res$pos.beta %>% dim() %>% tail(1)
@@ -27,9 +32,9 @@ mcmc_res_to_flowmix <- function(res, last_draws_inds=NULL){
   for(kk in 1:numclust){
     last_draws_inds
     pos.mn[[kk]] <- mclapply(last_draws_inds, function(mm){
-      res$pos.beta[,,kk,mm,drop=TRUE]%*% rbind(1,datobj$X)
+      res$pos.beta[,,kk,mm,drop=TRUE]%*% rbind(1,t(X))
     },
-      mc.cores = detectCores())%>%
+    mc.cores = detectCores())%>%
       abind::abind(.,along=3)
   }
   post.mn.mean <- lapply(pos.mn, function(aa){
@@ -42,7 +47,7 @@ mcmc_res_to_flowmix <- function(res, last_draws_inds=NULL){
   ## probabilities
   ## pos.gamma.mean = res$pos.gamma[,,last_draws_inds] %>% apply(c(1:2), mean)
   pos.SB <- apply(res$pos.gamma[,,last_draws_inds], c(2,3), function(ga)
-    1/(1+exp(-t(ga) %*% rbind(1,datobj$X))))
+    1/(1+exp(-t(ga) %*% rbind(1,t(X)))))
   pos.MN <- apply(pos.SB, c(1,3), flowcut:::SB2MN)  
   post.pi.mean <- apply(pos.MN,c(1,2), mean)
   obj$prob = t(post.pi.mean)

@@ -82,5 +82,3 @@ maxdev_to_gg <- function(X, dimdat, maxdev, numclust, ggvec,
   
   return(newx[imin])
 }
-
-

@@ -6,18 +6,18 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>8 Documenting the package and building | Creating the flowcut R package</title>
 <meta name="description" content="8 Documenting the package and building | Creating the flowcut R package">
-<meta name="generator" content="bookdown 0.40 and GitBook 2.6.7">
+<meta name="generator" content="bookdown 0.35 and GitBook 2.6.7">
 <meta property="og:title" content="8 Documenting the package and building | Creating the flowcut R package">
 <meta property="og:type" content="book">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="8 Documenting the package and building | Creating the flowcut R package">
 <meta name="author" content="Sheng Jiang, Sangwon Hyun">
-<meta name="date" content="2024-11-03">
+<meta name="date" content="2024-11-19">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="prev" href="real-data-example.html">
-<script src="libs/header-attrs-2.28/header-attrs.js"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script><link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet">
+<script src="libs/header-attrs-2.25/header-attrs.js"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script><link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet">
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet">
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet">
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet">
@@ -38,7 +38,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -116,7 +116,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="5.1" data-path="gibbs-sampler.html"><a href="gibbs-sampler.html#the-main-gibbs-sampler"><i class="fa fa-check"></i><b>5.1</b> The main Gibbs sampler</a></li>
 </ul>
 </li>
-<li class="chapter" data-level="6" data-path="simulations.html"><a href="simulations.html"><i class="fa fa-check"></i><b>6</b> Simulations</a></li>
+<li class="chapter" data-level="6" data-path="simulations.html">
+<a href="simulations.html"><i class="fa fa-check"></i><b>6</b> Simulations</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="simulations.html"><a href="simulations.html#simulation-helpers"><i class="fa fa-check"></i><b>6.1</b> Simulation helpers</a></li>
+</ul>
+</li>
 <li class="chapter" data-level="7" data-path="real-data-example.html"><a href="real-data-example.html"><i class="fa fa-check"></i><b>7</b> Real data example</a></li>
 <li class="chapter" data-level="8" data-path="documenting-the-package-and-building.html"><a href="documenting-the-package-and-building.html"><i class="fa fa-check"></i><b>8</b> Documenting the package and building</a></li>
 </ul></nav>
@@ -139,9 +144,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </h1>
 <p>We finish by running commands that will document, build, and install the
 package. It may also be a good idea to check the package from within this file.</p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="documenting-the-package-and-building.html#cb23-1" tabindex="-1"></a>litr<span class="sc">::</span><span class="fu">document</span>() <span class="co"># &lt;-- use instead of devtools::document()</span></span></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="documenting-the-package-and-building.html#cb26-1" tabindex="-1"></a>litr<span class="sc">::</span><span class="fu">document</span>() <span class="co"># &lt;-- use instead of devtools::document()</span></span></code></pre></div>
 <pre><code>## ℹ Updating flowcut documentation
-## Writing 'NAMESPACE'
 ## ℹ Loading flowcut
 ## Loading required package: MASS
 ## 
@@ -188,17 +192,20 @@ package. It may also be a good idea to check the package from within this file.<
 ## 
 ## Loading required package: RcppZiggurat
 ## 
-## Loading required package: RcppParallel</code></pre>
-<pre><code>## Warning: package 'RcppParallel' was built under R version 4.4.1</code></pre>
-<pre><code>## 
+## Loading required package: RcppParallel
+## 
+## 
 ## Attaching package: 'RcppParallel'
+## 
 ## 
 ## The following object is masked from 'package:Rcpp':
 ## 
 ##     LdFlags
 ## 
 ## 
+## 
 ## Rfast: 2.1.0
+## 
 ##  ___ __ __ __ __    __ __ __ __ __ _             _               __ __ __ __ __     __ __ __ __ __ __   
 ## |  __ __ __ __  |  |  __ __ __ __ _/            / \             |  __ __ __ __ /   /__ __ _   _ __ __\  
 ## | |           | |  | |                         / _ \            | |                        / /          
@@ -213,22 +220,45 @@ package. It may also be a good idea to check the package from within this file.<
 ## | |   \ \__ __ _   | |                / /                 \ \     _ __ __ __ _| |      / /          
 ## |_|    \__ __ __\  |_|               /_/                   \_\   /_ __ __ __ ___|      \/             team
 ## 
+## 
 ## Attaching package: 'Rfast'
+## 
 ## 
 ## The following objects are masked from 'package:mvnfast':
 ## 
 ##     dmvt, rmvt
 ## 
+## 
 ## The following object is masked from 'package:dplyr':
 ## 
 ##     nth
+## 
 ## 
 ## The following objects are masked from 'package:purrr':
 ## 
 ##     is_integer, transpose
 ## 
-## Loading required package: tmvnsim
-## ✖ run.Gibbs.fast.R:26: @return requires a value.Writing 'NAMESPACE'Writing 'printprogress.Rd'Writing 'progress.Rd'Writing 'SB2MN.Rd'Writing 'MN2SB.Rd'Writing 'flowcut-package.Rd'Writing 'gen_1d.Rd'Writing 'get_Cbox.Rd'Writing 'make_model.Rd'Writing 'maxdev_to_gg.Rd'Writing 'mcmc_res_to_flowmix.Rd'Writing 'post_process_pie.Rd'Writing 'run.Gibbs.fast.Rd'Writing 'pipe.Rd'</code></pre>
+## 
+## Loading required package: tmvnsim</code></pre>
+<pre><code>## Warning: [run.Gibbs.fast.R:26] @return requires a value</code></pre>
+<pre><code>## Writing 'NAMESPACE'
+## Writing 'NAMESPACE'
+## Writing 'printprogress.Rd'
+## Writing 'progress.Rd'
+## Writing 'SB2MN.Rd'
+## Writing 'MN2SB.Rd'
+## Writing 'flowcut-package.Rd'
+## Writing 'gen_1d.Rd'
+## Writing 'get_Cbox.Rd'
+## Writing 'get_posterior_probs.Rd'
+## Writing 'impute.Rd'
+## Writing 'make_model.Rd'
+## Writing 'maxdev_to_gg.Rd'
+## Writing 'mcmc_res_to_flowmix.Rd'
+## Writing 'post_process_pie.Rd'
+## Writing 'preimpute.Rd'
+## Writing 'run.Gibbs.fast.Rd'
+## Writing 'pipe.Rd'</code></pre>
 
 </div>
             </section>

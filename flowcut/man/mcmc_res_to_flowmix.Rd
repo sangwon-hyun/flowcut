@@ -3,12 +3,15 @@
 \name{mcmc_res_to_flowmix}
 \alias{mcmc_res_to_flowmix}
 \title{Reformatting the results from MCMC to create a flowmix-like object that
-contains of the posterior means of the model parametr. This allows you to use}
+contains of the posterior means of the model parametr. This allows you to use
+plotting code from the flowmix and flowtrend package.}
 \usage{
 mcmc_res_to_flowmix(res, last_draws_inds = NULL)
 }
 \arguments{
 \item{res}{The result of doing MCMC.}
+
+\item{last_draws_inds}{The last few MCMC draws to take. Defaults to NULL.}
 }
 \value{
 posterior mean estimates of the cluster coefficients, mean, variance
@@ -17,4 +20,5 @@ and probability.
 \description{
 Reformatting the results from MCMC to create a flowmix-like object that
 contains of the posterior means of the model parametr. This allows you to use
+plotting code from the flowmix and flowtrend package.
 }
