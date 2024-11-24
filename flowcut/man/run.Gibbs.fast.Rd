@@ -13,6 +13,7 @@ run.Gibbs.fast(
   Nmc = 3000,
   Nburn = 500,
   Cbox = NULL,
+  censorship.info = NULL,
   user.prior = NULL,
   gg = NULL,
   maxdev = NULL,
@@ -21,7 +22,6 @@ run.Gibbs.fast(
   verbose = FALSE,
   last.imputed = NULL,
   last.para = NULL,
-  tol = 1/1e+08,
   n.cores = 1
 )
 }
@@ -52,8 +52,6 @@ details. If a value is provided, |maxdev| and |maxdev_prob| are ignored.}
 overall mean, over time t=1,.., T. Defaults to 0.99.}
 
 \item{verbose}{Whether to be loud.}
-
-\item{tol}{NOT USED.}
 
 \item{n.cores}{Number of cores for multiple cores.}
 
