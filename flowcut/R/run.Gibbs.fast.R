@@ -122,7 +122,8 @@ run.Gibbs.fast <- function(ylist, countslist, X,
                 }}, mc.cores = n.cores)
         }else{ ## Cbox is not binding
             print("No active censoring is found. Turn off censor data imputation.") 
-            Cbox <- NULL 
+            Cbox <- NULL
+            samp.region.list <- NULL 
         }
         censorship.info <- list(Cbox = Cbox,
                                 samp.region.list = samp.region.list,
@@ -193,6 +194,8 @@ run.Gibbs.fast <- function(ylist, countslist, X,
       print("continue with previously imputed latent variables.") 
       Z.list <- last.imputed$Z.list 
       ylist <- last.imputed$ylist
+      rm(last.imputed)
+      gc()
 
       Nburn <- 0 ## no need of burn-in 
       tt.impute <- 0 

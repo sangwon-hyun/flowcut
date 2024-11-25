@@ -1,0 +1,10 @@
+introduction
+package-setup
+helpers-functions
+syntheticdata
+gibbs-sampler
+the-main-gibbs-sampler
+simulations
+simulation-helpers
+real-data-example
+documenting-the-package-and-building
