@@ -17,29 +17,12 @@ preimpute <- function(datobj){
   stopifnot(ncol(datobj$ylist[[1]]) == 1)
   stopifnot("Cbox" %in% names(datobj))
 
-  ## At each time point, set aside censored points.
-  censor.direction.full.list <- lapply(datobj$ylist,
-                        function(x){
-                          flowcut:::censorIndicator(x[,1, drop=FALSE],
-                                                    datobj$Cbox[1,,drop=FALSE])})
-  censor.which.list = censor.direction.full.list %>%
-    lapply(function(x) apply(x,1, function(xx){ sum(abs(xx)) > 0 })) %>%
-    lapply(which)
-  censored_ylist <- mapply(function(y, censor_which){y[censor_which,,drop=FALSE]},
-         datobj$ylist, censor.which.list)
-  censored_direction <- mapply(function(censor_direction, censor_which){
-    censor_direction[censor_which,,drop=FALSE]
-  }, censor.direction.full.list, censor.which.list)
-
-  ## here are data
-  inner_ylist <- mapply(function(y, censor_which){
-    if(length(censor_which) > 0) return(y[-censor_which,,drop=FALSE])
-    if(!length(censor_which) > 0) return(y)
-  }, datobj$ylist, censor.which.list)
-  inner_countslist <- mapply(function(counts, censor_which){
-    if(length(censor_which) > 0) return(counts[-censor_which])
-    if(!length(censor_which) > 0) return(counts)
-  }, datobj$countslist, censor.which.list)
+  ## Split the data
+  splitres = split_data(datobj)
+  inner_ylist = splitres$inner_ylist
+  inner_countslist = splitres$inner_countslist
+  censored_ylist = splitres$censored_ylist
+  censored_direction = splitres$censored_direction
 
   ## Fit 2-mixture Gaussian at each time point.
   gmm_model_list <- mapply(function(y, counts){

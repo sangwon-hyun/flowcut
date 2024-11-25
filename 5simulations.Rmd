@@ -123,27 +123,19 @@ get_posterior_probs <- function(gmm_model, ynew){
 }
 ```
 
-Here is a function that will pre-impute data for a 2-cluster 1-dimensional
-dataset.
+Also, here is a helper to split the data into (1) censored and (2) non-censored
+("inner") particles; used in `preimpute()`.
 
-```{r}
-#' At each time point, we will (1) set aside the censored points, and (2) estimate
-#' a 2-component GMM (2) take the censored points, and "impute" them according to those
-#' mixtures. (After that, we'll (3) fit flowmix on the resulting imputed data.)
+```{r,}
+#' A helper to split the data into (1) censored and (2) non-censored ("inner") particles.
 #'
-#' This is only designed for 1-dimensional data with two clusters.
+#' @param datobj List containing ylist, countslist, X, and Cbox.
 #'
-#' @param datobj List with ylist (particles), countslist, X, and Cbox.
-#'
-#' @return datobj with imputed ylist.
+#' @return List of particles on /and/ inside censor boundary. And the directions
+#'   in which they were censored.
 #'
 #' @export
-preimpute <- function(datobj){
-
-  ## Setup
-  stopifnot(ncol(datobj$ylist[[1]]) == 1)
-  stopifnot("Cbox" %in% names(datobj))
-
+split_data <- function(datobj){
   ## At each time point, set aside censored points.
   censor.direction.full.list <- lapply(datobj$ylist,
                         function(x){
@@ -167,6 +159,42 @@ preimpute <- function(datobj){
     if(length(censor_which) > 0) return(counts[-censor_which])
     if(!length(censor_which) > 0) return(counts)
   }, datobj$countslist, censor.which.list)
+
+  return(list(censored_ylist = censored_ylist,
+              censored_direction = censored_direction,
+              inner_ylist = inner_ylist,
+              inner_countslist = inner_countslist))
+}
+```
+
+
+Here is a function that will pre-impute data for a 2-cluster 1-dimensional
+dataset; used in `preimpute()`.
+
+```{r}
+#' At each time point, we will (1) set aside the censored points, and (2) estimate
+#' a 2-component GMM (2) take the censored points, and "impute" them according to those
+#' mixtures. (After that, we'll (3) fit flowmix on the resulting imputed data.)
+#'
+#' This is only designed for 1-dimensional data with two clusters.
+#'
+#' @param datobj List with ylist (particles), countslist, X, and Cbox.
+#'
+#' @return datobj with imputed ylist.
+#'
+#' @export
+preimpute <- function(datobj){
+
+  ## Setup
+  stopifnot(ncol(datobj$ylist[[1]]) == 1)
+  stopifnot("Cbox" %in% names(datobj))
+
+  ## Split the data
+  splitres = split_data(datobj)
+  inner_ylist = splitres$inner_ylist
+  inner_countslist = splitres$inner_countslist
+  censored_ylist = splitres$censored_ylist
+  censored_direction = splitres$censored_direction
 
   ## Fit 2-mixture Gaussian at each time point.
   gmm_model_list <- mapply(function(y, counts){

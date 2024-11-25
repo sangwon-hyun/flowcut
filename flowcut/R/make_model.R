@@ -15,19 +15,18 @@ make_model <- function(orig_model, isignal){
   new_model = orig_model
   new_model$numclust = 2
 
-  ## Not used now: Renormalize the probabilities
-  if(FALSE){
-    link = cbind(1, orig_model$X) %*% t(orig_model$alpha)
-    new_model$prob = exp(link) / rowSums(exp(link))
-    new_model$prob  %>% matplot(type = 'l', lty = 1)
-  }
+  ## Calculate + renormalize the probabilities
+  link = cbind(1, orig_model$X) %*% t(orig_model$alpha)
+  new_model$prob = exp(link) / rowSums(exp(link))
+  new_model$prob  %>% matplot(type = 'l', lty = 1)
 
-  ## We are actually just going to use flat probabilities, for now.
-  alphamat = orig_model$alpha
-  alphamat[,-1] = 0
-  alphamat[,1] = 1
-  new_model$alpha = alphamat
-  new_model$prob = matrix(1/2, nrow = orig_model$TT, ncol = 2)
+  ## ## Probabilities
+  ## alphamat = orig_model$alpha
+  ## alphamat[,-1] = 0
+  ## alphamat[,1] = 1
+  ## new_model$alpha = alphamat
+  ## ## new_model$prob = matrix(1/2, nrow = orig_model$TT, ncol = 2)
+  ## cbind(1, new_model$X) %*% alphamat
 
   ## Take the two intercepts
   intp_high = orig_model$beta %>% .[[1]]%>% .["intp",]  
@@ -43,6 +42,7 @@ make_model <- function(orig_model, isignal){
   ## Optional: plot the means
   if(FALSE){
     new_model$mn[,1,] %>% matplot(type = 'l', lty = 1)
+    new_model$prob %>% matplot(type = 'l', lty = 1)
   }
   
   return(new_model)

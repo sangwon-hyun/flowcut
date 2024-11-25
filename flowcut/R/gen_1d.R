@@ -28,10 +28,16 @@ gen_1d <- function(true_model, nt = 1000){
     for(iclust in 1:true_model$numclust){
       ntk = nt_by_clust[iclust]
       membership = rep(iclust, ntk)
-      y_onetime[[iclust]] = cbind(MASS::mvrnorm(n = ntk,
-                                                mu = true_model$mn[tt,,iclust],
-                                                Sigma = true_model$sigma[iclust,,]))
+      if(ntk == 0){
+        y_onetime[[iclust]] = NULL
+      } else {
+        y_onetime[[iclust]] =
+          cbind(MASS::mvrnorm(n = ntk,
+                              mu = true_model$mn[tt,,iclust],
+                              Sigma = true_model$sigma[iclust,,]))
+      }
     }
+    y_onetime = purrr::compact(y_onetime)
     y = do.call(rbind, y_onetime)
   
     ## Data

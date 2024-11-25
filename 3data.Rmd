@@ -67,26 +67,25 @@ flowtrend) model objects.)
 #'
 #' @return A list with beta, mn, alpha, prob, X, sigma, TT, numclust.
 #' @export
-make_model <- function(orig_model, isignal){
+make_sim_model <- function(orig_model, isignal){
 
   ## Setup
   stopifnot(isignal %in% 0:10)
   new_model = orig_model
   new_model$numclust = 2
 
-  ## Not used now: Renormalize the probabilities
-  if(FALSE){
-    link = cbind(1, orig_model$X) %*% t(orig_model$alpha)
-    new_model$prob = exp(link) / rowSums(exp(link))
-    new_model$prob  %>% matplot(type = 'l', lty = 1)
-  }
+  ## Calculate + renormalize the probabilities
+  link = cbind(1, orig_model$X) %*% t(orig_model$alpha)
+  new_model$prob = exp(link) / rowSums(exp(link))
+  new_model$prob  %>% matplot(type = 'l', lty = 1)
 
-  ## We are actually just going to use flat probabilities, for now.
-  alphamat = orig_model$alpha
-  alphamat[,-1] = 0
-  alphamat[,1] = 1
-  new_model$alpha = alphamat
-  new_model$prob = matrix(1/2, nrow = orig_model$TT, ncol = 2)
+  ## ## Probabilities
+  ## alphamat = orig_model$alpha
+  ## alphamat[,-1] = 0
+  ## alphamat[,1] = 1
+  ## new_model$alpha = alphamat
+  ## ## new_model$prob = matrix(1/2, nrow = orig_model$TT, ncol = 2)
+  ## cbind(1, new_model$X) %*% alphamat
 
   ## Take the two intercepts
   intp_high = orig_model$beta %>% .[[1]]%>% .["intp",]  
@@ -102,6 +101,7 @@ make_model <- function(orig_model, isignal){
   ## Optional: plot the means
   if(FALSE){
     new_model$mn[,1,] %>% matplot(type = 'l', lty = 1)
+    new_model$prob %>% matplot(type = 'l', lty = 1)
   }
   
   return(new_model)
@@ -110,11 +110,11 @@ make_model <- function(orig_model, isignal){
 
 ```{r plot-data, fig.width=10, fig.height=8}
 par(mfrow = c(3,1))
-new_model = make_model(orig_model, 0)
+new_model = make_sim_model(orig_model, 0)
 new_model$mn %>% .[,1,] %>% matplot(type='l', main = paste0("isignal=", 0), ylim = c(-0.5, 0.6))
-new_model = make_model(orig_model, 5)
+new_model = make_sim_model(orig_model, 5)
 new_model$mn %>% .[,1,] %>% matplot(type='l', main = paste0("isignal=", 5), ylim = c(-0.5, 0.6))
-new_model = make_model(orig_model, 10)
+new_model = make_sim_model(orig_model, 10)
 new_model$mn %>% .[,1,] %>% matplot(type='l', main = paste0("isignal=", 10), ylim = c(-0.5, 0.6))
 ```
 
@@ -149,10 +149,16 @@ gen_1d <- function(true_model, nt = 1000){
     for(iclust in 1:true_model$numclust){
       ntk = nt_by_clust[iclust]
       membership = rep(iclust, ntk)
-      y_onetime[[iclust]] = cbind(MASS::mvrnorm(n = ntk,
-                                                mu = true_model$mn[tt,,iclust],
-                                                Sigma = true_model$sigma[iclust,,]))
+      if(ntk == 0){
+        y_onetime[[iclust]] = NULL
+      } else {
+        y_onetime[[iclust]] =
+          cbind(MASS::mvrnorm(n = ntk,
+                              mu = true_model$mn[tt,,iclust],
+                              Sigma = true_model$sigma[iclust,,]))
+      }
     }
+    y_onetime = purrr::compact(y_onetime)
     y = do.call(rbind, y_onetime)
   
     ## Data
@@ -170,7 +176,7 @@ Testing this function out.
 ## Generate data
 set.seed(100)
 
-new_model = make_model(orig_model, 8)
+new_model = make_sim_model(orig_model, 8)
 ylist = gen_1d(new_model, nt = 100)
 flowtrend::plot_1d(ylist, obj = new_model)
 
