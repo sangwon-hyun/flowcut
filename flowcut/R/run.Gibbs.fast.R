@@ -193,6 +193,8 @@ run.Gibbs.fast <- function(ylist, countslist, X,
       print("continue with previously imputed latent variables.") 
       Z.list <- last.imputed$Z.list 
       ylist <- last.imputed$ylist
+      rm(last.imputed)
+      gc()
 
       Nburn <- 0 ## no need of burn-in 
       tt.impute <- 0 

@@ -6,23 +6,19 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>4 Generating synthetic data | Creating the flowcut R package</title>
 <meta name="description" content="4 Generating synthetic data | Creating the flowcut R package">
-<meta name="generator" content="bookdown 0.40 and GitBook 2.6.7">
+<meta name="generator" content="bookdown 0.35 and GitBook 2.6.7">
 <meta property="og:title" content="4 Generating synthetic data | Creating the flowcut R package">
 <meta property="og:type" content="book">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="4 Generating synthetic data | Creating the flowcut R package">
 <meta name="author" content="Sheng Jiang, Sangwon Hyun">
-<<<<<<< HEAD
-<meta name="date" content="2024-11-23">
-=======
-<meta name="date" content="2024-11-21">
->>>>>>> 14e80b5 (Update preimpute(), make_sim_model())
+<meta name="date" content="2024-11-25">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="prev" href="helpers-functions.html">
 <link rel="next" href="gibbs-sampler.html">
-<script src="libs/header-attrs-2.28/header-attrs.js"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script><link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet">
+<script src="libs/header-attrs-2.25/header-attrs.js"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script><link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet">
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet">
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet">
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet">
@@ -43,7 +39,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -200,7 +196,7 @@ flowtrend) model objects.)</p>
 <span id="cb13-6"><a href="syntheticdata.html#cb13-6" tabindex="-1"></a><span class="co">#'</span></span>
 <span id="cb13-7"><a href="syntheticdata.html#cb13-7" tabindex="-1"></a><span class="co">#' @return A list with beta, mn, alpha, prob, X, sigma, TT, numclust.</span></span>
 <span id="cb13-8"><a href="syntheticdata.html#cb13-8" tabindex="-1"></a><span class="co">#' @export</span></span>
-<span id="cb13-9"><a href="syntheticdata.html#cb13-9" tabindex="-1"></a><span id="make_model">make_model</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(orig_model, isignal){</span>
+<span id="cb13-9"><a href="syntheticdata.html#cb13-9" tabindex="-1"></a><span id="make_sim_model">make_sim_model</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(orig_model, isignal){</span>
 <span id="cb13-10"><a href="syntheticdata.html#cb13-10" tabindex="-1"></a></span>
 <span id="cb13-11"><a href="syntheticdata.html#cb13-11" tabindex="-1"></a>  <span class="do">## Setup</span></span>
 <span id="cb13-12"><a href="syntheticdata.html#cb13-12" tabindex="-1"></a>  <span class="fu">stopifnot</span>(isignal <span class="sc">%in%</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">10</span>)</span>
@@ -240,11 +236,11 @@ flowtrend) model objects.)</p>
 <span id="cb13-46"><a href="syntheticdata.html#cb13-46" tabindex="-1"></a>  <span class="fu">return</span>(new_model)</span>
 <span id="cb13-47"><a href="syntheticdata.html#cb13-47" tabindex="-1"></a>}</span></code></pre></div>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="syntheticdata.html#cb14-1" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">1</span>))</span>
-<span id="cb14-2"><a href="syntheticdata.html#cb14-2" tabindex="-1"></a>new_model <span class="ot">=</span> <a href="syntheticdata.html#make_model">make_model</a>(orig_model, <span class="dv">0</span>)</span>
+<span id="cb14-2"><a href="syntheticdata.html#cb14-2" tabindex="-1"></a>new_model <span class="ot">=</span> <a href="syntheticdata.html#make_sim_model">make_sim_model</a>(orig_model, <span class="dv">0</span>)</span>
 <span id="cb14-3"><a href="syntheticdata.html#cb14-3" tabindex="-1"></a>new_model<span class="sc">$</span>mn <span class="sc">%&gt;%</span> .[,<span class="dv">1</span>,] <span class="sc">%&gt;%</span> <span class="fu">matplot</span>(<span class="at">type=</span><span class="st">'l'</span>, <span class="at">main =</span> <span class="fu">paste0</span>(<span class="st">"isignal="</span>, <span class="dv">0</span>), <span class="at">ylim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.5</span>, <span class="fl">0.6</span>))</span>
-<span id="cb14-4"><a href="syntheticdata.html#cb14-4" tabindex="-1"></a>new_model <span class="ot">=</span> <a href="syntheticdata.html#make_model">make_model</a>(orig_model, <span class="dv">5</span>)</span>
+<span id="cb14-4"><a href="syntheticdata.html#cb14-4" tabindex="-1"></a>new_model <span class="ot">=</span> <a href="syntheticdata.html#make_sim_model">make_sim_model</a>(orig_model, <span class="dv">5</span>)</span>
 <span id="cb14-5"><a href="syntheticdata.html#cb14-5" tabindex="-1"></a>new_model<span class="sc">$</span>mn <span class="sc">%&gt;%</span> .[,<span class="dv">1</span>,] <span class="sc">%&gt;%</span> <span class="fu">matplot</span>(<span class="at">type=</span><span class="st">'l'</span>, <span class="at">main =</span> <span class="fu">paste0</span>(<span class="st">"isignal="</span>, <span class="dv">5</span>), <span class="at">ylim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.5</span>, <span class="fl">0.6</span>))</span>
-<span id="cb14-6"><a href="syntheticdata.html#cb14-6" tabindex="-1"></a>new_model <span class="ot">=</span> <a href="syntheticdata.html#make_model">make_model</a>(orig_model, <span class="dv">10</span>)</span>
+<span id="cb14-6"><a href="syntheticdata.html#cb14-6" tabindex="-1"></a>new_model <span class="ot">=</span> <a href="syntheticdata.html#make_sim_model">make_sim_model</a>(orig_model, <span class="dv">10</span>)</span>
 <span id="cb14-7"><a href="syntheticdata.html#cb14-7" tabindex="-1"></a>new_model<span class="sc">$</span>mn <span class="sc">%&gt;%</span> .[,<span class="dv">1</span>,] <span class="sc">%&gt;%</span> <span class="fu">matplot</span>(<span class="at">type=</span><span class="st">'l'</span>, <span class="at">main =</span> <span class="fu">paste0</span>(<span class="st">"isignal="</span>, <span class="dv">10</span>), <span class="at">ylim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.5</span>, <span class="fl">0.6</span>))</span></code></pre></div>
 <p>Then, we will generate data from this model using the function <code><a href="syntheticdata.html#gen_1d">gen_1d</a>()</code>.</p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="syntheticdata.html#cb15-1" tabindex="-1"></a><span class="co">#' Generate 1d data with 2 clusters from a list (|true_model|)</span></span>
@@ -297,7 +293,7 @@ flowtrend) model objects.)</p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="syntheticdata.html#cb16-1" tabindex="-1"></a><span class="do">## Generate data</span></span>
 <span id="cb16-2"><a href="syntheticdata.html#cb16-2" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">100</span>)</span>
 <span id="cb16-3"><a href="syntheticdata.html#cb16-3" tabindex="-1"></a></span>
-<span id="cb16-4"><a href="syntheticdata.html#cb16-4" tabindex="-1"></a>new_model <span class="ot">=</span> <a href="syntheticdata.html#make_model">make_model</a>(orig_model, <span class="dv">8</span>)</span>
+<span id="cb16-4"><a href="syntheticdata.html#cb16-4" tabindex="-1"></a>new_model <span class="ot">=</span> <a href="syntheticdata.html#make_sim_model">make_sim_model</a>(orig_model, <span class="dv">8</span>)</span>
 <span id="cb16-5"><a href="syntheticdata.html#cb16-5" tabindex="-1"></a>ylist <span class="ot">=</span> <a href="syntheticdata.html#gen_1d">gen_1d</a>(new_model, <span class="at">nt =</span> <span class="dv">100</span>)</span>
 <span id="cb16-6"><a href="syntheticdata.html#cb16-6" tabindex="-1"></a>flowtrend<span class="sc">::</span><span class="fu">plot_1d</span>(ylist, <span class="at">obj =</span> new_model)</span>
 <span id="cb16-7"><a href="syntheticdata.html#cb16-7" tabindex="-1"></a></span>

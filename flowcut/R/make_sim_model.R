@@ -8,7 +8,7 @@
 #'
 #' @return A list with beta, mn, alpha, prob, X, sigma, TT, numclust.
 #' @export
-make_model <- function(orig_model, isignal){
+make_sim_model <- function(orig_model, isignal){
 
   ## Setup
   stopifnot(isignal %in% 0:10)

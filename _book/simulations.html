@@ -6,23 +6,19 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>6 Simulations | Creating the flowcut R package</title>
 <meta name="description" content="6 Simulations | Creating the flowcut R package">
-<meta name="generator" content="bookdown 0.40 and GitBook 2.6.7">
+<meta name="generator" content="bookdown 0.35 and GitBook 2.6.7">
 <meta property="og:title" content="6 Simulations | Creating the flowcut R package">
 <meta property="og:type" content="book">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="6 Simulations | Creating the flowcut R package">
 <meta name="author" content="Sheng Jiang, Sangwon Hyun">
-<<<<<<< HEAD
-<meta name="date" content="2024-11-23">
-=======
-<meta name="date" content="2024-11-21">
->>>>>>> 14e80b5 (Update preimpute(), make_sim_model())
+<meta name="date" content="2024-11-25">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="prev" href="gibbs-sampler.html">
 <link rel="next" href="real-data-example.html">
-<script src="libs/header-attrs-2.28/header-attrs.js"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script><link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet">
+<script src="libs/header-attrs-2.25/header-attrs.js"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script><link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet">
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet">
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet">
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet">
@@ -43,7 +39,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -156,8 +152,8 @@ like.</p>
 <span id="cb18-4"><a href="simulations.html#cb18-4" tabindex="-1"></a><span class="do">## Generate data</span></span>
 <span id="cb18-5"><a href="simulations.html#cb18-5" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">100</span>)</span>
 <span id="cb18-6"><a href="simulations.html#cb18-6" tabindex="-1"></a>isignal <span class="ot">=</span> <span class="dv">10</span></span>
-<span id="cb18-7"><a href="simulations.html#cb18-7" tabindex="-1"></a>new_model <span class="ot">=</span> flowcut<span class="sc">::</span><a href="syntheticdata.html#make_model">make_model</a>(orig_model, isignal)</span>
-<span id="cb18-8"><a href="simulations.html#cb18-8" tabindex="-1"></a><span class="do">## new_model = flowcut::<a href="syntheticdata.html#make_model">make_model</a>(orig_sim_model, isignal)</span></span>
+<span id="cb18-7"><a href="simulations.html#cb18-7" tabindex="-1"></a>new_model <span class="ot">=</span> flowcut<span class="sc">::</span><span class="fu">make_model</span>(orig_model, isignal)</span>
+<span id="cb18-8"><a href="simulations.html#cb18-8" tabindex="-1"></a><span class="do">## new_model = flowcut::make_model(orig_sim_model, isignal)</span></span>
 <span id="cb18-9"><a href="simulations.html#cb18-9" tabindex="-1"></a>ylist <span class="ot">=</span> flowcut<span class="sc">::</span><a href="syntheticdata.html#gen_1d">gen_1d</a>(new_model, <span class="at">nt =</span> <span class="dv">100</span>)</span>
 <span id="cb18-10"><a href="simulations.html#cb18-10" tabindex="-1"></a>flowtrend<span class="sc">::</span><span class="fu">plot_1d</span>(ylist, <span class="at">obj =</span> new_model)</span></code></pre></div>
 <p>After censoring, this is it.</p>
@@ -242,7 +238,8 @@ dataset |ynew| given GMM model |gmm_model|.</p>
 <span id="cb23-16"><a href="simulations.html#cb23-16" tabindex="-1"></a>  post_prob <span class="ot">=</span> post_prob<span class="sc">/</span><span class="fu">rowSums</span>(post_prob)</span>
 <span id="cb23-17"><a href="simulations.html#cb23-17" tabindex="-1"></a>  <span class="fu">return</span>(post_prob)</span>
 <span id="cb23-18"><a href="simulations.html#cb23-18" tabindex="-1"></a>}</span></code></pre></div>
-<p>Also, here is a helper to split the data into (1) censored and (2) non-censored (“inner”) particles.</p>
+<p>Also, here is a helper to split the data into (1) censored and (2) non-censored
+(“inner”) particles; used in <code><a href="simulations.html#preimpute">preimpute</a>()</code>.</p>
 <div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="simulations.html#cb24-1" tabindex="-1"></a><span class="co">#' A helper to split the data into (1) censored and (2) non-censored ("inner") particles.</span></span>
 <span id="cb24-2"><a href="simulations.html#cb24-2" tabindex="-1"></a><span class="co">#'</span></span>
 <span id="cb24-3"><a href="simulations.html#cb24-3" tabindex="-1"></a><span class="co">#' @param datobj List containing ylist, countslist, X, and Cbox.</span></span>
@@ -261,20 +258,20 @@ dataset |ynew| given GMM model |gmm_model|.</p>
 <span id="cb24-16"><a href="simulations.html#cb24-16" tabindex="-1"></a>    <span class="fu">lapply</span>(<span class="cf">function</span>(x) <span class="fu">apply</span>(x,<span class="dv">1</span>, <span class="cf">function</span>(xx){ <span class="fu">sum</span>(<span class="fu">abs</span>(xx)) <span class="sc">&gt;</span> <span class="dv">0</span> })) <span class="sc">%&gt;%</span></span>
 <span id="cb24-17"><a href="simulations.html#cb24-17" tabindex="-1"></a>    <span class="fu">lapply</span>(which)</span>
 <span id="cb24-18"><a href="simulations.html#cb24-18" tabindex="-1"></a>  censored_ylist <span class="ot">&lt;-</span> <span class="fu">mapply</span>(<span class="cf">function</span>(y, censor_which){y[censor_which,,drop<span class="ot">=</span><span class="cn">FALSE</span>]},</span>
-<span id="cb24-19"><a href="simulations.html#cb24-19" tabindex="-1"></a>         datobj<span class="sc">$</span>ylist, censor.which.list)</span>
+<span id="cb24-19"><a href="simulations.html#cb24-19" tabindex="-1"></a>         datobj<span class="sc">$</span>ylist, censor.which.list, <span class="at">SIMPLIFY =</span> <span class="cn">FALSE</span>)</span>
 <span id="cb24-20"><a href="simulations.html#cb24-20" tabindex="-1"></a>  censored_direction <span class="ot">&lt;-</span> <span class="fu">mapply</span>(<span class="cf">function</span>(censor_direction, censor_which){</span>
 <span id="cb24-21"><a href="simulations.html#cb24-21" tabindex="-1"></a>    censor_direction[censor_which,,drop<span class="ot">=</span><span class="cn">FALSE</span>]</span>
-<span id="cb24-22"><a href="simulations.html#cb24-22" tabindex="-1"></a>  }, censor.direction.full.list, censor.which.list)</span>
+<span id="cb24-22"><a href="simulations.html#cb24-22" tabindex="-1"></a>  }, censor.direction.full.list, censor.which.list, <span class="at">SIMPLIFY =</span> <span class="cn">FALSE</span>)</span>
 <span id="cb24-23"><a href="simulations.html#cb24-23" tabindex="-1"></a></span>
 <span id="cb24-24"><a href="simulations.html#cb24-24" tabindex="-1"></a>  <span class="do">## here are data</span></span>
 <span id="cb24-25"><a href="simulations.html#cb24-25" tabindex="-1"></a>  inner_ylist <span class="ot">&lt;-</span> <span class="fu">mapply</span>(<span class="cf">function</span>(y, censor_which){</span>
 <span id="cb24-26"><a href="simulations.html#cb24-26" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">length</span>(censor_which) <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="fu">return</span>(y[<span class="sc">-</span>censor_which,,<span class="at">drop=</span><span class="cn">FALSE</span>])</span>
 <span id="cb24-27"><a href="simulations.html#cb24-27" tabindex="-1"></a>    <span class="cf">if</span>(<span class="sc">!</span><span class="fu">length</span>(censor_which) <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="fu">return</span>(y)</span>
-<span id="cb24-28"><a href="simulations.html#cb24-28" tabindex="-1"></a>  }, datobj<span class="sc">$</span>ylist, censor.which.list)</span>
+<span id="cb24-28"><a href="simulations.html#cb24-28" tabindex="-1"></a>  }, datobj<span class="sc">$</span>ylist, censor.which.list, <span class="at">SIMPLIFY =</span> <span class="cn">FALSE</span>)</span>
 <span id="cb24-29"><a href="simulations.html#cb24-29" tabindex="-1"></a>  inner_countslist <span class="ot">&lt;-</span> <span class="fu">mapply</span>(<span class="cf">function</span>(counts, censor_which){</span>
 <span id="cb24-30"><a href="simulations.html#cb24-30" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">length</span>(censor_which) <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="fu">return</span>(counts[<span class="sc">-</span>censor_which])</span>
 <span id="cb24-31"><a href="simulations.html#cb24-31" tabindex="-1"></a>    <span class="cf">if</span>(<span class="sc">!</span><span class="fu">length</span>(censor_which) <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="fu">return</span>(counts)</span>
-<span id="cb24-32"><a href="simulations.html#cb24-32" tabindex="-1"></a>  }, datobj<span class="sc">$</span>countslist, censor.which.list)</span>
+<span id="cb24-32"><a href="simulations.html#cb24-32" tabindex="-1"></a>  }, datobj<span class="sc">$</span>countslist, censor.which.list, <span class="at">SIMPLIFY =</span> <span class="cn">FALSE</span>)</span>
 <span id="cb24-33"><a href="simulations.html#cb24-33" tabindex="-1"></a></span>
 <span id="cb24-34"><a href="simulations.html#cb24-34" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">list</span>(<span class="at">censored_ylist =</span> censored_ylist,</span>
 <span id="cb24-35"><a href="simulations.html#cb24-35" tabindex="-1"></a>              <span class="at">censored_direction =</span> censored_direction,</span>
@@ -282,7 +279,7 @@ dataset |ynew| given GMM model |gmm_model|.</p>
 <span id="cb24-37"><a href="simulations.html#cb24-37" tabindex="-1"></a>              <span class="at">inner_countslist =</span> inner_countslist))</span>
 <span id="cb24-38"><a href="simulations.html#cb24-38" tabindex="-1"></a>}</span></code></pre></div>
 <p>Here is a function that will pre-impute data for a 2-cluster 1-dimensional
-dataset.</p>
+dataset; used in <code><a href="simulations.html#preimpute">preimpute</a>()</code>.</p>
 <div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="simulations.html#cb25-1" tabindex="-1"></a><span class="co">#' At each time point, we will (1) set aside the censored points, and (2) estimate</span></span>
 <span id="cb25-2"><a href="simulations.html#cb25-2" tabindex="-1"></a><span class="co">#' a 2-component GMM (2) take the censored points, and "impute" them according to those</span></span>
 <span id="cb25-3"><a href="simulations.html#cb25-3" tabindex="-1"></a><span class="co">#' mixtures. (After that, we'll (3) fit flowmix on the resulting imputed data.)</span></span>
