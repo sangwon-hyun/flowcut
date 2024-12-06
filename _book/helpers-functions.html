@@ -12,7 +12,7 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="3 Helpers functions | Creating the flowcut R package">
 <meta name="author" content="Sheng Jiang, Sangwon Hyun">
-<meta name="date" content="2024-11-25">
+<meta name="date" content="2024-12-05">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -540,7 +540,7 @@ first column is the lower cutoff, and the second column is the upper cutoff).</p
 <span id="cb8-36"><a href="helpers-functions.html#cb8-36" tabindex="-1"></a>          <span class="fu">as.matrix</span>(matrixNormal<span class="sc">::</span><span class="fu">rmatnorm</span>(<span class="at">M =</span> <span class="fu">matrix</span>(<span class="dv">0</span>,d,p), </span>
 <span id="cb8-37"><a href="helpers-functions.html#cb8-37" tabindex="-1"></a>                                           <span class="at">U =</span> xx, </span>
 <span id="cb8-38"><a href="helpers-functions.html#cb8-38" tabindex="-1"></a>                                           <span class="at">V =</span> inv.XTX<span class="sc">*</span>gg, </span>
-<span id="cb8-39"><a href="helpers-functions.html#cb8-39" tabindex="-1"></a>                                           <span class="at">tol =</span> .Machine<span class="sc">$</span>double.eps<span class="sc">^</span><span class="fl">0.5</span>)),</span>
+<span id="cb8-39"><a href="helpers-functions.html#cb8-39" tabindex="-1"></a>                                           <span class="at">tol =</span> <span class="fl">1E-5</span>)),<span class="do">##.Machine$double.eps^0.5)),</span></span>
 <span id="cb8-40"><a href="helpers-functions.html#cb8-40" tabindex="-1"></a>          <span class="at">simplify =</span> <span class="cn">FALSE</span>)</span>
 <span id="cb8-41"><a href="helpers-functions.html#cb8-41" tabindex="-1"></a>      xb <span class="ot">&lt;-</span> <span class="fu">lapply</span>(beta.ell, <span class="cf">function</span>(bb) bb<span class="sc">%*%</span> tX) </span>
 <span id="cb8-42"><a href="helpers-functions.html#cb8-42" tabindex="-1"></a>                                      <span class="co"># length of list: Nmc </span></span>
@@ -583,7 +583,58 @@ first column is the lower cutoff, and the second column is the upper cutoff).</p
 <span id="cb8-79"><a href="helpers-functions.html#cb8-79" tabindex="-1"></a>  }</span>
 <span id="cb8-80"><a href="helpers-functions.html#cb8-80" tabindex="-1"></a>  </span>
 <span id="cb8-81"><a href="helpers-functions.html#cb8-81" tabindex="-1"></a>  <span class="fu">return</span>(newx[imin])</span>
-<span id="cb8-82"><a href="helpers-functions.html#cb8-82" tabindex="-1"></a>}</span></code></pre></div>
+<span id="cb8-82"><a href="helpers-functions.html#cb8-82" tabindex="-1"></a>}</span>
+<span id="cb8-83"><a href="helpers-functions.html#cb8-83" tabindex="-1"></a></span>
+<span id="cb8-84"><a href="helpers-functions.html#cb8-84" tabindex="-1"></a><span class="co">#' Closed form for obtaining the g parameter by simulation. Currently only works for dimdat=1</span></span>
+<span id="cb8-85"><a href="helpers-functions.html#cb8-85" tabindex="-1"></a><span class="co">#' </span></span>
+<span id="cb8-86"><a href="helpers-functions.html#cb8-86" tabindex="-1"></a><span class="co">#' @param X the design matrix, TT by p, (that doesn't include the intercept) </span></span>
+<span id="cb8-87"><a href="helpers-functions.html#cb8-87" tabindex="-1"></a><span class="co">#' @param dimdat the dimension of the cytogram space </span></span>
+<span id="cb8-88"><a href="helpers-functions.html#cb8-88" tabindex="-1"></a><span class="co">#' @param maxdev Maximum deviation of cluster means away from its grand mean. </span></span>
+<span id="cb8-89"><a href="helpers-functions.html#cb8-89" tabindex="-1"></a><span class="co">#' @param numclust the number of experts </span></span>
+<span id="cb8-90"><a href="helpers-functions.html#cb8-90" tabindex="-1"></a><span class="co">#' @param prior_prob prior probability</span></span>
+<span id="cb8-91"><a href="helpers-functions.html#cb8-91" tabindex="-1"></a><span class="co">#' @param viz show the plot of the fitted relationship between the g parameter and the prior probability.</span></span>
+<span id="cb8-92"><a href="helpers-functions.html#cb8-92" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb8-93"><a href="helpers-functions.html#cb8-93" tabindex="-1"></a><span class="co">#' </span></span>
+<span id="cb8-94"><a href="helpers-functions.html#cb8-94" tabindex="-1"></a><span class="co">#' @return the g parameter with desired prior probability on maxdev </span></span>
+<span id="cb8-95"><a href="helpers-functions.html#cb8-95" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb8-96"><a href="helpers-functions.html#cb8-96" tabindex="-1"></a><span class="co">#' @export </span></span>
+<span id="cb8-97"><a href="helpers-functions.html#cb8-97" tabindex="-1"></a><span id="maxdev_to_gg_closed_form">maxdev_to_gg_closed_form</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(X, dimdat, maxdev, numclust, <span class="at">prior_prob =</span> <span class="fl">0.99</span>, <span class="at">viz =</span> <span class="cn">FALSE</span>){</span>
+<span id="cb8-98"><a href="helpers-functions.html#cb8-98" tabindex="-1"></a></span>
+<span id="cb8-99"><a href="helpers-functions.html#cb8-99" tabindex="-1"></a>  <span class="fu">stopifnot</span>(dimdat <span class="sc">==</span> <span class="dv">1</span>)</span>
+<span id="cb8-100"><a href="helpers-functions.html#cb8-100" tabindex="-1"></a>  obj <span class="ot">=</span> <span class="fu">svd</span>(X)</span>
+<span id="cb8-101"><a href="helpers-functions.html#cb8-101" tabindex="-1"></a>  pp <span class="ot">=</span> <span class="fu">ncol</span>(X)</span>
+<span id="cb8-102"><a href="helpers-functions.html#cb8-102" tabindex="-1"></a>  TT <span class="ot">=</span> <span class="fu">nrow</span>(X)</span>
+<span id="cb8-103"><a href="helpers-functions.html#cb8-103" tabindex="-1"></a>  <span class="do">## maxdev = 0.115525</span></span>
+<span id="cb8-104"><a href="helpers-functions.html#cb8-104" tabindex="-1"></a></span>
+<span id="cb8-105"><a href="helpers-functions.html#cb8-105" tabindex="-1"></a>  <span class="do">## z_cutoff = 2.58 ## for 99% for one cluster</span></span>
+<span id="cb8-106"><a href="helpers-functions.html#cb8-106" tabindex="-1"></a>  z_cutoff <span class="ot">=</span> <span class="fu">qnorm</span>(<span class="dv">1</span><span class="sc">-</span>(<span class="dv">1</span><span class="sc">-</span>prior_prob<span class="sc">^</span>(<span class="dv">1</span><span class="sc">/</span>numclust))<span class="sc">/</span><span class="dv">2</span>)</span>
+<span id="cb8-107"><a href="helpers-functions.html#cb8-107" tabindex="-1"></a>  </span>
+<span id="cb8-108"><a href="helpers-functions.html#cb8-108" tabindex="-1"></a>  <span class="do">## Form the constant c and matrix P, multiplied to form the prior covariance cP.</span></span>
+<span id="cb8-109"><a href="helpers-functions.html#cb8-109" tabindex="-1"></a>  P <span class="ot">=</span> obj<span class="sc">$</span>u <span class="sc">%*%</span> <span class="fu">t</span>(obj<span class="sc">$</span>u)</span>
+<span id="cb8-110"><a href="helpers-functions.html#cb8-110" tabindex="-1"></a>  c <span class="ot">=</span> maxdev<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> z_cutoff<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span><span class="fu">max</span>(<span class="fu">diag</span>(P))</span>
+<span id="cb8-111"><a href="helpers-functions.html#cb8-111" tabindex="-1"></a>  A <span class="ot">=</span> c <span class="sc">*</span> obj<span class="sc">$</span>v <span class="sc">%*%</span> <span class="fu">diag</span>(<span class="dv">1</span><span class="sc">/</span>(obj<span class="sc">$</span>d<span class="sc">^</span><span class="dv">2</span>)) <span class="sc">%*%</span> <span class="fu">t</span>(obj<span class="sc">$</span>v) </span>
+<span id="cb8-112"><a href="helpers-functions.html#cb8-112" tabindex="-1"></a>  cP <span class="ot">=</span> (X <span class="sc">%*%</span> A <span class="sc">%*%</span> <span class="fu">t</span>(X)) <span class="do">##%&gt;% diag() %&gt;% plot()</span></span>
+<span id="cb8-113"><a href="helpers-functions.html#cb8-113" tabindex="-1"></a></span>
+<span id="cb8-114"><a href="helpers-functions.html#cb8-114" tabindex="-1"></a>  <span class="cf">if</span>(viz){</span>
+<span id="cb8-115"><a href="helpers-functions.html#cb8-115" tabindex="-1"></a>  </span>
+<span id="cb8-116"><a href="helpers-functions.html#cb8-116" tabindex="-1"></a>    <span class="do">## Generate beta and form w = X beta_k</span></span>
+<span id="cb8-117"><a href="helpers-functions.html#cb8-117" tabindex="-1"></a>    many_betas <span class="ot">=</span> MASS<span class="sc">::</span><span class="fu">mvrnorm</span>(<span class="dv">100000</span>, <span class="at">mu =</span> <span class="fu">rep</span>(<span class="dv">0</span>, pp), <span class="at">Sigma =</span> A)</span>
+<span id="cb8-118"><a href="helpers-functions.html#cb8-118" tabindex="-1"></a>    w <span class="ot">=</span>  X <span class="sc">%*%</span> <span class="fu">t</span>(many_betas) </span>
+<span id="cb8-119"><a href="helpers-functions.html#cb8-119" tabindex="-1"></a>    </span>
+<span id="cb8-120"><a href="helpers-functions.html#cb8-120" tabindex="-1"></a>    <span class="do">## Make a plot of all w = X beta_k</span></span>
+<span id="cb8-121"><a href="helpers-functions.html#cb8-121" tabindex="-1"></a>    w <span class="sc">%&gt;%</span> .[,<span class="dv">1</span><span class="sc">:</span><span class="dv">500</span>] <span class="sc">%&gt;%</span> <span class="fu">matplot</span>(<span class="at">pch =</span> <span class="dv">16</span>, <span class="at">col =</span> <span class="fu">rgb</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="fl">0.1</span>))</span>
+<span id="cb8-122"><a href="helpers-functions.html#cb8-122" tabindex="-1"></a></span>
+<span id="cb8-123"><a href="helpers-functions.html#cb8-123" tabindex="-1"></a>    <span class="do">## Draw the lines where the 95'th quantiles are.</span></span>
+<span id="cb8-124"><a href="helpers-functions.html#cb8-124" tabindex="-1"></a>    qs <span class="ot">=</span> w <span class="sc">%&gt;%</span> <span class="fu">apply</span>(<span class="dv">1</span>, <span class="cf">function</span>(one_w){</span>
+<span id="cb8-125"><a href="helpers-functions.html#cb8-125" tabindex="-1"></a>      <span class="fu">quantile</span>(one_w, <span class="at">probs=</span><span class="fl">0.95</span>)})</span>
+<span id="cb8-126"><a href="helpers-functions.html#cb8-126" tabindex="-1"></a>    <span class="fu">lines</span>(qs, <span class="at">col =</span> <span class="st">'red'</span>)</span>
+<span id="cb8-127"><a href="helpers-functions.html#cb8-127" tabindex="-1"></a>    <span class="fu">abline</span>(<span class="at">h =</span> maxdev, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">lty =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">'red'</span>)</span>
+<span id="cb8-128"><a href="helpers-functions.html#cb8-128" tabindex="-1"></a>    <span class="fu">text</span>(<span class="at">x=</span><span class="dv">50</span>, <span class="at">y =</span> maxdev<span class="sc">*</span>.<span class="dv">98</span>, <span class="at">labels =</span> <span class="st">"Maximum deviation"</span>)</span>
+<span id="cb8-129"><a href="helpers-functions.html#cb8-129" tabindex="-1"></a>    <span class="fu">legend</span>(<span class="st">"topleft"</span>, <span class="at">col =</span> <span class="st">'red'</span>, <span class="at">lwd=</span><span class="dv">1</span>, <span class="at">lty=</span><span class="dv">1</span>, <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">"0.95 quantile"</span>))</span>
+<span id="cb8-130"><a href="helpers-functions.html#cb8-130" tabindex="-1"></a>  }</span>
+<span id="cb8-131"><a href="helpers-functions.html#cb8-131" tabindex="-1"></a></span>
+<span id="cb8-132"><a href="helpers-functions.html#cb8-132" tabindex="-1"></a>  <span class="fu">return</span>(c)</span>
+<span id="cb8-133"><a href="helpers-functions.html#cb8-133" tabindex="-1"></a>}</span></code></pre></div>
 <p>Here’s a function to take the stick-breaking <span class="math inline">\(\gamma\)</span> parameters (with <span class="math inline">\(X\)</span>) and
 transform them to a probability vector.</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="helpers-functions.html#cb9-1" tabindex="-1"></a><span class="co">#' Description goes here</span></span>

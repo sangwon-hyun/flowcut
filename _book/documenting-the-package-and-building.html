@@ -12,7 +12,7 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="8 Documenting the package and building | Creating the flowcut R package">
 <meta name="author" content="Sheng Jiang, Sangwon Hyun">
-<meta name="date" content="2024-11-25">
+<meta name="date" content="2024-12-05">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -144,7 +144,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </h1>
 <p>We finish by running commands that will document, build, and install the
 package. It may also be a good idea to check the package from within this file.</p>
-<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="documenting-the-package-and-building.html#cb28-1" tabindex="-1"></a>litr<span class="sc">::</span><span class="fu">document</span>() <span class="co"># &lt;-- use instead of devtools::document()</span></span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="documenting-the-package-and-building.html#cb27-1" tabindex="-1"></a>litr<span class="sc">::</span><span class="fu">document</span>() <span class="co"># &lt;-- use instead of devtools::document()</span></span></code></pre></div>
 <pre><code>## ℹ Updating flowcut documentation
 ## ℹ Loading flowcut
 ## Loading required package: MASS
@@ -238,7 +238,7 @@ package. It may also be a good idea to check the package from within this file.<
 ## 
 ##     is_integer, transpose
 ## 
-##
+## 
 ## Loading required package: tmvnsim</code></pre>
 <pre><code>## Warning: [run.Gibbs.fast.R:25] @return requires a value</code></pre>
 <pre><code>## Writing 'NAMESPACE'
@@ -254,6 +254,7 @@ package. It may also be a good idea to check the package from within this file.<
 ## Writing 'impute.Rd'
 ## Writing 'make_sim_model.Rd'
 ## Writing 'maxdev_to_gg.Rd'
+## Writing 'maxdev_to_gg_closed_form.Rd'
 ## Writing 'mcmc_res_to_flowmix.Rd'
 ## Writing 'post_process_pie.Rd'
 ## Writing 'preimpute.Rd'

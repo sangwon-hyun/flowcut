@@ -28,7 +28,7 @@ preimpute <- function(datobj){
   gmm_model_list <- mapply(function(y, counts){
 
     ## z is just a random initialization of the memberships of the points.
-    z = unmap(sample(1:2, size = length(y), replace=TRUE))
+    z = mclust::unmap(sample(1:2, size = length(y), replace=TRUE))
 
     ## Fit a Gaussian mixture model for weighted data.
     res = me.weighted(as.numeric(y), modelName = "V", weights = counts, z = z)

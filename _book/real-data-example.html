@@ -12,7 +12,7 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="7 Real data example | Creating the flowcut R package">
 <meta name="author" content="Sheng Jiang, Sangwon Hyun">
-<meta name="date" content="2024-11-25">
+<meta name="date" content="2024-12-05">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -147,68 +147,68 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>We’ll load the data, process it, then feed it into the MCMC.</p>
 <p>TODO: bundle the Cbox into a <code>make_Cbox()</code> function. Why are we doing
 <code><a href="real-data-example.html#more.censor">more.censor</a>()</code> manually? Simplify/streamline this.</p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="real-data-example.html#cb27-1" tabindex="-1"></a><span class="do">## Load the code for running MCMC</span></span>
-<span id="cb27-2"><a href="real-data-example.html#cb27-2" tabindex="-1"></a><span class="do">## codedir =  "~/Dropbox/Apps/Overleaf/censor-flowmix/BMEcensor/code/"</span></span>
-<span id="cb27-3"><a href="real-data-example.html#cb27-3" tabindex="-1"></a>codedir <span class="ot">=</span>  <span class="st">"~/Dropbox/Apps/Overleaf/censor-flowmix/BMEcensor/code/"</span></span>
-<span id="cb27-4"><a href="real-data-example.html#cb27-4" tabindex="-1"></a><span class="fu">source</span>(<span class="fu">file.path</span>(codedir, <span class="st">'BME-functions.r'</span>))</span>
-<span id="cb27-5"><a href="real-data-example.html#cb27-5" tabindex="-1"></a></span>
-<span id="cb27-6"><a href="real-data-example.html#cb27-6" tabindex="-1"></a><span class="do">## Load dataset</span></span>
-<span id="cb27-7"><a href="real-data-example.html#cb27-7" tabindex="-1"></a>datadir <span class="ot">=</span> <span class="st">"~/Dropbox/research-new/censored-flowmix/code/data"</span></span>
-<span id="cb27-8"><a href="real-data-example.html#cb27-8" tabindex="-1"></a>dta <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">file.path</span>(datadir, <span class="st">"pre-censor-datobj.RDS"</span>))</span>
-<span id="cb27-9"><a href="real-data-example.html#cb27-9" tabindex="-1"></a></span>
-<span id="cb27-10"><a href="real-data-example.html#cb27-10" tabindex="-1"></a><span class="do">## Assign data to objects</span></span>
-<span id="cb27-11"><a href="real-data-example.html#cb27-11" tabindex="-1"></a>ylist <span class="ot">&lt;-</span> dta<span class="sc">$</span>ylist</span>
-<span id="cb27-12"><a href="real-data-example.html#cb27-12" tabindex="-1"></a>TT <span class="ot">&lt;-</span> <span class="fu">length</span>(ylist)</span>
-<span id="cb27-13"><a href="real-data-example.html#cb27-13" tabindex="-1"></a>d <span class="ot">&lt;-</span> <span class="dv">3</span></span>
-<span id="cb27-14"><a href="real-data-example.html#cb27-14" tabindex="-1"></a>countslist <span class="ot">=</span> dta<span class="sc">$</span>countslist</span>
-<span id="cb27-15"><a href="real-data-example.html#cb27-15" tabindex="-1"></a></span>
-<span id="cb27-16"><a href="real-data-example.html#cb27-16" tabindex="-1"></a><span class="do">## Define censor limits</span></span>
-<span id="cb27-17"><a href="real-data-example.html#cb27-17" tabindex="-1"></a>bounds.lower <span class="ot">&lt;-</span> <span class="fu">rowMins</span>(<span class="fu">matrix</span>(<span class="fu">unlist</span>(</span>
-<span id="cb27-18"><a href="real-data-example.html#cb27-18" tabindex="-1"></a>    <span class="fu">lapply</span>(dta<span class="sc">$</span>ylist, <span class="cf">function</span>(xx) <span class="fu">colMins</span>(xx,<span class="at">value =</span> <span class="cn">TRUE</span>))),</span>
-<span id="cb27-19"><a href="real-data-example.html#cb27-19" tabindex="-1"></a>    <span class="at">nrow =</span> d), <span class="at">value =</span> <span class="cn">TRUE</span>) </span>
-<span id="cb27-20"><a href="real-data-example.html#cb27-20" tabindex="-1"></a>bounds.upper <span class="ot">&lt;-</span> <span class="fu">rowMaxs</span>(<span class="fu">matrix</span>(<span class="fu">unlist</span>(</span>
-<span id="cb27-21"><a href="real-data-example.html#cb27-21" tabindex="-1"></a>    <span class="fu">lapply</span>(dta<span class="sc">$</span>ylist, <span class="cf">function</span>(xx) <span class="fu">colMaxs</span>(xx,<span class="at">value =</span> <span class="cn">TRUE</span>))),</span>
-<span id="cb27-22"><a href="real-data-example.html#cb27-22" tabindex="-1"></a>    <span class="at">nrow =</span> d), <span class="at">value =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb27-23"><a href="real-data-example.html#cb27-23" tabindex="-1"></a></span>
-<span id="cb27-24"><a href="real-data-example.html#cb27-24" tabindex="-1"></a><span class="do">## Censor the first dimension a bit more</span></span>
-<span id="cb27-25"><a href="real-data-example.html#cb27-25" tabindex="-1"></a>Cbox <span class="ot">&lt;-</span> <span class="fu">cbind</span>(<span class="fu">signif</span>(<span class="fu">log</span>(bounds.lower),<span class="dv">5</span>), <span class="fu">log</span>(bounds.upper))</span>
-<span id="cb27-26"><a href="real-data-example.html#cb27-26" tabindex="-1"></a><span id="more.censor">more.censor</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(ymat,bd){</span>
-<span id="cb27-27"><a href="real-data-example.html#cb27-27" tabindex="-1"></a>    <span class="fu">cbind</span>(<span class="fu">sapply</span>(ymat[,<span class="dv">1</span>], <span class="cf">function</span>(xx) <span class="fu">ifelse</span>(xx<span class="sc">&lt;</span>bd, bd, xx)),</span>
-<span id="cb27-28"><a href="real-data-example.html#cb27-28" tabindex="-1"></a>          ymat[,<span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">3</span>)]) }</span>
-<span id="cb27-29"><a href="real-data-example.html#cb27-29" tabindex="-1"></a>ylist <span class="ot">&lt;-</span> <span class="fu">mclapply</span>(dta<span class="sc">$</span>ylist,</span>
-<span id="cb27-30"><a href="real-data-example.html#cb27-30" tabindex="-1"></a>                  <span class="cf">function</span>(yy){ <a href="real-data-example.html#more.censor">more.censor</a>(<span class="fu">log</span>(yy),Cbox[<span class="dv">1</span>,<span class="dv">1</span>]), },</span>
-<span id="cb27-31"><a href="real-data-example.html#cb27-31" tabindex="-1"></a>                  <span class="at">mc.cores =</span> <span class="fu">min</span>(n.cores, TT))</span>
-<span id="cb27-32"><a href="real-data-example.html#cb27-32" tabindex="-1"></a></span>
-<span id="cb27-33"><a href="real-data-example.html#cb27-33" tabindex="-1"></a></span>
-<span id="cb27-34"><a href="real-data-example.html#cb27-34" tabindex="-1"></a><span class="do">## Checking that censoring is done properly</span></span>
-<span id="cb27-35"><a href="real-data-example.html#cb27-35" tabindex="-1"></a>assertthat<span class="sc">::</span><span class="fu">assert_that</span>(<span class="fu">all</span>(<span class="fu">rowMins</span>(<span class="fu">matrix</span>(<span class="fu">unlist</span>(</span>
-<span id="cb27-36"><a href="real-data-example.html#cb27-36" tabindex="-1"></a>                <span class="fu">lapply</span>(ylist, <span class="cf">function</span>(xx) <span class="fu">colMins</span>(xx,<span class="at">value =</span> <span class="cn">TRUE</span>))),</span>
-<span id="cb27-37"><a href="real-data-example.html#cb27-37" tabindex="-1"></a>                <span class="at">nrow =</span> d), <span class="at">value =</span> <span class="cn">TRUE</span>) <span class="sc">==</span> Cbox[,<span class="dv">1</span>]))</span>
-<span id="cb27-38"><a href="real-data-example.html#cb27-38" tabindex="-1"></a>assertthat<span class="sc">::</span><span class="fu">assert_that</span>(<span class="fu">all</span>(<span class="fu">rowMaxs</span>(<span class="fu">matrix</span>(<span class="fu">unlist</span>(</span>
-<span id="cb27-39"><a href="real-data-example.html#cb27-39" tabindex="-1"></a>                <span class="fu">lapply</span>(ylist, <span class="cf">function</span>(xx) <span class="fu">colMaxs</span>(xx,<span class="at">value =</span> <span class="cn">TRUE</span>))),</span>
-<span id="cb27-40"><a href="real-data-example.html#cb27-40" tabindex="-1"></a>                <span class="at">nrow =</span> d), <span class="at">value =</span> <span class="cn">TRUE</span>)  <span class="sc">==</span> Cbox[,<span class="dv">2</span>]))</span>
-<span id="cb27-41"><a href="real-data-example.html#cb27-41" tabindex="-1"></a></span>
-<span id="cb27-42"><a href="real-data-example.html#cb27-42" tabindex="-1"></a></span>
-<span id="cb27-43"><a href="real-data-example.html#cb27-43" tabindex="-1"></a><span class="do">## Clean data</span></span>
-<span id="cb27-44"><a href="real-data-example.html#cb27-44" tabindex="-1"></a>datobj <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">ylist =</span> ylist,</span>
-<span id="cb27-45"><a href="real-data-example.html#cb27-45" tabindex="-1"></a>               <span class="at">countslist =</span> dta<span class="sc">$</span>countslist,</span>
-<span id="cb27-46"><a href="real-data-example.html#cb27-46" tabindex="-1"></a>               <span class="at">X =</span> dta<span class="sc">$</span>X,</span>
-<span id="cb27-47"><a href="real-data-example.html#cb27-47" tabindex="-1"></a>               <span class="at">numclust =</span> <span class="dv">10</span>,</span>
-<span id="cb27-48"><a href="real-data-example.html#cb27-48" tabindex="-1"></a>               <span class="at">Cbox=</span>Cbox) </span>
-<span id="cb27-49"><a href="real-data-example.html#cb27-49" tabindex="-1"></a></span>
-<span id="cb27-50"><a href="real-data-example.html#cb27-50" tabindex="-1"></a></span>
-<span id="cb27-51"><a href="real-data-example.html#cb27-51" tabindex="-1"></a><span class="do">## Run the MCMC</span></span>
-<span id="cb27-52"><a href="real-data-example.html#cb27-52" tabindex="-1"></a>Nmc <span class="ot">&lt;-</span> <span class="fl">1e3</span><span class="sc">*</span><span class="dv">5</span></span>
-<span id="cb27-53"><a href="real-data-example.html#cb27-53" tabindex="-1"></a>Nburn <span class="ot">&lt;-</span> <span class="dv">500</span></span>
-<span id="cb27-54"><a href="real-data-example.html#cb27-54" tabindex="-1"></a>K  <span class="ot">&lt;-</span>  <span class="dv">10</span></span>
-<span id="cb27-55"><a href="real-data-example.html#cb27-55" tabindex="-1"></a>Gibbs.res0 <span class="ot">&lt;-</span> <a href="gibbs-sampler.html#run.Gibbs.fast">run.Gibbs.fast</a>(<span class="at">ylist =</span> datobj<span class="sc">$</span>ylist,</span>
-<span id="cb27-56"><a href="real-data-example.html#cb27-56" tabindex="-1"></a>                             <span class="at">countslist =</span> datobj<span class="sc">$</span>countslist,</span>
-<span id="cb27-57"><a href="real-data-example.html#cb27-57" tabindex="-1"></a>                             <span class="at">X =</span> datobj<span class="sc">$</span>X,</span>
-<span id="cb27-58"><a href="real-data-example.html#cb27-58" tabindex="-1"></a>                             <span class="at">numclust =</span> datobj<span class="sc">$</span>numclust,</span>
-<span id="cb27-59"><a href="real-data-example.html#cb27-59" tabindex="-1"></a>                             <span class="at">gg =</span> <span class="fl">0.1</span>,</span>
-<span id="cb27-60"><a href="real-data-example.html#cb27-60" tabindex="-1"></a>                             <span class="at">Nmc =</span> Nmc, <span class="at">Nburn =</span> Nburn,</span>
-<span id="cb27-61"><a href="real-data-example.html#cb27-61" tabindex="-1"></a>                             <span class="at">Cbox =</span> datobj<span class="sc">$</span>Cbox, <span class="at">verbose =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb27-62"><a href="real-data-example.html#cb27-62" tabindex="-1"></a>                             <span class="at">warm.start =</span> <span class="cn">NULL</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="real-data-example.html#cb26-1" tabindex="-1"></a><span class="do">## Load the code for running MCMC</span></span>
+<span id="cb26-2"><a href="real-data-example.html#cb26-2" tabindex="-1"></a><span class="do">## codedir =  "~/Dropbox/Apps/Overleaf/censor-flowmix/BMEcensor/code/"</span></span>
+<span id="cb26-3"><a href="real-data-example.html#cb26-3" tabindex="-1"></a>codedir <span class="ot">=</span>  <span class="st">"~/Dropbox/Apps/Overleaf/censor-flowmix/BMEcensor/code/"</span></span>
+<span id="cb26-4"><a href="real-data-example.html#cb26-4" tabindex="-1"></a><span class="fu">source</span>(<span class="fu">file.path</span>(codedir, <span class="st">'BME-functions.r'</span>))</span>
+<span id="cb26-5"><a href="real-data-example.html#cb26-5" tabindex="-1"></a></span>
+<span id="cb26-6"><a href="real-data-example.html#cb26-6" tabindex="-1"></a><span class="do">## Load dataset</span></span>
+<span id="cb26-7"><a href="real-data-example.html#cb26-7" tabindex="-1"></a>datadir <span class="ot">=</span> <span class="st">"~/Dropbox/research-new/censored-flowmix/code/data"</span></span>
+<span id="cb26-8"><a href="real-data-example.html#cb26-8" tabindex="-1"></a>dta <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">file.path</span>(datadir, <span class="st">"pre-censor-datobj.RDS"</span>))</span>
+<span id="cb26-9"><a href="real-data-example.html#cb26-9" tabindex="-1"></a></span>
+<span id="cb26-10"><a href="real-data-example.html#cb26-10" tabindex="-1"></a><span class="do">## Assign data to objects</span></span>
+<span id="cb26-11"><a href="real-data-example.html#cb26-11" tabindex="-1"></a>ylist <span class="ot">&lt;-</span> dta<span class="sc">$</span>ylist</span>
+<span id="cb26-12"><a href="real-data-example.html#cb26-12" tabindex="-1"></a>TT <span class="ot">&lt;-</span> <span class="fu">length</span>(ylist)</span>
+<span id="cb26-13"><a href="real-data-example.html#cb26-13" tabindex="-1"></a>d <span class="ot">&lt;-</span> <span class="dv">3</span></span>
+<span id="cb26-14"><a href="real-data-example.html#cb26-14" tabindex="-1"></a>countslist <span class="ot">=</span> dta<span class="sc">$</span>countslist</span>
+<span id="cb26-15"><a href="real-data-example.html#cb26-15" tabindex="-1"></a></span>
+<span id="cb26-16"><a href="real-data-example.html#cb26-16" tabindex="-1"></a><span class="do">## Define censor limits</span></span>
+<span id="cb26-17"><a href="real-data-example.html#cb26-17" tabindex="-1"></a>bounds.lower <span class="ot">&lt;-</span> <span class="fu">rowMins</span>(<span class="fu">matrix</span>(<span class="fu">unlist</span>(</span>
+<span id="cb26-18"><a href="real-data-example.html#cb26-18" tabindex="-1"></a>    <span class="fu">lapply</span>(dta<span class="sc">$</span>ylist, <span class="cf">function</span>(xx) <span class="fu">colMins</span>(xx,<span class="at">value =</span> <span class="cn">TRUE</span>))),</span>
+<span id="cb26-19"><a href="real-data-example.html#cb26-19" tabindex="-1"></a>    <span class="at">nrow =</span> d), <span class="at">value =</span> <span class="cn">TRUE</span>) </span>
+<span id="cb26-20"><a href="real-data-example.html#cb26-20" tabindex="-1"></a>bounds.upper <span class="ot">&lt;-</span> <span class="fu">rowMaxs</span>(<span class="fu">matrix</span>(<span class="fu">unlist</span>(</span>
+<span id="cb26-21"><a href="real-data-example.html#cb26-21" tabindex="-1"></a>    <span class="fu">lapply</span>(dta<span class="sc">$</span>ylist, <span class="cf">function</span>(xx) <span class="fu">colMaxs</span>(xx,<span class="at">value =</span> <span class="cn">TRUE</span>))),</span>
+<span id="cb26-22"><a href="real-data-example.html#cb26-22" tabindex="-1"></a>    <span class="at">nrow =</span> d), <span class="at">value =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb26-23"><a href="real-data-example.html#cb26-23" tabindex="-1"></a></span>
+<span id="cb26-24"><a href="real-data-example.html#cb26-24" tabindex="-1"></a><span class="do">## Censor the first dimension a bit more</span></span>
+<span id="cb26-25"><a href="real-data-example.html#cb26-25" tabindex="-1"></a>Cbox <span class="ot">&lt;-</span> <span class="fu">cbind</span>(<span class="fu">signif</span>(<span class="fu">log</span>(bounds.lower),<span class="dv">5</span>), <span class="fu">log</span>(bounds.upper))</span>
+<span id="cb26-26"><a href="real-data-example.html#cb26-26" tabindex="-1"></a><span id="more.censor">more.censor</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(ymat,bd){</span>
+<span id="cb26-27"><a href="real-data-example.html#cb26-27" tabindex="-1"></a>    <span class="fu">cbind</span>(<span class="fu">sapply</span>(ymat[,<span class="dv">1</span>], <span class="cf">function</span>(xx) <span class="fu">ifelse</span>(xx<span class="sc">&lt;</span>bd, bd, xx)),</span>
+<span id="cb26-28"><a href="real-data-example.html#cb26-28" tabindex="-1"></a>          ymat[,<span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">3</span>)]) }</span>
+<span id="cb26-29"><a href="real-data-example.html#cb26-29" tabindex="-1"></a>ylist <span class="ot">&lt;-</span> <span class="fu">mclapply</span>(dta<span class="sc">$</span>ylist,</span>
+<span id="cb26-30"><a href="real-data-example.html#cb26-30" tabindex="-1"></a>                  <span class="cf">function</span>(yy){ <a href="real-data-example.html#more.censor">more.censor</a>(<span class="fu">log</span>(yy),Cbox[<span class="dv">1</span>,<span class="dv">1</span>]), },</span>
+<span id="cb26-31"><a href="real-data-example.html#cb26-31" tabindex="-1"></a>                  <span class="at">mc.cores =</span> <span class="fu">min</span>(n.cores, TT))</span>
+<span id="cb26-32"><a href="real-data-example.html#cb26-32" tabindex="-1"></a></span>
+<span id="cb26-33"><a href="real-data-example.html#cb26-33" tabindex="-1"></a></span>
+<span id="cb26-34"><a href="real-data-example.html#cb26-34" tabindex="-1"></a><span class="do">## Checking that censoring is done properly</span></span>
+<span id="cb26-35"><a href="real-data-example.html#cb26-35" tabindex="-1"></a>assertthat<span class="sc">::</span><span class="fu">assert_that</span>(<span class="fu">all</span>(<span class="fu">rowMins</span>(<span class="fu">matrix</span>(<span class="fu">unlist</span>(</span>
+<span id="cb26-36"><a href="real-data-example.html#cb26-36" tabindex="-1"></a>                <span class="fu">lapply</span>(ylist, <span class="cf">function</span>(xx) <span class="fu">colMins</span>(xx,<span class="at">value =</span> <span class="cn">TRUE</span>))),</span>
+<span id="cb26-37"><a href="real-data-example.html#cb26-37" tabindex="-1"></a>                <span class="at">nrow =</span> d), <span class="at">value =</span> <span class="cn">TRUE</span>) <span class="sc">==</span> Cbox[,<span class="dv">1</span>]))</span>
+<span id="cb26-38"><a href="real-data-example.html#cb26-38" tabindex="-1"></a>assertthat<span class="sc">::</span><span class="fu">assert_that</span>(<span class="fu">all</span>(<span class="fu">rowMaxs</span>(<span class="fu">matrix</span>(<span class="fu">unlist</span>(</span>
+<span id="cb26-39"><a href="real-data-example.html#cb26-39" tabindex="-1"></a>                <span class="fu">lapply</span>(ylist, <span class="cf">function</span>(xx) <span class="fu">colMaxs</span>(xx,<span class="at">value =</span> <span class="cn">TRUE</span>))),</span>
+<span id="cb26-40"><a href="real-data-example.html#cb26-40" tabindex="-1"></a>                <span class="at">nrow =</span> d), <span class="at">value =</span> <span class="cn">TRUE</span>)  <span class="sc">==</span> Cbox[,<span class="dv">2</span>]))</span>
+<span id="cb26-41"><a href="real-data-example.html#cb26-41" tabindex="-1"></a></span>
+<span id="cb26-42"><a href="real-data-example.html#cb26-42" tabindex="-1"></a></span>
+<span id="cb26-43"><a href="real-data-example.html#cb26-43" tabindex="-1"></a><span class="do">## Clean data</span></span>
+<span id="cb26-44"><a href="real-data-example.html#cb26-44" tabindex="-1"></a>datobj <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">ylist =</span> ylist,</span>
+<span id="cb26-45"><a href="real-data-example.html#cb26-45" tabindex="-1"></a>               <span class="at">countslist =</span> dta<span class="sc">$</span>countslist,</span>
+<span id="cb26-46"><a href="real-data-example.html#cb26-46" tabindex="-1"></a>               <span class="at">X =</span> dta<span class="sc">$</span>X,</span>
+<span id="cb26-47"><a href="real-data-example.html#cb26-47" tabindex="-1"></a>               <span class="at">numclust =</span> <span class="dv">10</span>,</span>
+<span id="cb26-48"><a href="real-data-example.html#cb26-48" tabindex="-1"></a>               <span class="at">Cbox=</span>Cbox) </span>
+<span id="cb26-49"><a href="real-data-example.html#cb26-49" tabindex="-1"></a></span>
+<span id="cb26-50"><a href="real-data-example.html#cb26-50" tabindex="-1"></a></span>
+<span id="cb26-51"><a href="real-data-example.html#cb26-51" tabindex="-1"></a><span class="do">## Run the MCMC</span></span>
+<span id="cb26-52"><a href="real-data-example.html#cb26-52" tabindex="-1"></a>Nmc <span class="ot">&lt;-</span> <span class="fl">1e3</span><span class="sc">*</span><span class="dv">5</span></span>
+<span id="cb26-53"><a href="real-data-example.html#cb26-53" tabindex="-1"></a>Nburn <span class="ot">&lt;-</span> <span class="dv">500</span></span>
+<span id="cb26-54"><a href="real-data-example.html#cb26-54" tabindex="-1"></a>K  <span class="ot">&lt;-</span>  <span class="dv">10</span></span>
+<span id="cb26-55"><a href="real-data-example.html#cb26-55" tabindex="-1"></a>Gibbs.res0 <span class="ot">&lt;-</span> <a href="gibbs-sampler.html#run.Gibbs.fast">run.Gibbs.fast</a>(<span class="at">ylist =</span> datobj<span class="sc">$</span>ylist,</span>
+<span id="cb26-56"><a href="real-data-example.html#cb26-56" tabindex="-1"></a>                             <span class="at">countslist =</span> datobj<span class="sc">$</span>countslist,</span>
+<span id="cb26-57"><a href="real-data-example.html#cb26-57" tabindex="-1"></a>                             <span class="at">X =</span> datobj<span class="sc">$</span>X,</span>
+<span id="cb26-58"><a href="real-data-example.html#cb26-58" tabindex="-1"></a>                             <span class="at">numclust =</span> datobj<span class="sc">$</span>numclust,</span>
+<span id="cb26-59"><a href="real-data-example.html#cb26-59" tabindex="-1"></a>                             <span class="at">gg =</span> <span class="fl">0.1</span>,</span>
+<span id="cb26-60"><a href="real-data-example.html#cb26-60" tabindex="-1"></a>                             <span class="at">Nmc =</span> Nmc, <span class="at">Nburn =</span> Nburn,</span>
+<span id="cb26-61"><a href="real-data-example.html#cb26-61" tabindex="-1"></a>                             <span class="at">Cbox =</span> datobj<span class="sc">$</span>Cbox, <span class="at">verbose =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb26-62"><a href="real-data-example.html#cb26-62" tabindex="-1"></a>                             <span class="at">warm.start =</span> <span class="cn">NULL</span>)</span></code></pre></div>
 </div>
             </section>
 </div>
