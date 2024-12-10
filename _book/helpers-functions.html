@@ -12,7 +12,7 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="3 Helpers functions | Creating the flowcut R package">
 <meta name="author" content="Sheng Jiang, Sangwon Hyun">
-<meta name="date" content="2024-12-05">
+<meta name="date" content="2024-12-09">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -109,7 +109,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
       <nav role="navigation"><ul class="summary">
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
 <li class="chapter" data-level="2" data-path="package-setup.html"><a href="package-setup.html"><i class="fa fa-check"></i><b>2</b> Package setup</a></li>
-<li class="chapter" data-level="3" data-path="helpers-functions.html"><a href="helpers-functions.html"><i class="fa fa-check"></i><b>3</b> Helpers functions</a></li>
+<li class="chapter" data-level="3" data-path="helpers-functions.html">
+<a href="helpers-functions.html"><i class="fa fa-check"></i><b>3</b> Helpers functions</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="helpers-functions.html"><a href="helpers-functions.html#ball-constraint-on-xt-beta_k"><i class="fa fa-check"></i><b>3.1</b> Ball constraint on <span class="math inline">\(X^{(t)} \beta_k\)</span></a></li>
+</ul>
+</li>
 <li class="chapter" data-level="4" data-path="syntheticdata.html"><a href="syntheticdata.html"><i class="fa fa-check"></i><b>4</b> Generating synthetic data</a></li>
 <li class="chapter" data-level="5" data-path="gibbs-sampler.html">
 <a href="gibbs-sampler.html"><i class="fa fa-check"></i><b>5</b> Gibbs sampler</a>
@@ -502,6 +507,11 @@ first column is the lower cutoff, and the second column is the upper cutoff).</p
 <span id="cb7-25"><a href="helpers-functions.html#cb7-25" tabindex="-1"></a>  <span class="do">## Modify censorship slightly</span></span>
 <span id="cb7-26"><a href="helpers-functions.html#cb7-26" tabindex="-1"></a>  Cbox <span class="ot">&lt;-</span> <span class="fu">cbind</span>(bounds.lower, bounds.upper)</span>
 <span id="cb7-27"><a href="helpers-functions.html#cb7-27" tabindex="-1"></a>}</span></code></pre></div>
+<div id="ball-constraint-on-xt-beta_k" class="section level2 hasAnchor" number="3.1">
+<h2>
+<span class="header-section-number">3.1</span> Ball constraint on <span class="math inline">\(X^{(t)} \beta_k\)</span><a href="helpers-functions.html#ball-constraint-on-xt-beta_k" class="anchor-section" aria-label="Anchor link to header"></a>
+</h2>
+<p>This function seems to have a bug.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="helpers-functions.html#cb8-1" tabindex="-1"></a><span class="co">#' Obtain the g parameter by simulation. </span></span>
 <span id="cb8-2"><a href="helpers-functions.html#cb8-2" tabindex="-1"></a><span class="co">#' </span></span>
 <span id="cb8-3"><a href="helpers-functions.html#cb8-3" tabindex="-1"></a><span class="co">#' @param X the design matrix, TT by p, (that doesn't include the intercept) </span></span>
@@ -540,7 +550,7 @@ first column is the lower cutoff, and the second column is the upper cutoff).</p
 <span id="cb8-36"><a href="helpers-functions.html#cb8-36" tabindex="-1"></a>          <span class="fu">as.matrix</span>(matrixNormal<span class="sc">::</span><span class="fu">rmatnorm</span>(<span class="at">M =</span> <span class="fu">matrix</span>(<span class="dv">0</span>,d,p), </span>
 <span id="cb8-37"><a href="helpers-functions.html#cb8-37" tabindex="-1"></a>                                           <span class="at">U =</span> xx, </span>
 <span id="cb8-38"><a href="helpers-functions.html#cb8-38" tabindex="-1"></a>                                           <span class="at">V =</span> inv.XTX<span class="sc">*</span>gg, </span>
-<span id="cb8-39"><a href="helpers-functions.html#cb8-39" tabindex="-1"></a>                                           <span class="at">tol =</span> <span class="fl">1E-5</span>)),<span class="do">##.Machine$double.eps^0.5)),</span></span>
+<span id="cb8-39"><a href="helpers-functions.html#cb8-39" tabindex="-1"></a>                                           <span class="at">tol =</span> .Machine<span class="sc">$</span>double.eps<span class="sc">^</span><span class="fl">0.5</span>)),</span>
 <span id="cb8-40"><a href="helpers-functions.html#cb8-40" tabindex="-1"></a>          <span class="at">simplify =</span> <span class="cn">FALSE</span>)</span>
 <span id="cb8-41"><a href="helpers-functions.html#cb8-41" tabindex="-1"></a>      xb <span class="ot">&lt;-</span> <span class="fu">lapply</span>(beta.ell, <span class="cf">function</span>(bb) bb<span class="sc">%*%</span> tX) </span>
 <span id="cb8-42"><a href="helpers-functions.html#cb8-42" tabindex="-1"></a>                                      <span class="co"># length of list: Nmc </span></span>
@@ -563,274 +573,413 @@ first column is the lower cutoff, and the second column is the upper cutoff).</p
 <span id="cb8-59"><a href="helpers-functions.html#cb8-59" tabindex="-1"></a>  <span class="at">mc.cores =</span> n.cores)</span>
 <span id="cb8-60"><a href="helpers-functions.html#cb8-60" tabindex="-1"></a>  <span class="cf">if</span>(verbose) <span class="fu">cat</span>(<span class="at">fill=</span><span class="cn">TRUE</span>)</span>
 <span id="cb8-61"><a href="helpers-functions.html#cb8-61" tabindex="-1"></a></span>
-<span id="cb8-62"><a href="helpers-functions.html#cb8-62" tabindex="-1"></a>    </span>
-<span id="cb8-63"><a href="helpers-functions.html#cb8-63" tabindex="-1"></a>  <span class="do">## Make linear interpolation at a fine grid</span></span>
-<span id="cb8-64"><a href="helpers-functions.html#cb8-64" tabindex="-1"></a>  res <span class="ot">=</span> stats<span class="sc">::</span><span class="fu">approx</span>(<span class="at">x =</span> <span class="fu">unlist</span>(gglist), <span class="at">y =</span> <span class="fu">unlist</span>(plist), <span class="at">method=</span><span class="st">"linear"</span>, <span class="at">n =</span> <span class="dv">100</span>)</span>
-<span id="cb8-65"><a href="helpers-functions.html#cb8-65" tabindex="-1"></a>  newx <span class="ot">=</span>  res<span class="sc">$</span>x</span>
-<span id="cb8-66"><a href="helpers-functions.html#cb8-66" tabindex="-1"></a>  newy <span class="ot">=</span> res<span class="sc">$</span>y</span>
-<span id="cb8-67"><a href="helpers-functions.html#cb8-67" tabindex="-1"></a>  </span>
-<span id="cb8-68"><a href="helpers-functions.html#cb8-68" tabindex="-1"></a>  <span class="do">## Get closest point</span></span>
-<span id="cb8-69"><a href="helpers-functions.html#cb8-69" tabindex="-1"></a>  imin <span class="ot">=</span>  <span class="fu">which.min</span>(<span class="fu">abs</span>(newy <span class="sc">-</span> prior.prob <span class="sc">^</span>(<span class="dv">1</span><span class="sc">/</span>numclust))) </span>
-<span id="cb8-70"><a href="helpers-functions.html#cb8-70" tabindex="-1"></a>    </span>
-<span id="cb8-71"><a href="helpers-functions.html#cb8-71" tabindex="-1"></a>  <span class="do">## Make some plots to confirm</span></span>
-<span id="cb8-72"><a href="helpers-functions.html#cb8-72" tabindex="-1"></a>  <span class="cf">if</span>(viz){</span>
-<span id="cb8-73"><a href="helpers-functions.html#cb8-73" tabindex="-1"></a>      <span class="fu">plot</span>(gglist,plist,<span class="at">type =</span> <span class="st">"l"</span>,</span>
-<span id="cb8-74"><a href="helpers-functions.html#cb8-74" tabindex="-1"></a>           <span class="at">ylab =</span> <span class="st">"Prob outside of </span><span class="sc">\n</span><span class="st"> radius r"</span>, <span class="at">xlab =</span> <span class="st">"Value of |gg|"</span>)</span>
-<span id="cb8-75"><a href="helpers-functions.html#cb8-75" tabindex="-1"></a>      graphics<span class="sc">::</span><span class="fu">abline</span>(<span class="at">h=</span><span class="fl">0.05</span>,<span class="at">lwd=</span><span class="dv">2</span>,<span class="at">col =</span> <span class="st">"red"</span>)</span>
-<span id="cb8-76"><a href="helpers-functions.html#cb8-76" tabindex="-1"></a>      graphics<span class="sc">::</span><span class="fu">abline</span>(<span class="at">h=</span><span class="fl">0.01</span>,<span class="at">lwd=</span><span class="dv">2</span>,<span class="at">col =</span> <span class="st">"red"</span>)</span>
-<span id="cb8-77"><a href="helpers-functions.html#cb8-77" tabindex="-1"></a>      <span class="do">## lines(y=newy, x=newx,lwd=2,col="blue")</span></span>
-<span id="cb8-78"><a href="helpers-functions.html#cb8-78" tabindex="-1"></a>      <span class="do">## abline(v=newx[imin])</span></span>
-<span id="cb8-79"><a href="helpers-functions.html#cb8-79" tabindex="-1"></a>  }</span>
-<span id="cb8-80"><a href="helpers-functions.html#cb8-80" tabindex="-1"></a>  </span>
-<span id="cb8-81"><a href="helpers-functions.html#cb8-81" tabindex="-1"></a>  <span class="fu">return</span>(newx[imin])</span>
-<span id="cb8-82"><a href="helpers-functions.html#cb8-82" tabindex="-1"></a>}</span>
-<span id="cb8-83"><a href="helpers-functions.html#cb8-83" tabindex="-1"></a></span>
-<span id="cb8-84"><a href="helpers-functions.html#cb8-84" tabindex="-1"></a><span class="co">#' Closed form for obtaining the g parameter by simulation. Currently only works for dimdat=1</span></span>
-<span id="cb8-85"><a href="helpers-functions.html#cb8-85" tabindex="-1"></a><span class="co">#' </span></span>
-<span id="cb8-86"><a href="helpers-functions.html#cb8-86" tabindex="-1"></a><span class="co">#' @param X the design matrix, TT by p, (that doesn't include the intercept) </span></span>
-<span id="cb8-87"><a href="helpers-functions.html#cb8-87" tabindex="-1"></a><span class="co">#' @param dimdat the dimension of the cytogram space </span></span>
-<span id="cb8-88"><a href="helpers-functions.html#cb8-88" tabindex="-1"></a><span class="co">#' @param maxdev Maximum deviation of cluster means away from its grand mean. </span></span>
-<span id="cb8-89"><a href="helpers-functions.html#cb8-89" tabindex="-1"></a><span class="co">#' @param numclust the number of experts </span></span>
-<span id="cb8-90"><a href="helpers-functions.html#cb8-90" tabindex="-1"></a><span class="co">#' @param prior_prob prior probability</span></span>
-<span id="cb8-91"><a href="helpers-functions.html#cb8-91" tabindex="-1"></a><span class="co">#' @param viz show the plot of the fitted relationship between the g parameter and the prior probability.</span></span>
-<span id="cb8-92"><a href="helpers-functions.html#cb8-92" tabindex="-1"></a><span class="co">#'</span></span>
-<span id="cb8-93"><a href="helpers-functions.html#cb8-93" tabindex="-1"></a><span class="co">#' </span></span>
-<span id="cb8-94"><a href="helpers-functions.html#cb8-94" tabindex="-1"></a><span class="co">#' @return the g parameter with desired prior probability on maxdev </span></span>
-<span id="cb8-95"><a href="helpers-functions.html#cb8-95" tabindex="-1"></a><span class="co">#'</span></span>
-<span id="cb8-96"><a href="helpers-functions.html#cb8-96" tabindex="-1"></a><span class="co">#' @export </span></span>
-<span id="cb8-97"><a href="helpers-functions.html#cb8-97" tabindex="-1"></a><span id="maxdev_to_gg_closed_form">maxdev_to_gg_closed_form</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(X, dimdat, maxdev, numclust, <span class="at">prior_prob =</span> <span class="fl">0.99</span>, <span class="at">viz =</span> <span class="cn">FALSE</span>){</span>
-<span id="cb8-98"><a href="helpers-functions.html#cb8-98" tabindex="-1"></a></span>
-<span id="cb8-99"><a href="helpers-functions.html#cb8-99" tabindex="-1"></a>  <span class="fu">stopifnot</span>(dimdat <span class="sc">==</span> <span class="dv">1</span>)</span>
-<span id="cb8-100"><a href="helpers-functions.html#cb8-100" tabindex="-1"></a>  obj <span class="ot">=</span> <span class="fu">svd</span>(X)</span>
-<span id="cb8-101"><a href="helpers-functions.html#cb8-101" tabindex="-1"></a>  pp <span class="ot">=</span> <span class="fu">ncol</span>(X)</span>
-<span id="cb8-102"><a href="helpers-functions.html#cb8-102" tabindex="-1"></a>  TT <span class="ot">=</span> <span class="fu">nrow</span>(X)</span>
-<span id="cb8-103"><a href="helpers-functions.html#cb8-103" tabindex="-1"></a>  <span class="do">## maxdev = 0.115525</span></span>
-<span id="cb8-104"><a href="helpers-functions.html#cb8-104" tabindex="-1"></a></span>
-<span id="cb8-105"><a href="helpers-functions.html#cb8-105" tabindex="-1"></a>  <span class="do">## z_cutoff = 2.58 ## for 99% for one cluster</span></span>
-<span id="cb8-106"><a href="helpers-functions.html#cb8-106" tabindex="-1"></a>  z_cutoff <span class="ot">=</span> <span class="fu">qnorm</span>(<span class="dv">1</span><span class="sc">-</span>(<span class="dv">1</span><span class="sc">-</span>prior_prob<span class="sc">^</span>(<span class="dv">1</span><span class="sc">/</span>numclust))<span class="sc">/</span><span class="dv">2</span>)</span>
-<span id="cb8-107"><a href="helpers-functions.html#cb8-107" tabindex="-1"></a>  </span>
-<span id="cb8-108"><a href="helpers-functions.html#cb8-108" tabindex="-1"></a>  <span class="do">## Form the constant c and matrix P, multiplied to form the prior covariance cP.</span></span>
-<span id="cb8-109"><a href="helpers-functions.html#cb8-109" tabindex="-1"></a>  P <span class="ot">=</span> obj<span class="sc">$</span>u <span class="sc">%*%</span> <span class="fu">t</span>(obj<span class="sc">$</span>u)</span>
-<span id="cb8-110"><a href="helpers-functions.html#cb8-110" tabindex="-1"></a>  c <span class="ot">=</span> maxdev<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> z_cutoff<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span><span class="fu">max</span>(<span class="fu">diag</span>(P))</span>
-<span id="cb8-111"><a href="helpers-functions.html#cb8-111" tabindex="-1"></a>  A <span class="ot">=</span> c <span class="sc">*</span> obj<span class="sc">$</span>v <span class="sc">%*%</span> <span class="fu">diag</span>(<span class="dv">1</span><span class="sc">/</span>(obj<span class="sc">$</span>d<span class="sc">^</span><span class="dv">2</span>)) <span class="sc">%*%</span> <span class="fu">t</span>(obj<span class="sc">$</span>v) </span>
-<span id="cb8-112"><a href="helpers-functions.html#cb8-112" tabindex="-1"></a>  cP <span class="ot">=</span> (X <span class="sc">%*%</span> A <span class="sc">%*%</span> <span class="fu">t</span>(X)) <span class="do">##%&gt;% diag() %&gt;% plot()</span></span>
-<span id="cb8-113"><a href="helpers-functions.html#cb8-113" tabindex="-1"></a></span>
-<span id="cb8-114"><a href="helpers-functions.html#cb8-114" tabindex="-1"></a>  <span class="cf">if</span>(viz){</span>
-<span id="cb8-115"><a href="helpers-functions.html#cb8-115" tabindex="-1"></a>  </span>
-<span id="cb8-116"><a href="helpers-functions.html#cb8-116" tabindex="-1"></a>    <span class="do">## Generate beta and form w = X beta_k</span></span>
-<span id="cb8-117"><a href="helpers-functions.html#cb8-117" tabindex="-1"></a>    many_betas <span class="ot">=</span> MASS<span class="sc">::</span><span class="fu">mvrnorm</span>(<span class="dv">100000</span>, <span class="at">mu =</span> <span class="fu">rep</span>(<span class="dv">0</span>, pp), <span class="at">Sigma =</span> A)</span>
-<span id="cb8-118"><a href="helpers-functions.html#cb8-118" tabindex="-1"></a>    w <span class="ot">=</span>  X <span class="sc">%*%</span> <span class="fu">t</span>(many_betas) </span>
-<span id="cb8-119"><a href="helpers-functions.html#cb8-119" tabindex="-1"></a>    </span>
-<span id="cb8-120"><a href="helpers-functions.html#cb8-120" tabindex="-1"></a>    <span class="do">## Make a plot of all w = X beta_k</span></span>
-<span id="cb8-121"><a href="helpers-functions.html#cb8-121" tabindex="-1"></a>    w <span class="sc">%&gt;%</span> .[,<span class="dv">1</span><span class="sc">:</span><span class="dv">500</span>] <span class="sc">%&gt;%</span> <span class="fu">matplot</span>(<span class="at">pch =</span> <span class="dv">16</span>, <span class="at">col =</span> <span class="fu">rgb</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="fl">0.1</span>))</span>
-<span id="cb8-122"><a href="helpers-functions.html#cb8-122" tabindex="-1"></a></span>
-<span id="cb8-123"><a href="helpers-functions.html#cb8-123" tabindex="-1"></a>    <span class="do">## Draw the lines where the 95'th quantiles are.</span></span>
-<span id="cb8-124"><a href="helpers-functions.html#cb8-124" tabindex="-1"></a>    qs <span class="ot">=</span> w <span class="sc">%&gt;%</span> <span class="fu">apply</span>(<span class="dv">1</span>, <span class="cf">function</span>(one_w){</span>
-<span id="cb8-125"><a href="helpers-functions.html#cb8-125" tabindex="-1"></a>      <span class="fu">quantile</span>(one_w, <span class="at">probs=</span><span class="fl">0.95</span>)})</span>
-<span id="cb8-126"><a href="helpers-functions.html#cb8-126" tabindex="-1"></a>    <span class="fu">lines</span>(qs, <span class="at">col =</span> <span class="st">'red'</span>)</span>
-<span id="cb8-127"><a href="helpers-functions.html#cb8-127" tabindex="-1"></a>    <span class="fu">abline</span>(<span class="at">h =</span> maxdev, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">lty =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">'red'</span>)</span>
-<span id="cb8-128"><a href="helpers-functions.html#cb8-128" tabindex="-1"></a>    <span class="fu">text</span>(<span class="at">x=</span><span class="dv">50</span>, <span class="at">y =</span> maxdev<span class="sc">*</span>.<span class="dv">98</span>, <span class="at">labels =</span> <span class="st">"Maximum deviation"</span>)</span>
-<span id="cb8-129"><a href="helpers-functions.html#cb8-129" tabindex="-1"></a>    <span class="fu">legend</span>(<span class="st">"topleft"</span>, <span class="at">col =</span> <span class="st">'red'</span>, <span class="at">lwd=</span><span class="dv">1</span>, <span class="at">lty=</span><span class="dv">1</span>, <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">"0.95 quantile"</span>))</span>
-<span id="cb8-130"><a href="helpers-functions.html#cb8-130" tabindex="-1"></a>  }</span>
-<span id="cb8-131"><a href="helpers-functions.html#cb8-131" tabindex="-1"></a></span>
-<span id="cb8-132"><a href="helpers-functions.html#cb8-132" tabindex="-1"></a>  <span class="fu">return</span>(c)</span>
-<span id="cb8-133"><a href="helpers-functions.html#cb8-133" tabindex="-1"></a>}</span></code></pre></div>
-<p>Here’s a function to take the stick-breaking <span class="math inline">\(\gamma\)</span> parameters (with <span class="math inline">\(X\)</span>) and
-transform them to a probability vector.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="helpers-functions.html#cb9-1" tabindex="-1"></a><span class="co">#' Description goes here</span></span>
+<span id="cb8-62"><a href="helpers-functions.html#cb8-62" tabindex="-1"></a>  <span class="do">## Make linear interpolation at a fine grid</span></span>
+<span id="cb8-63"><a href="helpers-functions.html#cb8-63" tabindex="-1"></a>  res <span class="ot">=</span> stats<span class="sc">::</span><span class="fu">approx</span>(<span class="at">x =</span> <span class="fu">unlist</span>(gglist), <span class="at">y =</span> <span class="fu">unlist</span>(plist), <span class="at">method=</span><span class="st">"linear"</span>, <span class="at">n =</span> <span class="dv">100</span>)</span>
+<span id="cb8-64"><a href="helpers-functions.html#cb8-64" tabindex="-1"></a>  newx <span class="ot">=</span>  res<span class="sc">$</span>x</span>
+<span id="cb8-65"><a href="helpers-functions.html#cb8-65" tabindex="-1"></a>  newy <span class="ot">=</span> res<span class="sc">$</span>y</span>
+<span id="cb8-66"><a href="helpers-functions.html#cb8-66" tabindex="-1"></a>  </span>
+<span id="cb8-67"><a href="helpers-functions.html#cb8-67" tabindex="-1"></a>  <span class="do">## Get closest point</span></span>
+<span id="cb8-68"><a href="helpers-functions.html#cb8-68" tabindex="-1"></a>  imin <span class="ot">=</span>  <span class="fu">which.min</span>(<span class="fu">abs</span>(newy <span class="sc">-</span> prior.prob <span class="sc">^</span>(<span class="dv">1</span><span class="sc">/</span>numclust))) </span>
+<span id="cb8-69"><a href="helpers-functions.html#cb8-69" tabindex="-1"></a>    </span>
+<span id="cb8-70"><a href="helpers-functions.html#cb8-70" tabindex="-1"></a>  <span class="do">## Make some plots to confirm</span></span>
+<span id="cb8-71"><a href="helpers-functions.html#cb8-71" tabindex="-1"></a>  <span class="cf">if</span>(viz){</span>
+<span id="cb8-72"><a href="helpers-functions.html#cb8-72" tabindex="-1"></a>      <span class="fu">plot</span>(gglist,plist,<span class="at">type =</span> <span class="st">"l"</span>,</span>
+<span id="cb8-73"><a href="helpers-functions.html#cb8-73" tabindex="-1"></a>           <span class="at">ylab =</span> <span class="st">"Prob outside of </span><span class="sc">\n</span><span class="st"> radius r"</span>, <span class="at">xlab =</span> <span class="st">"Value of |gg|"</span>)</span>
+<span id="cb8-74"><a href="helpers-functions.html#cb8-74" tabindex="-1"></a>      graphics<span class="sc">::</span><span class="fu">abline</span>(<span class="at">h=</span><span class="fl">0.05</span>,<span class="at">lwd=</span><span class="dv">2</span>,<span class="at">col =</span> <span class="st">"red"</span>)</span>
+<span id="cb8-75"><a href="helpers-functions.html#cb8-75" tabindex="-1"></a>      graphics<span class="sc">::</span><span class="fu">abline</span>(<span class="at">h=</span><span class="fl">0.01</span>,<span class="at">lwd=</span><span class="dv">2</span>,<span class="at">col =</span> <span class="st">"red"</span>)</span>
+<span id="cb8-76"><a href="helpers-functions.html#cb8-76" tabindex="-1"></a>      <span class="do">## lines(y=newy, x=newx,lwd=2,col="blue")</span></span>
+<span id="cb8-77"><a href="helpers-functions.html#cb8-77" tabindex="-1"></a>      <span class="do">## abline(v=newx[imin])</span></span>
+<span id="cb8-78"><a href="helpers-functions.html#cb8-78" tabindex="-1"></a>  }</span>
+<span id="cb8-79"><a href="helpers-functions.html#cb8-79" tabindex="-1"></a>  </span>
+<span id="cb8-80"><a href="helpers-functions.html#cb8-80" tabindex="-1"></a>  <span class="fu">return</span>(newx[imin])</span>
+<span id="cb8-81"><a href="helpers-functions.html#cb8-81" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="helpers-functions.html#cb9-1" tabindex="-1"></a><span class="co">#' Closed form for obtaining the g parameter by simulation. Currently only works for dimdat=1</span></span>
 <span id="cb9-2"><a href="helpers-functions.html#cb9-2" tabindex="-1"></a><span class="co">#' </span></span>
-<span id="cb9-3"><a href="helpers-functions.html#cb9-3" tabindex="-1"></a><span class="co">#' @param ga document this carefully</span></span>
-<span id="cb9-4"><a href="helpers-functions.html#cb9-4" tabindex="-1"></a><span class="co">#' @param Xp 1 vector appended to left of covariate matrix X.</span></span>
-<span id="cb9-5"><a href="helpers-functions.html#cb9-5" tabindex="-1"></a><span class="co">#' </span></span>
-<span id="cb9-6"><a href="helpers-functions.html#cb9-6" tabindex="-1"></a><span class="co">#' @export</span></span>
-<span id="cb9-7"><a href="helpers-functions.html#cb9-7" tabindex="-1"></a><span class="co">#' @return (OO x OO) matrix with each row..</span></span>
-<span id="cb9-8"><a href="helpers-functions.html#cb9-8" tabindex="-1"></a><span id="post_process_pie">post_process_pie</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(Xp,ga){</span>
-<span id="cb9-9"><a href="helpers-functions.html#cb9-9" tabindex="-1"></a>  Xga <span class="ot">&lt;-</span> Xp <span class="sc">%*%</span> ga </span>
-<span id="cb9-10"><a href="helpers-functions.html#cb9-10" tabindex="-1"></a>  pie.SB <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span>(<span class="dv">1</span><span class="sc">+</span><span class="fu">exp</span>(<span class="sc">-</span>Xga))</span>
-<span id="cb9-11"><a href="helpers-functions.html#cb9-11" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">t</span>(<span class="fu">apply</span>(pie.SB,<span class="dv">1</span>, SB2MN)))</span>
-<span id="cb9-12"><a href="helpers-functions.html#cb9-12" tabindex="-1"></a>}</span></code></pre></div>
+<span id="cb9-3"><a href="helpers-functions.html#cb9-3" tabindex="-1"></a><span class="co">#' @param X the design matrix, TT by p, (that doesn't include the intercept) </span></span>
+<span id="cb9-4"><a href="helpers-functions.html#cb9-4" tabindex="-1"></a><span class="co">#' @param dimdat the dimension of the cytogram space </span></span>
+<span id="cb9-5"><a href="helpers-functions.html#cb9-5" tabindex="-1"></a><span class="co">#' @param maxdev Maximum deviation of cluster means away from its grand mean. </span></span>
+<span id="cb9-6"><a href="helpers-functions.html#cb9-6" tabindex="-1"></a><span class="co">#' @param numclust the number of experts </span></span>
+<span id="cb9-7"><a href="helpers-functions.html#cb9-7" tabindex="-1"></a><span class="co">#' @param prior_prob prior probability</span></span>
+<span id="cb9-8"><a href="helpers-functions.html#cb9-8" tabindex="-1"></a><span class="co">#' @param viz show the plot of the fitted relationship between the g parameter and the prior probability.</span></span>
+<span id="cb9-9"><a href="helpers-functions.html#cb9-9" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb9-10"><a href="helpers-functions.html#cb9-10" tabindex="-1"></a><span class="co">#' </span></span>
+<span id="cb9-11"><a href="helpers-functions.html#cb9-11" tabindex="-1"></a><span class="co">#' @return the g parameter with desired prior probability on maxdev </span></span>
+<span id="cb9-12"><a href="helpers-functions.html#cb9-12" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb9-13"><a href="helpers-functions.html#cb9-13" tabindex="-1"></a><span class="co">#' @export </span></span>
+<span id="cb9-14"><a href="helpers-functions.html#cb9-14" tabindex="-1"></a><span id="maxdev_to_gg_closed_form">maxdev_to_gg_closed_form</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(X, dimdat, maxdev, numclust, <span class="at">prior_prob =</span> <span class="fl">0.99</span>, <span class="at">viz =</span> <span class="cn">FALSE</span>){</span>
+<span id="cb9-15"><a href="helpers-functions.html#cb9-15" tabindex="-1"></a></span>
+<span id="cb9-16"><a href="helpers-functions.html#cb9-16" tabindex="-1"></a>  <span class="fu">stopifnot</span>(dimdat <span class="sc">==</span> <span class="dv">1</span>)</span>
+<span id="cb9-17"><a href="helpers-functions.html#cb9-17" tabindex="-1"></a>  obj <span class="ot">=</span> <span class="fu">svd</span>(X)</span>
+<span id="cb9-18"><a href="helpers-functions.html#cb9-18" tabindex="-1"></a>  pp <span class="ot">=</span> <span class="fu">ncol</span>(X)</span>
+<span id="cb9-19"><a href="helpers-functions.html#cb9-19" tabindex="-1"></a>  TT <span class="ot">=</span> <span class="fu">nrow</span>(X)</span>
+<span id="cb9-20"><a href="helpers-functions.html#cb9-20" tabindex="-1"></a>  <span class="do">## maxdev = 0.115525</span></span>
+<span id="cb9-21"><a href="helpers-functions.html#cb9-21" tabindex="-1"></a></span>
+<span id="cb9-22"><a href="helpers-functions.html#cb9-22" tabindex="-1"></a>  <span class="do">## z_cutoff = 2.58 ## for 99% for one cluster</span></span>
+<span id="cb9-23"><a href="helpers-functions.html#cb9-23" tabindex="-1"></a>  z_cutoff <span class="ot">=</span> <span class="fu">qnorm</span>(<span class="dv">1</span><span class="sc">-</span>(<span class="dv">1</span><span class="sc">-</span>prior_prob<span class="sc">^</span>(<span class="dv">1</span><span class="sc">/</span>numclust))<span class="sc">/</span><span class="dv">2</span>)</span>
+<span id="cb9-24"><a href="helpers-functions.html#cb9-24" tabindex="-1"></a>  </span>
+<span id="cb9-25"><a href="helpers-functions.html#cb9-25" tabindex="-1"></a>  <span class="do">## Form the constant c and matrix P, multiplied to form the prior covariance cP.</span></span>
+<span id="cb9-26"><a href="helpers-functions.html#cb9-26" tabindex="-1"></a>  P <span class="ot">=</span> obj<span class="sc">$</span>u <span class="sc">%*%</span> <span class="fu">t</span>(obj<span class="sc">$</span>u)</span>
+<span id="cb9-27"><a href="helpers-functions.html#cb9-27" tabindex="-1"></a>  c <span class="ot">=</span> (maxdev<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> z_cutoff<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> <span class="fu">diag</span>(P)) <span class="sc">%&gt;%</span> median</span>
+<span id="cb9-28"><a href="helpers-functions.html#cb9-28" tabindex="-1"></a>  A <span class="ot">=</span> c <span class="sc">*</span> obj<span class="sc">$</span>v <span class="sc">%*%</span> <span class="fu">diag</span>(<span class="dv">1</span><span class="sc">/</span>(obj<span class="sc">$</span>d<span class="sc">^</span><span class="dv">2</span>)) <span class="sc">%*%</span> <span class="fu">t</span>(obj<span class="sc">$</span>v) </span>
+<span id="cb9-29"><a href="helpers-functions.html#cb9-29" tabindex="-1"></a>  cP <span class="ot">=</span> (X <span class="sc">%*%</span> A <span class="sc">%*%</span> <span class="fu">t</span>(X)) <span class="do">##%&gt;% diag() %&gt;% plot()</span></span>
+<span id="cb9-30"><a href="helpers-functions.html#cb9-30" tabindex="-1"></a></span>
+<span id="cb9-31"><a href="helpers-functions.html#cb9-31" tabindex="-1"></a>  <span class="fu">return</span>(c)</span>
+<span id="cb9-32"><a href="helpers-functions.html#cb9-32" tabindex="-1"></a>}</span></code></pre></div>
+<p>Testing out this function.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="helpers-functions.html#cb10-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">100</span>)</span>
+<span id="cb10-2"><a href="helpers-functions.html#cb10-2" tabindex="-1"></a>X <span class="ot">=</span> <span class="fu">rnorm</span>(<span class="dv">1000</span>,<span class="dv">0</span>,<span class="dv">1</span>) <span class="sc">%&gt;%</span> <span class="fu">matrix</span>(<span class="at">ncol =</span> <span class="dv">10</span>, <span class="at">nrow =</span> <span class="dv">100</span>)</span>
+<span id="cb10-3"><a href="helpers-functions.html#cb10-3" tabindex="-1"></a>obj <span class="ot">=</span> <span class="fu">svd</span>(X)</span>
+<span id="cb10-4"><a href="helpers-functions.html#cb10-4" tabindex="-1"></a>pp <span class="ot">=</span> <span class="fu">ncol</span>(X)</span>
+<span id="cb10-5"><a href="helpers-functions.html#cb10-5" tabindex="-1"></a>TT <span class="ot">=</span> <span class="fu">nrow</span>(X)</span>
+<span id="cb10-6"><a href="helpers-functions.html#cb10-6" tabindex="-1"></a>maxdev <span class="ot">=</span> <span class="fl">0.5</span></span>
+<span id="cb10-7"><a href="helpers-functions.html#cb10-7" tabindex="-1"></a>numclust <span class="ot">=</span> <span class="dv">1</span></span>
+<span id="cb10-8"><a href="helpers-functions.html#cb10-8" tabindex="-1"></a>prior_probs <span class="ot">=</span> <span class="fu">seq</span>(<span class="at">from =</span> <span class="fl">0.1</span>, <span class="at">to =</span> <span class="dv">1</span>, <span class="at">by =</span> <span class="fl">0.05</span>)</span>
+<span id="cb10-9"><a href="helpers-functions.html#cb10-9" tabindex="-1"></a><span class="fu">sapply</span>(prior_probs, <span class="cf">function</span>(prior_prob){</span>
+<span id="cb10-10"><a href="helpers-functions.html#cb10-10" tabindex="-1"></a>  z_cutoff <span class="ot">=</span> <span class="fu">qnorm</span>(<span class="dv">1</span><span class="sc">-</span>(<span class="dv">1</span><span class="sc">-</span>prior_prob<span class="sc">^</span>(<span class="dv">1</span><span class="sc">/</span>numclust))<span class="sc">/</span><span class="dv">2</span>)</span>
+<span id="cb10-11"><a href="helpers-functions.html#cb10-11" tabindex="-1"></a>  </span>
+<span id="cb10-12"><a href="helpers-functions.html#cb10-12" tabindex="-1"></a>  <span class="do">## Form the constant c and matrix P, multiplied to form the prior covariance cP.</span></span>
+<span id="cb10-13"><a href="helpers-functions.html#cb10-13" tabindex="-1"></a>  P <span class="ot">=</span> obj<span class="sc">$</span>u <span class="sc">%*%</span> <span class="fu">t</span>(obj<span class="sc">$</span>u)</span>
+<span id="cb10-14"><a href="helpers-functions.html#cb10-14" tabindex="-1"></a>  c <span class="ot">=</span> (maxdev<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> z_cutoff<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> <span class="fu">diag</span>(P)) <span class="sc">%&gt;%</span> <span class="fu">median</span>()</span>
+<span id="cb10-15"><a href="helpers-functions.html#cb10-15" tabindex="-1"></a>  <span class="do">## c = (maxdev^2 / z_cutoff^2 / mean(diag(P)))</span></span>
+<span id="cb10-16"><a href="helpers-functions.html#cb10-16" tabindex="-1"></a>  A <span class="ot">=</span> c <span class="sc">*</span> obj<span class="sc">$</span>v <span class="sc">%*%</span> <span class="fu">diag</span>(<span class="dv">1</span><span class="sc">/</span>(obj<span class="sc">$</span>d<span class="sc">^</span><span class="dv">2</span>)) <span class="sc">%*%</span> <span class="fu">t</span>(obj<span class="sc">$</span>v) </span>
+<span id="cb10-17"><a href="helpers-functions.html#cb10-17" tabindex="-1"></a>  cP <span class="ot">=</span> (X <span class="sc">%*%</span> A <span class="sc">%*%</span> <span class="fu">t</span>(X)) <span class="do">##%&gt;% diag() %&gt;% plot()</span></span>
+<span id="cb10-18"><a href="helpers-functions.html#cb10-18" tabindex="-1"></a>  </span>
+<span id="cb10-19"><a href="helpers-functions.html#cb10-19" tabindex="-1"></a>  <span class="do">## Generate beta and form w = X beta_k</span></span>
+<span id="cb10-20"><a href="helpers-functions.html#cb10-20" tabindex="-1"></a>  many_betas <span class="ot">=</span> MASS<span class="sc">::</span><span class="fu">mvrnorm</span>(<span class="dv">100000</span>, <span class="at">mu =</span> <span class="fu">rep</span>(<span class="dv">0</span>, pp), <span class="at">Sigma =</span> A)</span>
+<span id="cb10-21"><a href="helpers-functions.html#cb10-21" tabindex="-1"></a>  w <span class="ot">=</span>  X <span class="sc">%*%</span> <span class="fu">t</span>(many_betas) </span>
+<span id="cb10-22"><a href="helpers-functions.html#cb10-22" tabindex="-1"></a>  </span>
+<span id="cb10-23"><a href="helpers-functions.html#cb10-23" tabindex="-1"></a>  <span class="do">## Plotting</span></span>
+<span id="cb10-24"><a href="helpers-functions.html#cb10-24" tabindex="-1"></a>  <span class="cf">if</span>(<span class="cn">FALSE</span>){</span>
+<span id="cb10-25"><a href="helpers-functions.html#cb10-25" tabindex="-1"></a>    <span class="do">## Make a plot of all w = X beta_k</span></span>
+<span id="cb10-26"><a href="helpers-functions.html#cb10-26" tabindex="-1"></a>    w <span class="sc">%&gt;%</span> .[,<span class="dv">1</span><span class="sc">:</span><span class="dv">500</span>] <span class="sc">%&gt;%</span> <span class="fu">matplot</span>(<span class="at">pch =</span> <span class="dv">16</span>, <span class="at">col =</span> <span class="fu">rgb</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="fl">0.1</span>))</span>
+<span id="cb10-27"><a href="helpers-functions.html#cb10-27" tabindex="-1"></a>    </span>
+<span id="cb10-28"><a href="helpers-functions.html#cb10-28" tabindex="-1"></a>    <span class="do">## Draw the lines where the 95'th quantiles are.</span></span>
+<span id="cb10-29"><a href="helpers-functions.html#cb10-29" tabindex="-1"></a>    qs <span class="ot">=</span> w <span class="sc">%&gt;%</span> <span class="fu">apply</span>(<span class="dv">1</span>, <span class="cf">function</span>(one_w){</span>
+<span id="cb10-30"><a href="helpers-functions.html#cb10-30" tabindex="-1"></a>      <span class="fu">quantile</span>(one_w, <span class="at">probs=</span><span class="fl">0.975</span>)})</span>
+<span id="cb10-31"><a href="helpers-functions.html#cb10-31" tabindex="-1"></a>    <span class="fu">lines</span>(qs, <span class="at">col =</span> <span class="st">'red'</span>)</span>
+<span id="cb10-32"><a href="helpers-functions.html#cb10-32" tabindex="-1"></a>    </span>
+<span id="cb10-33"><a href="helpers-functions.html#cb10-33" tabindex="-1"></a>    qs <span class="ot">=</span> w <span class="sc">%&gt;%</span> <span class="fu">apply</span>(<span class="dv">1</span>, <span class="cf">function</span>(one_w){</span>
+<span id="cb10-34"><a href="helpers-functions.html#cb10-34" tabindex="-1"></a>      <span class="fu">quantile</span>(one_w, <span class="at">probs=</span><span class="fl">0.025</span>)})</span>
+<span id="cb10-35"><a href="helpers-functions.html#cb10-35" tabindex="-1"></a>    <span class="fu">lines</span>(qs, <span class="at">col =</span> <span class="st">'red'</span>)</span>
+<span id="cb10-36"><a href="helpers-functions.html#cb10-36" tabindex="-1"></a>    </span>
+<span id="cb10-37"><a href="helpers-functions.html#cb10-37" tabindex="-1"></a>    <span class="fu">abline</span>(<span class="at">h =</span> maxdev, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">lty =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">'red'</span>)</span>
+<span id="cb10-38"><a href="helpers-functions.html#cb10-38" tabindex="-1"></a>    <span class="fu">abline</span>(<span class="at">h =</span> <span class="sc">-</span>maxdev, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">lty =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">'red'</span>)</span>
+<span id="cb10-39"><a href="helpers-functions.html#cb10-39" tabindex="-1"></a>    <span class="fu">text</span>(<span class="at">x=</span><span class="dv">50</span>, <span class="at">y =</span> maxdev<span class="sc">*</span><span class="fl">1.1</span>, <span class="at">labels =</span> <span class="st">"Maximum deviation"</span>)</span>
+<span id="cb10-40"><a href="helpers-functions.html#cb10-40" tabindex="-1"></a>    <span class="fu">legend</span>(<span class="st">"topleft"</span>, <span class="at">col =</span> <span class="st">'red'</span>, <span class="at">lwd=</span><span class="dv">1</span>, <span class="at">lty=</span><span class="dv">1</span>, <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">"0.95 quantile"</span>))</span>
+<span id="cb10-41"><a href="helpers-functions.html#cb10-41" tabindex="-1"></a>  }</span>
+<span id="cb10-42"><a href="helpers-functions.html#cb10-42" tabindex="-1"></a>  <span class="fu">sum</span>((<span class="fu">abs</span>(w)<span class="sc">&lt;</span>maxdev))<span class="sc">/</span><span class="fu">length</span>(w)</span>
+<span id="cb10-43"><a href="helpers-functions.html#cb10-43" tabindex="-1"></a>}) <span class="ot">-&gt;</span> coverages</span>
+<span id="cb10-44"><a href="helpers-functions.html#cb10-44" tabindex="-1"></a><span class="fu">plot</span>(<span class="at">x =</span> prior_probs, <span class="at">y =</span> coverages, <span class="at">type =</span> <span class="st">'o'</span>, <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>), <span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>),</span>
+<span id="cb10-45"><a href="helpers-functions.html#cb10-45" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Target prior probability of deviation</span><span class="sc">\n</span><span class="st"> of |w| = |X beta| above maxdev"</span>,</span>
+<span id="cb10-46"><a href="helpers-functions.html#cb10-46" tabindex="-1"></a>     <span class="at">ylab =</span> <span class="st">"Empirical probability of deviation"</span>)</span>
+<span id="cb10-47"><a href="helpers-functions.html#cb10-47" tabindex="-1"></a><span class="fu">abline</span>(<span class="dv">0</span>,<span class="dv">1</span>, <span class="at">col =</span> <span class="st">'red'</span>)</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-7-1.png" width="672"></p>
+<p>Here is the 3d version (not properly tested yet, doesn’t seem to work).</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="helpers-functions.html#cb11-1" tabindex="-1"></a><span id="maxdev_to_gg_closed_form_3d">maxdev_to_gg_closed_form_3d</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(X, dimdat, maxdev, numclust,</span>
+<span id="cb11-2"><a href="helpers-functions.html#cb11-2" tabindex="-1"></a>                                        <span class="at">prior_prob =</span> <span class="fl">0.99</span>, <span class="at">viz =</span> <span class="cn">FALSE</span>){</span>
+<span id="cb11-3"><a href="helpers-functions.html#cb11-3" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="helpers-functions.html#cb11-4" tabindex="-1"></a>  <span class="fu">stopifnot</span>(dimdat <span class="sc">==</span> <span class="dv">3</span>)</span>
+<span id="cb11-5"><a href="helpers-functions.html#cb11-5" tabindex="-1"></a>  obj <span class="ot">=</span> <span class="fu">svd</span>(X)</span>
+<span id="cb11-6"><a href="helpers-functions.html#cb11-6" tabindex="-1"></a>  pp <span class="ot">=</span> <span class="fu">ncol</span>(X)</span>
+<span id="cb11-7"><a href="helpers-functions.html#cb11-7" tabindex="-1"></a>  TT <span class="ot">=</span> <span class="fu">nrow</span>(X)</span>
+<span id="cb11-8"><a href="helpers-functions.html#cb11-8" tabindex="-1"></a>  <span class="do">## maxdev = 0.115525</span></span>
+<span id="cb11-9"><a href="helpers-functions.html#cb11-9" tabindex="-1"></a></span>
+<span id="cb11-10"><a href="helpers-functions.html#cb11-10" tabindex="-1"></a>  <span class="do">## z_cutoff = 2.58 ## for 99% for one cluster</span></span>
+<span id="cb11-11"><a href="helpers-functions.html#cb11-11" tabindex="-1"></a>  <span class="do">## z_cutoff = qnorm(1-(1-prior_prob^(1/numclust))/2)</span></span>
+<span id="cb11-12"><a href="helpers-functions.html#cb11-12" tabindex="-1"></a>  chisq_cutoff <span class="ot">=</span> <span class="fu">qchisq</span>(<span class="at">p=</span><span class="dv">1</span><span class="sc">-</span>(<span class="dv">1</span><span class="sc">-</span>prior_prob<span class="sc">^</span>(<span class="dv">1</span><span class="sc">/</span>numclust)), <span class="at">df =</span> dimdat)</span>
+<span id="cb11-13"><a href="helpers-functions.html#cb11-13" tabindex="-1"></a>  </span>
+<span id="cb11-14"><a href="helpers-functions.html#cb11-14" tabindex="-1"></a>  <span class="do">## Form the constant c and matrix P, multiplied to form the prior covariance cP.</span></span>
+<span id="cb11-15"><a href="helpers-functions.html#cb11-15" tabindex="-1"></a>  P <span class="ot">=</span> obj<span class="sc">$</span>u <span class="sc">%*%</span> <span class="fu">t</span>(obj<span class="sc">$</span>u)</span>
+<span id="cb11-16"><a href="helpers-functions.html#cb11-16" tabindex="-1"></a>  c <span class="ot">=</span> (maxdev<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> chisq_cutoff<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span><span class="fu">diag</span>(P)) <span class="sc">%&gt;%</span> <span class="fu">median</span>()</span>
+<span id="cb11-17"><a href="helpers-functions.html#cb11-17" tabindex="-1"></a>  A <span class="ot">=</span> c <span class="sc">*</span> obj<span class="sc">$</span>v <span class="sc">%*%</span> <span class="fu">diag</span>(<span class="dv">1</span><span class="sc">/</span>(obj<span class="sc">$</span>d<span class="sc">^</span><span class="dv">2</span>)) <span class="sc">%*%</span> <span class="fu">t</span>(obj<span class="sc">$</span>v) </span>
+<span id="cb11-18"><a href="helpers-functions.html#cb11-18" tabindex="-1"></a>  cP <span class="ot">=</span> (X <span class="sc">%*%</span> A <span class="sc">%*%</span> <span class="fu">t</span>(X)) <span class="do">##%&gt;% diag() %&gt;% plot()</span></span>
+<span id="cb11-19"><a href="helpers-functions.html#cb11-19" tabindex="-1"></a></span>
+<span id="cb11-20"><a href="helpers-functions.html#cb11-20" tabindex="-1"></a>  <span class="cf">if</span>(viz){</span>
+<span id="cb11-21"><a href="helpers-functions.html#cb11-21" tabindex="-1"></a>  </span>
+<span id="cb11-22"><a href="helpers-functions.html#cb11-22" tabindex="-1"></a>    <span class="do">## Generate beta and form w = X beta_k</span></span>
+<span id="cb11-23"><a href="helpers-functions.html#cb11-23" tabindex="-1"></a>    <span class="do">## many_betas = MASS::mvrnorm(100000, mu = rep(0, pp), Sigma = A)</span></span>
+<span id="cb11-24"><a href="helpers-functions.html#cb11-24" tabindex="-1"></a>    many_betas <span class="ot">=</span> matrixsampling<span class="sc">::</span><span class="fu">rmatrixnormal</span>(<span class="at">n=</span><span class="dv">100000</span>,</span>
+<span id="cb11-25"><a href="helpers-functions.html#cb11-25" tabindex="-1"></a>                                               <span class="at">M=</span><span class="fu">matrix</span>(<span class="dv">0</span>, pp, dimdat),</span>
+<span id="cb11-26"><a href="helpers-functions.html#cb11-26" tabindex="-1"></a>                                               <span class="at">U=</span>A,</span>
+<span id="cb11-27"><a href="helpers-functions.html#cb11-27" tabindex="-1"></a>                                               <span class="at">V =</span> <span class="fu">diag</span>(<span class="fu">rep</span>(<span class="dv">1</span>,dimdat)))</span>
+<span id="cb11-28"><a href="helpers-functions.html#cb11-28" tabindex="-1"></a>    wlist <span class="ot">=</span> <span class="fu">lapply</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">100000</span>, <span class="cf">function</span>(ii)X <span class="sc">%*%</span> many_betas[,,ii])</span>
+<span id="cb11-29"><a href="helpers-functions.html#cb11-29" tabindex="-1"></a>    wlist_rownorms <span class="ot">=</span> wlist <span class="sc">%&gt;%</span> <span class="fu">lapply</span>(<span class="cf">function</span>(w) <span class="fu">apply</span>(w, <span class="dv">1</span>,<span class="cf">function</span>(a)<span class="fu">sum</span>(a<span class="sc">*</span>a)))</span>
+<span id="cb11-30"><a href="helpers-functions.html#cb11-30" tabindex="-1"></a>    </span>
+<span id="cb11-31"><a href="helpers-functions.html#cb11-31" tabindex="-1"></a>    <span class="do">## Make a plot of all |w|_2, w = X beta_k</span></span>
+<span id="cb11-32"><a href="helpers-functions.html#cb11-32" tabindex="-1"></a>    <span class="do">## wlist_rownorms %&gt;% lapply(function(a)a[1]) %&gt;%  .[1:500] %&gt;% matplot(pch = 16, col = rgb(0,0,0,0.1))</span></span>
+<span id="cb11-33"><a href="helpers-functions.html#cb11-33" tabindex="-1"></a>    wlist_rownorms <span class="sc">%&gt;%</span> .[<span class="dv">1</span><span class="sc">:</span><span class="dv">500</span>] <span class="sc">%&gt;%</span> <span class="fu">do.call</span>(rbind, .) <span class="sc">%&gt;%</span>  <span class="fu">matplot</span>(<span class="at">pch =</span> <span class="dv">16</span>, <span class="at">col =</span> <span class="fu">rgb</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="fl">0.1</span>))</span>
+<span id="cb11-34"><a href="helpers-functions.html#cb11-34" tabindex="-1"></a></span>
+<span id="cb11-35"><a href="helpers-functions.html#cb11-35" tabindex="-1"></a>    <span class="do">## Draw the lines where the 95'th quantiles are.</span></span>
+<span id="cb11-36"><a href="helpers-functions.html#cb11-36" tabindex="-1"></a>    qs <span class="ot">=</span>     wlist_rownorms <span class="sc">%&gt;%</span> .[<span class="dv">1</span><span class="sc">:</span><span class="dv">500</span>] <span class="sc">%&gt;%</span> <span class="fu">do.call</span>(rbind, .) <span class="sc">%&gt;%</span> <span class="fu">apply</span>(<span class="dv">1</span>, <span class="cf">function</span>(one_w){</span>
+<span id="cb11-37"><a href="helpers-functions.html#cb11-37" tabindex="-1"></a>      <span class="fu">quantile</span>(one_w, <span class="at">probs=</span><span class="fl">0.95</span>)})</span>
+<span id="cb11-38"><a href="helpers-functions.html#cb11-38" tabindex="-1"></a>    <span class="fu">lines</span>(qs, <span class="at">col =</span> <span class="st">'red'</span>)</span>
+<span id="cb11-39"><a href="helpers-functions.html#cb11-39" tabindex="-1"></a>    <span class="fu">abline</span>(<span class="at">h =</span> maxdev, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">lty =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">'red'</span>)</span>
+<span id="cb11-40"><a href="helpers-functions.html#cb11-40" tabindex="-1"></a>    <span class="fu">text</span>(<span class="at">x=</span><span class="dv">50</span>, <span class="at">y =</span> maxdev<span class="sc">*</span><span class="fl">1.1</span>, <span class="at">labels =</span> <span class="st">"Maximum deviation"</span>)</span>
+<span id="cb11-41"><a href="helpers-functions.html#cb11-41" tabindex="-1"></a>    <span class="fu">legend</span>(<span class="st">"topleft"</span>, <span class="at">col =</span> <span class="st">'red'</span>, <span class="at">lwd=</span><span class="dv">1</span>, <span class="at">lty=</span><span class="dv">1</span>, <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">"0.95 quantile"</span>))</span>
+<span id="cb11-42"><a href="helpers-functions.html#cb11-42" tabindex="-1"></a>  }</span>
+<span id="cb11-43"><a href="helpers-functions.html#cb11-43" tabindex="-1"></a></span>
+<span id="cb11-44"><a href="helpers-functions.html#cb11-44" tabindex="-1"></a>  <span class="fu">return</span>(c)</span>
+<span id="cb11-45"><a href="helpers-functions.html#cb11-45" tabindex="-1"></a>}</span></code></pre></div>
+<p>(This should reduce to the dimdat=1 case. Work in progress!)</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="helpers-functions.html#cb12-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">100</span>)</span>
+<span id="cb12-2"><a href="helpers-functions.html#cb12-2" tabindex="-1"></a>X <span class="ot">=</span> <span class="fu">rnorm</span>(<span class="dv">1000</span>,<span class="dv">0</span>,<span class="dv">1</span>) <span class="sc">%&gt;%</span> <span class="fu">matrix</span>(<span class="at">ncol =</span> <span class="dv">10</span>, <span class="at">nrow =</span> <span class="dv">100</span>)</span>
+<span id="cb12-3"><a href="helpers-functions.html#cb12-3" tabindex="-1"></a>obj <span class="ot">=</span> <span class="fu">svd</span>(X)</span>
+<span id="cb12-4"><a href="helpers-functions.html#cb12-4" tabindex="-1"></a>pp <span class="ot">=</span> <span class="fu">ncol</span>(X)</span>
+<span id="cb12-5"><a href="helpers-functions.html#cb12-5" tabindex="-1"></a>TT <span class="ot">=</span> <span class="fu">nrow</span>(X)</span>
+<span id="cb12-6"><a href="helpers-functions.html#cb12-6" tabindex="-1"></a>maxdev <span class="ot">=</span> <span class="fl">0.5</span></span>
+<span id="cb12-7"><a href="helpers-functions.html#cb12-7" tabindex="-1"></a>dimdat <span class="ot">=</span> <span class="dv">1</span></span>
+<span id="cb12-8"><a href="helpers-functions.html#cb12-8" tabindex="-1"></a>numclust <span class="ot">=</span> <span class="dv">1</span></span>
+<span id="cb12-9"><a href="helpers-functions.html#cb12-9" tabindex="-1"></a>prior_probs <span class="ot">=</span> <span class="fu">seq</span>(<span class="at">from =</span> <span class="fl">0.1</span>, <span class="at">to =</span> <span class="dv">1</span>, <span class="at">by =</span> <span class="fl">0.1</span>)</span>
+<span id="cb12-10"><a href="helpers-functions.html#cb12-10" tabindex="-1"></a><span class="fu">sapply</span>(prior_probs, <span class="cf">function</span>(prior_prob){</span>
+<span id="cb12-11"><a href="helpers-functions.html#cb12-11" tabindex="-1"></a>  <span class="fu">print</span>(prior_prob)</span>
+<span id="cb12-12"><a href="helpers-functions.html#cb12-12" tabindex="-1"></a>  chisq_cutoff <span class="ot">=</span> <span class="fu">qchisq</span>(<span class="at">p =</span> (<span class="dv">1</span><span class="sc">-</span>(<span class="dv">1</span><span class="sc">-</span>prior_prob<span class="sc">^</span>(<span class="dv">1</span><span class="sc">/</span>numclust))), <span class="at">df =</span> dimdat)</span>
+<span id="cb12-13"><a href="helpers-functions.html#cb12-13" tabindex="-1"></a>  <span class="do">## print(1-(1-prior_prob^(1/numclust)))</span></span>
+<span id="cb12-14"><a href="helpers-functions.html#cb12-14" tabindex="-1"></a>  <span class="do">## print(chisq_cutoff)</span></span>
+<span id="cb12-15"><a href="helpers-functions.html#cb12-15" tabindex="-1"></a></span>
+<span id="cb12-16"><a href="helpers-functions.html#cb12-16" tabindex="-1"></a>  <span class="do">## Form the constant c and matrix P, multiplied to form the prior covariance cP.</span></span>
+<span id="cb12-17"><a href="helpers-functions.html#cb12-17" tabindex="-1"></a>  P <span class="ot">=</span> obj<span class="sc">$</span>u <span class="sc">%*%</span> <span class="fu">t</span>(obj<span class="sc">$</span>u)</span>
+<span id="cb12-18"><a href="helpers-functions.html#cb12-18" tabindex="-1"></a>  c <span class="ot">=</span> (maxdev<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> chisq_cutoff<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> <span class="fu">diag</span>(P)) <span class="sc">%&gt;%</span> <span class="fu">median</span>()</span>
+<span id="cb12-19"><a href="helpers-functions.html#cb12-19" tabindex="-1"></a>  A <span class="ot">=</span> c <span class="sc">*</span> obj<span class="sc">$</span>v <span class="sc">%*%</span> <span class="fu">diag</span>(<span class="dv">1</span><span class="sc">/</span>(obj<span class="sc">$</span>d<span class="sc">^</span><span class="dv">2</span>)) <span class="sc">%*%</span> <span class="fu">t</span>(obj<span class="sc">$</span>v) </span>
+<span id="cb12-20"><a href="helpers-functions.html#cb12-20" tabindex="-1"></a>  cP <span class="ot">=</span> (X <span class="sc">%*%</span> A <span class="sc">%*%</span> <span class="fu">t</span>(X)) <span class="do">##%&gt;% diag() %&gt;% plot()</span></span>
+<span id="cb12-21"><a href="helpers-functions.html#cb12-21" tabindex="-1"></a>  </span>
+<span id="cb12-22"><a href="helpers-functions.html#cb12-22" tabindex="-1"></a>  <span class="do">## Generate beta and form w = X beta_k</span></span>
+<span id="cb12-23"><a href="helpers-functions.html#cb12-23" tabindex="-1"></a>  <span class="do">## many_betas = MASS::mvrnorm(100000, mu = rep(0, pp), Sigma = A)</span></span>
+<span id="cb12-24"><a href="helpers-functions.html#cb12-24" tabindex="-1"></a>  nsim <span class="ot">=</span> <span class="dv">10000</span></span>
+<span id="cb12-25"><a href="helpers-functions.html#cb12-25" tabindex="-1"></a>  many_betas <span class="ot">=</span> matrixsampling<span class="sc">::</span><span class="fu">rmatrixnormal</span>(<span class="at">n =</span> nsim,</span>
+<span id="cb12-26"><a href="helpers-functions.html#cb12-26" tabindex="-1"></a>                                             <span class="at">M =</span> <span class="fu">matrix</span>(<span class="dv">0</span>, pp, dimdat),</span>
+<span id="cb12-27"><a href="helpers-functions.html#cb12-27" tabindex="-1"></a>                                             <span class="at">U =</span> A,</span>
+<span id="cb12-28"><a href="helpers-functions.html#cb12-28" tabindex="-1"></a>                                             <span class="at">V =</span> <span class="fu">diag</span>(<span class="fu">rep</span>(<span class="dv">1</span>,dimdat)))</span>
+<span id="cb12-29"><a href="helpers-functions.html#cb12-29" tabindex="-1"></a>  wlist <span class="ot">=</span> <span class="fu">lapply</span>(<span class="dv">1</span><span class="sc">:</span>nsim, <span class="cf">function</span>(ii)X <span class="sc">%*%</span> many_betas[,,ii])</span>
+<span id="cb12-30"><a href="helpers-functions.html#cb12-30" tabindex="-1"></a>  wlist_rownorms <span class="ot">=</span> wlist <span class="sc">%&gt;%</span> <span class="fu">lapply</span>(<span class="cf">function</span>(w) <span class="fu">apply</span>(w, <span class="dv">1</span>,<span class="cf">function</span>(a)<span class="fu">sum</span>(a<span class="sc">*</span>a)))</span>
+<span id="cb12-31"><a href="helpers-functions.html#cb12-31" tabindex="-1"></a>  </span>
+<span id="cb12-32"><a href="helpers-functions.html#cb12-32" tabindex="-1"></a>  </span>
+<span id="cb12-33"><a href="helpers-functions.html#cb12-33" tabindex="-1"></a>  <span class="do">## Make a plot of all |w|_2, w = X beta_k</span></span>
+<span id="cb12-34"><a href="helpers-functions.html#cb12-34" tabindex="-1"></a>  <span class="cf">if</span>(<span class="cn">FALSE</span>){</span>
+<span id="cb12-35"><a href="helpers-functions.html#cb12-35" tabindex="-1"></a>    <span class="do">## wlist_rownorms %&gt;% lapply(function(a)a[1]) %&gt;%  .[1:500] %&gt;% matplot(pch = 16, col = rgb(0,0,0,0.1))</span></span>
+<span id="cb12-36"><a href="helpers-functions.html#cb12-36" tabindex="-1"></a>    wlist_rownorms <span class="sc">%&gt;%</span> .[<span class="dv">1</span><span class="sc">:</span><span class="dv">500</span>] <span class="sc">%&gt;%</span> <span class="fu">do.call</span>(rbind, .) <span class="sc">%&gt;%</span>  <span class="fu">matplot</span>(<span class="at">pch =</span> <span class="dv">16</span>, <span class="at">col =</span> <span class="fu">rgb</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="fl">0.1</span>))</span>
+<span id="cb12-37"><a href="helpers-functions.html#cb12-37" tabindex="-1"></a></span>
+<span id="cb12-38"><a href="helpers-functions.html#cb12-38" tabindex="-1"></a>    <span class="do">## Draw the lines where the 95'th quantiles are.</span></span>
+<span id="cb12-39"><a href="helpers-functions.html#cb12-39" tabindex="-1"></a>    qs <span class="ot">=</span> wlist_rownorms <span class="sc">%&gt;%</span> .[<span class="dv">1</span><span class="sc">:</span><span class="dv">500</span>] <span class="sc">%&gt;%</span> <span class="fu">do.call</span>(rbind, .) <span class="sc">%&gt;%</span> <span class="fu">apply</span>(<span class="dv">1</span>, <span class="cf">function</span>(one_w){</span>
+<span id="cb12-40"><a href="helpers-functions.html#cb12-40" tabindex="-1"></a>      <span class="fu">quantile</span>(one_w, <span class="at">probs=</span><span class="fl">0.95</span>)})</span>
+<span id="cb12-41"><a href="helpers-functions.html#cb12-41" tabindex="-1"></a>    <span class="fu">lines</span>(qs, <span class="at">col =</span> <span class="st">'red'</span>)</span>
+<span id="cb12-42"><a href="helpers-functions.html#cb12-42" tabindex="-1"></a>    <span class="fu">abline</span>(<span class="at">h =</span> maxdev, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">lty =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">'red'</span>)</span>
+<span id="cb12-43"><a href="helpers-functions.html#cb12-43" tabindex="-1"></a>    <span class="fu">text</span>(<span class="at">x=</span><span class="dv">50</span>, <span class="at">y =</span> maxdev<span class="sc">*</span><span class="fl">1.1</span>, <span class="at">labels =</span> <span class="st">"Maximum deviation"</span>)</span>
+<span id="cb12-44"><a href="helpers-functions.html#cb12-44" tabindex="-1"></a>    <span class="fu">legend</span>(<span class="st">"topleft"</span>, <span class="at">col =</span> <span class="st">'red'</span>, <span class="at">lwd=</span><span class="dv">1</span>, <span class="at">lty=</span><span class="dv">1</span>, <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">"0.95 quantile"</span>))</span>
+<span id="cb12-45"><a href="helpers-functions.html#cb12-45" tabindex="-1"></a>  }</span>
+<span id="cb12-46"><a href="helpers-functions.html#cb12-46" tabindex="-1"></a></span>
+<span id="cb12-47"><a href="helpers-functions.html#cb12-47" tabindex="-1"></a>  normmat <span class="ot">=</span> <span class="fu">do.call</span>(rbind, wlist_rownorms)</span>
+<span id="cb12-48"><a href="helpers-functions.html#cb12-48" tabindex="-1"></a>  <span class="fu">hist</span>(normmat[,<span class="dv">1</span>])</span>
+<span id="cb12-49"><a href="helpers-functions.html#cb12-49" tabindex="-1"></a>  <span class="fu">abline</span>(<span class="at">v =</span> maxdev, <span class="at">col =</span> <span class="st">'red'</span>, <span class="at">lwd=</span><span class="dv">2</span>)</span>
+<span id="cb12-50"><a href="helpers-functions.html#cb12-50" tabindex="-1"></a></span>
+<span id="cb12-51"><a href="helpers-functions.html#cb12-51" tabindex="-1"></a>  <span class="fu">sum</span>((<span class="fu">abs</span>(normmat)<span class="sc">&lt;</span> maxdev))<span class="sc">/</span>(<span class="fu">length</span>(normmat))</span>
+<span id="cb12-52"><a href="helpers-functions.html#cb12-52" tabindex="-1"></a>}) <span class="ot">-&gt;</span> coverages</span>
+<span id="cb12-53"><a href="helpers-functions.html#cb12-53" tabindex="-1"></a><span class="fu">plot</span>(<span class="at">x =</span> prior_probs, <span class="at">y =</span> coverages, <span class="at">type =</span> <span class="st">'o'</span>, <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>), <span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>),</span>
+<span id="cb12-54"><a href="helpers-functions.html#cb12-54" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Target prior probability of deviation</span><span class="sc">\n</span><span class="st"> of |w| = |X beta| above maxdev"</span>,</span>
+<span id="cb12-55"><a href="helpers-functions.html#cb12-55" tabindex="-1"></a>     <span class="at">ylab =</span> <span class="st">"Empirical probability of deviation"</span>)</span>
+<span id="cb12-56"><a href="helpers-functions.html#cb12-56" tabindex="-1"></a><span class="fu">abline</span>(<span class="dv">0</span>,<span class="dv">1</span>, <span class="at">col =</span> <span class="st">'red'</span>)</span></code></pre></div>
+<pre><code>
+
+
+Here's a function to take the stick-breaking $\gamma$ parameters (with $X$) and
+transform them to a probability vector.
+
+
+```r
+#' Description goes here
+#' 
+#' @param ga document this carefully
+#' @param Xp 1 vector appended to left of covariate matrix X.
+#' 
+#' @export
+#' @return (OO x OO) matrix with each row..
+<span id="post_process_pie">post_process_pie</span> &lt;- function(Xp,ga){
+  Xga &lt;- Xp %*% ga 
+  pie.SB &lt;- 1/(1+exp(-Xga))
+  return(t(apply(pie.SB,1, SB2MN)))
+}</code></pre>
 <p>Here’s a helper to change the results from an MCMC to a flowmix- (or flowtrend-)
 like object. This way, we can use the plotting helpers from those packages.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="helpers-functions.html#cb10-1" tabindex="-1"></a><span class="co">#' Reformatting the results from MCMC to create a flowmix-like object that</span></span>
-<span id="cb10-2"><a href="helpers-functions.html#cb10-2" tabindex="-1"></a><span class="co">#' contains of the posterior means of the model parametr. This allows you to use</span></span>
-<span id="cb10-3"><a href="helpers-functions.html#cb10-3" tabindex="-1"></a><span class="co">#' plotting code from the flowmix and flowtrend package.</span></span>
-<span id="cb10-4"><a href="helpers-functions.html#cb10-4" tabindex="-1"></a><span class="co">#' </span></span>
-<span id="cb10-5"><a href="helpers-functions.html#cb10-5" tabindex="-1"></a><span class="co">#' @param res The result of doing MCMC.</span></span>
-<span id="cb10-6"><a href="helpers-functions.html#cb10-6" tabindex="-1"></a><span class="co">#' @param last_draws_inds The last few MCMC draws to take. Defaults to NULL.</span></span>
-<span id="cb10-7"><a href="helpers-functions.html#cb10-7" tabindex="-1"></a><span class="co">#'</span></span>
-<span id="cb10-8"><a href="helpers-functions.html#cb10-8" tabindex="-1"></a><span class="co">#' @return posterior mean estimates of the cluster coefficients, mean, variance</span></span>
-<span id="cb10-9"><a href="helpers-functions.html#cb10-9" tabindex="-1"></a><span class="co">#'   and probability.</span></span>
-<span id="cb10-10"><a href="helpers-functions.html#cb10-10" tabindex="-1"></a><span class="co">#' </span></span>
-<span id="cb10-11"><a href="helpers-functions.html#cb10-11" tabindex="-1"></a><span class="co">#' @export</span></span>
-<span id="cb10-12"><a href="helpers-functions.html#cb10-12" tabindex="-1"></a><span class="co">#' </span></span>
-<span id="cb10-13"><a href="helpers-functions.html#cb10-13" tabindex="-1"></a><span id="mcmc_res_to_flowmix">mcmc_res_to_flowmix</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(res, <span class="at">last_draws_inds=</span><span class="cn">NULL</span>){</span>
-<span id="cb10-14"><a href="helpers-functions.html#cb10-14" tabindex="-1"></a></span>
-<span id="cb10-15"><a href="helpers-functions.html#cb10-15" tabindex="-1"></a>  <span class="do">## Setup</span></span>
-<span id="cb10-16"><a href="helpers-functions.html#cb10-16" tabindex="-1"></a>  X <span class="ot">=</span> <span class="fu">t</span>(res<span class="sc">$</span>dat.info<span class="sc">$</span>X)</span>
-<span id="cb10-17"><a href="helpers-functions.html#cb10-17" tabindex="-1"></a>  numclust <span class="ot">=</span> res<span class="sc">$</span>pos.Sigma <span class="sc">%&gt;%</span> .[<span class="dv">3</span>]</span>
-<span id="cb10-18"><a href="helpers-functions.html#cb10-18" tabindex="-1"></a>  TT <span class="ot">=</span> <span class="fu">nrow</span>(X)</span>
-<span id="cb10-19"><a href="helpers-functions.html#cb10-19" tabindex="-1"></a>  p <span class="ot">=</span> <span class="fu">ncol</span>(X)</span>
-<span id="cb10-20"><a href="helpers-functions.html#cb10-20" tabindex="-1"></a>  numclust <span class="ot">=</span> res<span class="sc">$</span>dat.info<span class="sc">$</span>numclust</span>
-<span id="cb10-21"><a href="helpers-functions.html#cb10-21" tabindex="-1"></a>  dimdat <span class="ot">=</span> res<span class="sc">$</span>dat.info<span class="sc">$</span>ylist[[<span class="dv">1</span>]] <span class="sc">%&gt;%</span> <span class="fu">ncol</span>()</span>
-<span id="cb10-22"><a href="helpers-functions.html#cb10-22" tabindex="-1"></a>  obj <span class="ot">=</span> <span class="fu">list</span>()</span>
-<span id="cb10-23"><a href="helpers-functions.html#cb10-23" tabindex="-1"></a>  Nmc <span class="ot">=</span> res<span class="sc">$</span>pos.beta <span class="sc">%&gt;%</span> <span class="fu">dim</span>() <span class="sc">%&gt;%</span> <span class="fu">tail</span>(<span class="dv">1</span>)</span>
-<span id="cb10-24"><a href="helpers-functions.html#cb10-24" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">is.null</span>(last_draws_inds)) last_draws_inds <span class="ot">=</span> <span class="dv">1</span><span class="sc">:</span>Nmc</span>
-<span id="cb10-25"><a href="helpers-functions.html#cb10-25" tabindex="-1"></a>  <span class="cf">if</span>(<span class="sc">!</span><span class="fu">is.null</span>(last_draws_inds))<span class="fu">stopifnot</span>(<span class="fu">all</span>(last_draws_inds<span class="sc">&lt;=</span>Nmc))</span>
-<span id="cb10-26"><a href="helpers-functions.html#cb10-26" tabindex="-1"></a>  <span class="do">## last_draw_inds = 1:dim(res$pos.beta)[4]</span></span>
-<span id="cb10-27"><a href="helpers-functions.html#cb10-27" tabindex="-1"></a></span>
-<span id="cb10-28"><a href="helpers-functions.html#cb10-28" tabindex="-1"></a>  <span class="do">## Means</span></span>
-<span id="cb10-29"><a href="helpers-functions.html#cb10-29" tabindex="-1"></a>  pos.mn <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
-<span id="cb10-30"><a href="helpers-functions.html#cb10-30" tabindex="-1"></a>  <span class="cf">for</span>(kk <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>numclust){</span>
-<span id="cb10-31"><a href="helpers-functions.html#cb10-31" tabindex="-1"></a>    last_draws_inds</span>
-<span id="cb10-32"><a href="helpers-functions.html#cb10-32" tabindex="-1"></a>    pos.mn[[kk]] <span class="ot">&lt;-</span> <span class="fu">mclapply</span>(last_draws_inds, <span class="cf">function</span>(mm){</span>
-<span id="cb10-33"><a href="helpers-functions.html#cb10-33" tabindex="-1"></a>      res<span class="sc">$</span>pos.beta[,,kk,mm,drop<span class="ot">=</span><span class="cn">TRUE</span>]<span class="sc">%*%</span> <span class="fu">rbind</span>(<span class="dv">1</span>,<span class="fu">t</span>(X))</span>
-<span id="cb10-34"><a href="helpers-functions.html#cb10-34" tabindex="-1"></a>    },</span>
-<span id="cb10-35"><a href="helpers-functions.html#cb10-35" tabindex="-1"></a>    <span class="at">mc.cores =</span> <span class="fu">detectCores</span>())<span class="sc">%&gt;%</span></span>
-<span id="cb10-36"><a href="helpers-functions.html#cb10-36" tabindex="-1"></a>      abind<span class="sc">::</span><span class="fu">abind</span>(.,<span class="at">along=</span><span class="dv">3</span>)</span>
-<span id="cb10-37"><a href="helpers-functions.html#cb10-37" tabindex="-1"></a>  }</span>
-<span id="cb10-38"><a href="helpers-functions.html#cb10-38" tabindex="-1"></a>  post.mn.mean <span class="ot">&lt;-</span> <span class="fu">lapply</span>(pos.mn, <span class="cf">function</span>(aa){</span>
-<span id="cb10-39"><a href="helpers-functions.html#cb10-39" tabindex="-1"></a>    <span class="fu">apply</span>(aa,<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>),mean)})</span>
-<span id="cb10-40"><a href="helpers-functions.html#cb10-40" tabindex="-1"></a>  obj<span class="sc">$</span>mn <span class="ot">=</span> <span class="fu">array</span>(<span class="cn">NA</span>, <span class="at">dim =</span> <span class="fu">c</span>(TT, dimdat,numclust))</span>
-<span id="cb10-41"><a href="helpers-functions.html#cb10-41" tabindex="-1"></a>  <span class="cf">for</span>(iclust <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>numclust){</span>
-<span id="cb10-42"><a href="helpers-functions.html#cb10-42" tabindex="-1"></a>    obj<span class="sc">$</span>mn[,,iclust] <span class="ot">=</span> <span class="fu">t</span>(post.mn.mean[[iclust]]) </span>
-<span id="cb10-43"><a href="helpers-functions.html#cb10-43" tabindex="-1"></a>  }</span>
-<span id="cb10-44"><a href="helpers-functions.html#cb10-44" tabindex="-1"></a></span>
-<span id="cb10-45"><a href="helpers-functions.html#cb10-45" tabindex="-1"></a>  <span class="do">## probabilities</span></span>
-<span id="cb10-46"><a href="helpers-functions.html#cb10-46" tabindex="-1"></a>  <span class="do">## pos.gamma.mean = res$pos.gamma[,,last_draws_inds] %&gt;% apply(c(1:2), mean)</span></span>
-<span id="cb10-47"><a href="helpers-functions.html#cb10-47" tabindex="-1"></a>  pos.SB <span class="ot">&lt;-</span> <span class="fu">apply</span>(res<span class="sc">$</span>pos.gamma[,,last_draws_inds], <span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">3</span>), <span class="cf">function</span>(ga)</span>
-<span id="cb10-48"><a href="helpers-functions.html#cb10-48" tabindex="-1"></a>    <span class="dv">1</span><span class="sc">/</span>(<span class="dv">1</span><span class="sc">+</span><span class="fu">exp</span>(<span class="sc">-</span><span class="fu">t</span>(ga) <span class="sc">%*%</span> <span class="fu">rbind</span>(<span class="dv">1</span>,<span class="fu">t</span>(X)))))</span>
-<span id="cb10-49"><a href="helpers-functions.html#cb10-49" tabindex="-1"></a>  pos.MN <span class="ot">&lt;-</span> <span class="fu">apply</span>(pos.SB, <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>), flowcut<span class="sc">:::</span>SB2MN)  </span>
-<span id="cb10-50"><a href="helpers-functions.html#cb10-50" tabindex="-1"></a>  post.pi.mean <span class="ot">&lt;-</span> <span class="fu">apply</span>(pos.MN,<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>), mean)</span>
-<span id="cb10-51"><a href="helpers-functions.html#cb10-51" tabindex="-1"></a>  obj<span class="sc">$</span>prob <span class="ot">=</span> <span class="fu">t</span>(post.pi.mean)</span>
-<span id="cb10-52"><a href="helpers-functions.html#cb10-52" tabindex="-1"></a></span>
-<span id="cb10-53"><a href="helpers-functions.html#cb10-53" tabindex="-1"></a>  <span class="do">## cluster covariances</span></span>
-<span id="cb10-54"><a href="helpers-functions.html#cb10-54" tabindex="-1"></a>  obj<span class="sc">$</span>sigma <span class="ot">=</span> <span class="fu">array</span>(<span class="cn">NA</span>, <span class="at">dim =</span> <span class="fu">c</span>(numclust, dimdat, dimdat))</span>
-<span id="cb10-55"><a href="helpers-functions.html#cb10-55" tabindex="-1"></a>  obj<span class="sc">$</span>numclust <span class="ot">=</span> numclust</span>
-<span id="cb10-56"><a href="helpers-functions.html#cb10-56" tabindex="-1"></a>  res<span class="sc">$</span>pos.Sigma <span class="sc">%&gt;%</span> <span class="fu">dim</span>()</span>
-<span id="cb10-57"><a href="helpers-functions.html#cb10-57" tabindex="-1"></a>  <span class="do">## post.Sigma.mean &lt;- apply(res$pos.Sigma,c(1,2,3), mean) %&gt;% aperm(c(3,1,2))</span></span>
-<span id="cb10-58"><a href="helpers-functions.html#cb10-58" tabindex="-1"></a>  pos.Sigma.mean <span class="ot">=</span> res<span class="sc">$</span>pos.Sigma[,,,last_draws_inds] <span class="sc">%&gt;%</span> <span class="fu">apply</span>(<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>), mean) <span class="sc">%&gt;%</span> <span class="fu">aperm</span>(<span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">1</span>,<span class="dv">2</span>)) </span>
-<span id="cb10-59"><a href="helpers-functions.html#cb10-59" tabindex="-1"></a>  obj<span class="sc">$</span>sigma <span class="ot">=</span> pos.Sigma.mean</span>
-<span id="cb10-60"><a href="helpers-functions.html#cb10-60" tabindex="-1"></a></span>
-<span id="cb10-61"><a href="helpers-functions.html#cb10-61" tabindex="-1"></a>  <span class="do">## mean regression coefficients</span></span>
-<span id="cb10-62"><a href="helpers-functions.html#cb10-62" tabindex="-1"></a>  pos.beta <span class="ot">=</span> res<span class="sc">$</span>pos.beta[,,,last_draws_inds]</span>
-<span id="cb10-63"><a href="helpers-functions.html#cb10-63" tabindex="-1"></a>  pos.beta.mean <span class="ot">=</span> pos.beta <span class="sc">%&gt;%</span> <span class="fu">apply</span>(<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>), mean) </span>
-<span id="cb10-64"><a href="helpers-functions.html#cb10-64" tabindex="-1"></a>  obj<span class="sc">$</span>beta <span class="ot">=</span> pos.beta.mean</span>
-<span id="cb10-65"><a href="helpers-functions.html#cb10-65" tabindex="-1"></a>  </span>
-<span id="cb10-66"><a href="helpers-functions.html#cb10-66" tabindex="-1"></a>  <span class="do">## prob regression coefficients</span></span>
-<span id="cb10-67"><a href="helpers-functions.html#cb10-67" tabindex="-1"></a>  pos.gamma.mean <span class="ot">=</span> res<span class="sc">$</span>pos.gamma[,,last_draws_inds] <span class="sc">%&gt;%</span> <span class="fu">apply</span>(<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>), mean)</span>
-<span id="cb10-68"><a href="helpers-functions.html#cb10-68" tabindex="-1"></a>  obj<span class="sc">$</span>alpha <span class="ot">=</span> pos.gamma.mean</span>
-<span id="cb10-69"><a href="helpers-functions.html#cb10-69" tabindex="-1"></a></span>
-<span id="cb10-70"><a href="helpers-functions.html#cb10-70" tabindex="-1"></a>  <span class="do">## Bundle and return</span></span>
-<span id="cb10-71"><a href="helpers-functions.html#cb10-71" tabindex="-1"></a>  obj<span class="sc">$</span>numclust <span class="ot">=</span> numclust</span>
-<span id="cb10-72"><a href="helpers-functions.html#cb10-72" tabindex="-1"></a>  obj<span class="sc">$</span>TT <span class="ot">=</span> TT</span>
-<span id="cb10-73"><a href="helpers-functions.html#cb10-73" tabindex="-1"></a>  <span class="fu">class</span>(obj) <span class="ot">=</span> <span class="st">"flowmix"</span></span>
-<span id="cb10-74"><a href="helpers-functions.html#cb10-74" tabindex="-1"></a>  <span class="fu">return</span>(obj)</span>
-<span id="cb10-75"><a href="helpers-functions.html#cb10-75" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="helpers-functions.html#cb14-1" tabindex="-1"></a><span class="co">#' Reformatting the results from MCMC to create a flowmix-like object that</span></span>
+<span id="cb14-2"><a href="helpers-functions.html#cb14-2" tabindex="-1"></a><span class="co">#' contains of the posterior means of the model parametr. This allows you to use</span></span>
+<span id="cb14-3"><a href="helpers-functions.html#cb14-3" tabindex="-1"></a><span class="co">#' plotting code from the flowmix and flowtrend package.</span></span>
+<span id="cb14-4"><a href="helpers-functions.html#cb14-4" tabindex="-1"></a><span class="co">#' </span></span>
+<span id="cb14-5"><a href="helpers-functions.html#cb14-5" tabindex="-1"></a><span class="co">#' @param res The result of doing MCMC.</span></span>
+<span id="cb14-6"><a href="helpers-functions.html#cb14-6" tabindex="-1"></a><span class="co">#' @param last_draws_inds The last few MCMC draws to take. Defaults to NULL.</span></span>
+<span id="cb14-7"><a href="helpers-functions.html#cb14-7" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb14-8"><a href="helpers-functions.html#cb14-8" tabindex="-1"></a><span class="co">#' @return posterior mean estimates of the cluster coefficients, mean, variance</span></span>
+<span id="cb14-9"><a href="helpers-functions.html#cb14-9" tabindex="-1"></a><span class="co">#'   and probability.</span></span>
+<span id="cb14-10"><a href="helpers-functions.html#cb14-10" tabindex="-1"></a><span class="co">#' </span></span>
+<span id="cb14-11"><a href="helpers-functions.html#cb14-11" tabindex="-1"></a><span class="co">#' @export</span></span>
+<span id="cb14-12"><a href="helpers-functions.html#cb14-12" tabindex="-1"></a><span class="co">#' </span></span>
+<span id="cb14-13"><a href="helpers-functions.html#cb14-13" tabindex="-1"></a><span id="mcmc_res_to_flowmix">mcmc_res_to_flowmix</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(res, <span class="at">last_draws_inds=</span><span class="cn">NULL</span>){</span>
+<span id="cb14-14"><a href="helpers-functions.html#cb14-14" tabindex="-1"></a></span>
+<span id="cb14-15"><a href="helpers-functions.html#cb14-15" tabindex="-1"></a>  <span class="do">## Setup</span></span>
+<span id="cb14-16"><a href="helpers-functions.html#cb14-16" tabindex="-1"></a>  X <span class="ot">=</span> <span class="fu">t</span>(res<span class="sc">$</span>dat.info<span class="sc">$</span>X)</span>
+<span id="cb14-17"><a href="helpers-functions.html#cb14-17" tabindex="-1"></a>  numclust <span class="ot">=</span> res<span class="sc">$</span>pos.Sigma <span class="sc">%&gt;%</span> .[<span class="dv">3</span>]</span>
+<span id="cb14-18"><a href="helpers-functions.html#cb14-18" tabindex="-1"></a>  TT <span class="ot">=</span> <span class="fu">nrow</span>(X)</span>
+<span id="cb14-19"><a href="helpers-functions.html#cb14-19" tabindex="-1"></a>  p <span class="ot">=</span> <span class="fu">ncol</span>(X)</span>
+<span id="cb14-20"><a href="helpers-functions.html#cb14-20" tabindex="-1"></a>  numclust <span class="ot">=</span> res<span class="sc">$</span>dat.info<span class="sc">$</span>numclust</span>
+<span id="cb14-21"><a href="helpers-functions.html#cb14-21" tabindex="-1"></a>  dimdat <span class="ot">=</span> res<span class="sc">$</span>dat.info<span class="sc">$</span>ylist[[<span class="dv">1</span>]] <span class="sc">%&gt;%</span> <span class="fu">ncol</span>()</span>
+<span id="cb14-22"><a href="helpers-functions.html#cb14-22" tabindex="-1"></a>  obj <span class="ot">=</span> <span class="fu">list</span>()</span>
+<span id="cb14-23"><a href="helpers-functions.html#cb14-23" tabindex="-1"></a>  Nmc <span class="ot">=</span> res<span class="sc">$</span>pos.beta <span class="sc">%&gt;%</span> <span class="fu">dim</span>() <span class="sc">%&gt;%</span> <span class="fu">tail</span>(<span class="dv">1</span>)</span>
+<span id="cb14-24"><a href="helpers-functions.html#cb14-24" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">is.null</span>(last_draws_inds)) last_draws_inds <span class="ot">=</span> <span class="dv">1</span><span class="sc">:</span>Nmc</span>
+<span id="cb14-25"><a href="helpers-functions.html#cb14-25" tabindex="-1"></a>  <span class="cf">if</span>(<span class="sc">!</span><span class="fu">is.null</span>(last_draws_inds))<span class="fu">stopifnot</span>(<span class="fu">all</span>(last_draws_inds<span class="sc">&lt;=</span>Nmc))</span>
+<span id="cb14-26"><a href="helpers-functions.html#cb14-26" tabindex="-1"></a>  <span class="do">## last_draw_inds = 1:dim(res$pos.beta)[4]</span></span>
+<span id="cb14-27"><a href="helpers-functions.html#cb14-27" tabindex="-1"></a></span>
+<span id="cb14-28"><a href="helpers-functions.html#cb14-28" tabindex="-1"></a>  <span class="do">## Means</span></span>
+<span id="cb14-29"><a href="helpers-functions.html#cb14-29" tabindex="-1"></a>  pos.mn <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb14-30"><a href="helpers-functions.html#cb14-30" tabindex="-1"></a>  <span class="cf">for</span>(kk <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>numclust){</span>
+<span id="cb14-31"><a href="helpers-functions.html#cb14-31" tabindex="-1"></a>    last_draws_inds</span>
+<span id="cb14-32"><a href="helpers-functions.html#cb14-32" tabindex="-1"></a>    pos.mn[[kk]] <span class="ot">&lt;-</span> <span class="fu">mclapply</span>(last_draws_inds, <span class="cf">function</span>(mm){</span>
+<span id="cb14-33"><a href="helpers-functions.html#cb14-33" tabindex="-1"></a>      res<span class="sc">$</span>pos.beta[,,kk,mm,drop<span class="ot">=</span><span class="cn">TRUE</span>]<span class="sc">%*%</span> <span class="fu">rbind</span>(<span class="dv">1</span>,<span class="fu">t</span>(X))</span>
+<span id="cb14-34"><a href="helpers-functions.html#cb14-34" tabindex="-1"></a>    },</span>
+<span id="cb14-35"><a href="helpers-functions.html#cb14-35" tabindex="-1"></a>    <span class="at">mc.cores =</span> <span class="fu">detectCores</span>())<span class="sc">%&gt;%</span></span>
+<span id="cb14-36"><a href="helpers-functions.html#cb14-36" tabindex="-1"></a>      abind<span class="sc">::</span><span class="fu">abind</span>(.,<span class="at">along=</span><span class="dv">3</span>)</span>
+<span id="cb14-37"><a href="helpers-functions.html#cb14-37" tabindex="-1"></a>  }</span>
+<span id="cb14-38"><a href="helpers-functions.html#cb14-38" tabindex="-1"></a>  post.mn.mean <span class="ot">&lt;-</span> <span class="fu">lapply</span>(pos.mn, <span class="cf">function</span>(aa){</span>
+<span id="cb14-39"><a href="helpers-functions.html#cb14-39" tabindex="-1"></a>    <span class="fu">apply</span>(aa,<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>),mean)})</span>
+<span id="cb14-40"><a href="helpers-functions.html#cb14-40" tabindex="-1"></a>  obj<span class="sc">$</span>mn <span class="ot">=</span> <span class="fu">array</span>(<span class="cn">NA</span>, <span class="at">dim =</span> <span class="fu">c</span>(TT, dimdat,numclust))</span>
+<span id="cb14-41"><a href="helpers-functions.html#cb14-41" tabindex="-1"></a>  <span class="cf">for</span>(iclust <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>numclust){</span>
+<span id="cb14-42"><a href="helpers-functions.html#cb14-42" tabindex="-1"></a>    obj<span class="sc">$</span>mn[,,iclust] <span class="ot">=</span> <span class="fu">t</span>(post.mn.mean[[iclust]]) </span>
+<span id="cb14-43"><a href="helpers-functions.html#cb14-43" tabindex="-1"></a>  }</span>
+<span id="cb14-44"><a href="helpers-functions.html#cb14-44" tabindex="-1"></a></span>
+<span id="cb14-45"><a href="helpers-functions.html#cb14-45" tabindex="-1"></a>  <span class="do">## probabilities</span></span>
+<span id="cb14-46"><a href="helpers-functions.html#cb14-46" tabindex="-1"></a>  <span class="do">## pos.gamma.mean = res$pos.gamma[,,last_draws_inds] %&gt;% apply(c(1:2), mean)</span></span>
+<span id="cb14-47"><a href="helpers-functions.html#cb14-47" tabindex="-1"></a>  pos.SB <span class="ot">&lt;-</span> <span class="fu">apply</span>(res<span class="sc">$</span>pos.gamma[,,last_draws_inds], <span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">3</span>), <span class="cf">function</span>(ga)</span>
+<span id="cb14-48"><a href="helpers-functions.html#cb14-48" tabindex="-1"></a>    <span class="dv">1</span><span class="sc">/</span>(<span class="dv">1</span><span class="sc">+</span><span class="fu">exp</span>(<span class="sc">-</span><span class="fu">t</span>(ga) <span class="sc">%*%</span> <span class="fu">rbind</span>(<span class="dv">1</span>,<span class="fu">t</span>(X)))))</span>
+<span id="cb14-49"><a href="helpers-functions.html#cb14-49" tabindex="-1"></a>  pos.MN <span class="ot">&lt;-</span> <span class="fu">apply</span>(pos.SB, <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>), flowcut<span class="sc">:::</span>SB2MN)  </span>
+<span id="cb14-50"><a href="helpers-functions.html#cb14-50" tabindex="-1"></a>  post.pi.mean <span class="ot">&lt;-</span> <span class="fu">apply</span>(pos.MN,<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>), mean)</span>
+<span id="cb14-51"><a href="helpers-functions.html#cb14-51" tabindex="-1"></a>  obj<span class="sc">$</span>prob <span class="ot">=</span> <span class="fu">t</span>(post.pi.mean)</span>
+<span id="cb14-52"><a href="helpers-functions.html#cb14-52" tabindex="-1"></a></span>
+<span id="cb14-53"><a href="helpers-functions.html#cb14-53" tabindex="-1"></a>  <span class="do">## cluster covariances</span></span>
+<span id="cb14-54"><a href="helpers-functions.html#cb14-54" tabindex="-1"></a>  obj<span class="sc">$</span>sigma <span class="ot">=</span> <span class="fu">array</span>(<span class="cn">NA</span>, <span class="at">dim =</span> <span class="fu">c</span>(numclust, dimdat, dimdat))</span>
+<span id="cb14-55"><a href="helpers-functions.html#cb14-55" tabindex="-1"></a>  obj<span class="sc">$</span>numclust <span class="ot">=</span> numclust</span>
+<span id="cb14-56"><a href="helpers-functions.html#cb14-56" tabindex="-1"></a>  res<span class="sc">$</span>pos.Sigma <span class="sc">%&gt;%</span> <span class="fu">dim</span>()</span>
+<span id="cb14-57"><a href="helpers-functions.html#cb14-57" tabindex="-1"></a>  <span class="do">## post.Sigma.mean &lt;- apply(res$pos.Sigma,c(1,2,3), mean) %&gt;% aperm(c(3,1,2))</span></span>
+<span id="cb14-58"><a href="helpers-functions.html#cb14-58" tabindex="-1"></a>  pos.Sigma.mean <span class="ot">=</span> res<span class="sc">$</span>pos.Sigma[,,,last_draws_inds] <span class="sc">%&gt;%</span> <span class="fu">apply</span>(<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>), mean) <span class="sc">%&gt;%</span> <span class="fu">aperm</span>(<span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">1</span>,<span class="dv">2</span>)) </span>
+<span id="cb14-59"><a href="helpers-functions.html#cb14-59" tabindex="-1"></a>  obj<span class="sc">$</span>sigma <span class="ot">=</span> pos.Sigma.mean</span>
+<span id="cb14-60"><a href="helpers-functions.html#cb14-60" tabindex="-1"></a></span>
+<span id="cb14-61"><a href="helpers-functions.html#cb14-61" tabindex="-1"></a>  <span class="do">## mean regression coefficients</span></span>
+<span id="cb14-62"><a href="helpers-functions.html#cb14-62" tabindex="-1"></a>  pos.beta <span class="ot">=</span> res<span class="sc">$</span>pos.beta[,,,last_draws_inds]</span>
+<span id="cb14-63"><a href="helpers-functions.html#cb14-63" tabindex="-1"></a>  pos.beta.mean <span class="ot">=</span> pos.beta <span class="sc">%&gt;%</span> <span class="fu">apply</span>(<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>), mean) </span>
+<span id="cb14-64"><a href="helpers-functions.html#cb14-64" tabindex="-1"></a>  obj<span class="sc">$</span>beta <span class="ot">=</span> pos.beta.mean</span>
+<span id="cb14-65"><a href="helpers-functions.html#cb14-65" tabindex="-1"></a>  </span>
+<span id="cb14-66"><a href="helpers-functions.html#cb14-66" tabindex="-1"></a>  <span class="do">## prob regression coefficients</span></span>
+<span id="cb14-67"><a href="helpers-functions.html#cb14-67" tabindex="-1"></a>  pos.gamma.mean <span class="ot">=</span> res<span class="sc">$</span>pos.gamma[,,last_draws_inds] <span class="sc">%&gt;%</span> <span class="fu">apply</span>(<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>), mean)</span>
+<span id="cb14-68"><a href="helpers-functions.html#cb14-68" tabindex="-1"></a>  obj<span class="sc">$</span>alpha <span class="ot">=</span> pos.gamma.mean</span>
+<span id="cb14-69"><a href="helpers-functions.html#cb14-69" tabindex="-1"></a></span>
+<span id="cb14-70"><a href="helpers-functions.html#cb14-70" tabindex="-1"></a>  <span class="do">## Bundle and return</span></span>
+<span id="cb14-71"><a href="helpers-functions.html#cb14-71" tabindex="-1"></a>  obj<span class="sc">$</span>numclust <span class="ot">=</span> numclust</span>
+<span id="cb14-72"><a href="helpers-functions.html#cb14-72" tabindex="-1"></a>  obj<span class="sc">$</span>TT <span class="ot">=</span> TT</span>
+<span id="cb14-73"><a href="helpers-functions.html#cb14-73" tabindex="-1"></a>  <span class="fu">class</span>(obj) <span class="ot">=</span> <span class="st">"flowmix"</span></span>
+<span id="cb14-74"><a href="helpers-functions.html#cb14-74" tabindex="-1"></a>  <span class="fu">return</span>(obj)</span>
+<span id="cb14-75"><a href="helpers-functions.html#cb14-75" tabindex="-1"></a>}</span></code></pre></div>
 <p>Here’s a function to impute the y’s based on a model defined by the posterior
 mean of the last 500 draws.</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="helpers-functions.html#cb11-1" tabindex="-1"></a><span class="co">#' Imputing particles to impute the y's based on a model defined by the posterior</span></span>
-<span id="cb11-2"><a href="helpers-functions.html#cb11-2" tabindex="-1"></a><span class="co">#' mean of the last 500 draws. This is separated out from the Gibbs since the result takes up a lot of memory.</span></span>
-<span id="cb11-3"><a href="helpers-functions.html#cb11-3" tabindex="-1"></a><span class="co">#' (This is all code in the Gibbs.fast() function.)</span></span>
-<span id="cb11-4"><a href="helpers-functions.html#cb11-4" tabindex="-1"></a><span class="co">#'</span></span>
-<span id="cb11-5"><a href="helpers-functions.html#cb11-5" tabindex="-1"></a><span class="co">#' </span></span>
-<span id="cb11-6"><a href="helpers-functions.html#cb11-6" tabindex="-1"></a><span class="co">#' @param ylist Original particles</span></span>
-<span id="cb11-7"><a href="helpers-functions.html#cb11-7" tabindex="-1"></a><span class="co">#' @param countslist Biomass list</span></span>
-<span id="cb11-8"><a href="helpers-functions.html#cb11-8" tabindex="-1"></a><span class="co">#' @param Cbox Bounding box.</span></span>
-<span id="cb11-9"><a href="helpers-functions.html#cb11-9" tabindex="-1"></a><span class="co">#' @param mcres The converted MCMC result, using e.g., |<a href="helpers-functions.html#mcmc_res_to_flowmix">mcmc_res_to_flowmix</a>(res,</span></span>
-<span id="cb11-10"><a href="helpers-functions.html#cb11-10" tabindex="-1"></a><span class="co">#'   last_draws_inds = 1001:1500)|</span></span>
-<span id="cb11-11"><a href="helpers-functions.html#cb11-11" tabindex="-1"></a><span class="co">#' @param n.cores number of CPU cores to use</span></span>
-<span id="cb11-12"><a href="helpers-functions.html#cb11-12" tabindex="-1"></a><span class="co">#' </span></span>
-<span id="cb11-13"><a href="helpers-functions.html#cb11-13" tabindex="-1"></a><span class="co">#' @export</span></span>
-<span id="cb11-14"><a href="helpers-functions.html#cb11-14" tabindex="-1"></a><span id="impute">impute</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(ylist, countslist, Cbox, mcres, <span class="at">n.cores=</span><span class="dv">1</span>){</span>
-<span id="cb11-15"><a href="helpers-functions.html#cb11-15" tabindex="-1"></a></span>
-<span id="cb11-16"><a href="helpers-functions.html#cb11-16" tabindex="-1"></a>  <span class="do">## if(FALSE){</span></span>
-<span id="cb11-17"><a href="helpers-functions.html#cb11-17" tabindex="-1"></a>  <span class="do">##   ## Temporary</span></span>
-<span id="cb11-18"><a href="helpers-functions.html#cb11-18" tabindex="-1"></a>  <span class="do">##   ylist = datobj$ylist</span></span>
-<span id="cb11-19"><a href="helpers-functions.html#cb11-19" tabindex="-1"></a>  <span class="do">##   countslist = datobj$countslist</span></span>
-<span id="cb11-20"><a href="helpers-functions.html#cb11-20" tabindex="-1"></a></span>
-<span id="cb11-21"><a href="helpers-functions.html#cb11-21" tabindex="-1"></a>  <span class="do">##   ## TEMPORARY: Add a bounding box |Cbox|</span></span>
-<span id="cb11-22"><a href="helpers-functions.html#cb11-22" tabindex="-1"></a>  <span class="do">##   bounds.lower &lt;- lapply(datobj$ylist,function(xx)</span></span>
-<span id="cb11-23"><a href="helpers-functions.html#cb11-23" tabindex="-1"></a>  <span class="do">##     Rfast::colMins(xx,value = TRUE)) %&gt;%</span></span>
-<span id="cb11-24"><a href="helpers-functions.html#cb11-24" tabindex="-1"></a>  <span class="do">##     do.call(rbind,.) %&gt;% Rfast::colMins(.,value = TRUE)</span></span>
-<span id="cb11-25"><a href="helpers-functions.html#cb11-25" tabindex="-1"></a>  <span class="do">##   bounds.upper &lt;- lapply(datobj$ylist,function(xx)</span></span>
-<span id="cb11-26"><a href="helpers-functions.html#cb11-26" tabindex="-1"></a>  <span class="do">##     Rfast::colMaxs(xx,value = TRUE)) %&gt;%</span></span>
-<span id="cb11-27"><a href="helpers-functions.html#cb11-27" tabindex="-1"></a>  <span class="do">##     do.call(rbind,.) %&gt;% Rfast::colMaxs(.,value = TRUE)</span></span>
-<span id="cb11-28"><a href="helpers-functions.html#cb11-28" tabindex="-1"></a>  <span class="do">##   Cbox &lt;- cbind(bounds.lower,bounds.upper)</span></span>
-<span id="cb11-29"><a href="helpers-functions.html#cb11-29" tabindex="-1"></a>  <span class="do">##   Cbox &lt;- res$dat.info$Cbox</span></span>
-<span id="cb11-30"><a href="helpers-functions.html#cb11-30" tabindex="-1"></a>  <span class="do">##   datobj$Cbox = Cbox</span></span>
-<span id="cb11-31"><a href="helpers-functions.html#cb11-31" tabindex="-1"></a></span>
-<span id="cb11-32"><a href="helpers-functions.html#cb11-32" tabindex="-1"></a>  <span class="do">##   ## Temporary</span></span>
-<span id="cb11-33"><a href="helpers-functions.html#cb11-33" tabindex="-1"></a>  <span class="do">##   mcres = <a href="helpers-functions.html#mcmc_res_to_flowmix">mcmc_res_to_flowmix</a>(res, last_draws_inds = 1001:1500)</span></span>
-<span id="cb11-34"><a href="helpers-functions.html#cb11-34" tabindex="-1"></a>  <span class="do">## }</span></span>
-<span id="cb11-35"><a href="helpers-functions.html#cb11-35" tabindex="-1"></a>  </span>
-<span id="cb11-36"><a href="helpers-functions.html#cb11-36" tabindex="-1"></a>  <span class="do">## Get everything</span></span>
-<span id="cb11-37"><a href="helpers-functions.html#cb11-37" tabindex="-1"></a>  ntlist <span class="ot">=</span> <span class="fu">sapply</span>(ylist, nrow)</span>
-<span id="cb11-38"><a href="helpers-functions.html#cb11-38" tabindex="-1"></a>  TT <span class="ot">=</span> <span class="fu">length</span>(ylist)</span>
-<span id="cb11-39"><a href="helpers-functions.html#cb11-39" tabindex="-1"></a>  NN <span class="ot">&lt;-</span> <span class="fu">sum</span>(ntlist)</span>
-<span id="cb11-40"><a href="helpers-functions.html#cb11-40" tabindex="-1"></a>  dimdat <span class="ot">&lt;-</span> <span class="fu">ncol</span>(ylist[[<span class="dv">1</span>]])</span>
-<span id="cb11-41"><a href="helpers-functions.html#cb11-41" tabindex="-1"></a>  countsTotal <span class="ot">&lt;-</span> <span class="fu">sapply</span>(countslist,sum) <span class="sc">%&gt;%</span> <span class="fu">sum</span>() </span>
-<span id="cb11-42"><a href="helpers-functions.html#cb11-42" tabindex="-1"></a>  alpha.factor <span class="ot">&lt;-</span> NN<span class="sc">/</span>countsTotal  </span>
-<span id="cb11-43"><a href="helpers-functions.html#cb11-43" tabindex="-1"></a>  W.list <span class="ot">&lt;-</span> <span class="fu">lapply</span>(countslist, <span class="cf">function</span>(xx) xx<span class="sc">*</span>alpha.factor) </span>
-<span id="cb11-44"><a href="helpers-functions.html#cb11-44" tabindex="-1"></a></span>
-<span id="cb11-45"><a href="helpers-functions.html#cb11-45" tabindex="-1"></a>  <span class="do">## More processing</span></span>
-<span id="cb11-46"><a href="helpers-functions.html#cb11-46" tabindex="-1"></a>  Censor.list <span class="ot">&lt;-</span> <span class="fu">lapply</span>(ylist, <span class="cf">function</span>(x) <a href="helpers-functions.html#censorIndicator">censorIndicator</a>(x,Cbox))  </span>
-<span id="cb11-47"><a href="helpers-functions.html#cb11-47" tabindex="-1"></a>  censor.<span class="fl">01.</span>list <span class="ot">&lt;-</span> <span class="fu">lapply</span>(Censor.list, <span class="cf">function</span>(x) <span class="fu">apply</span>(x,<span class="dv">1</span>, <span class="cf">function</span>(xx){</span>
-<span id="cb11-48"><a href="helpers-functions.html#cb11-48" tabindex="-1"></a>    <span class="fu">sum</span>(<span class="fu">abs</span>(xx)) <span class="sc">&gt;</span> <span class="dv">0</span>})) <span class="do">## expensive</span></span>
-<span id="cb11-49"><a href="helpers-functions.html#cb11-49" tabindex="-1"></a>  censor.which.list <span class="ot">&lt;-</span> <span class="fu">lapply</span>(censor.<span class="fl">01.</span>list, <span class="cf">function</span>(cc) <span class="fu">which</span>(cc<span class="sc">==</span><span class="cn">TRUE</span>))</span>
-<span id="cb11-50"><a href="helpers-functions.html#cb11-50" tabindex="-1"></a>  censored.ylist <span class="ot">&lt;-</span> <span class="fu">mapply</span>(<span class="cf">function</span>(yy,c01) {yy[c01<span class="sc">==</span><span class="cn">TRUE</span>,,drop<span class="ot">=</span><span class="cn">FALSE</span>]},</span>
-<span id="cb11-51"><a href="helpers-functions.html#cb11-51" tabindex="-1"></a>                                       <span class="at">yy =</span> ylist, <span class="at">c01 =</span> censor.<span class="fl">01.</span>list)</span>
-<span id="cb11-52"><a href="helpers-functions.html#cb11-52" tabindex="-1"></a>  censored.C.list <span class="ot">&lt;-</span> <span class="fu">mapply</span>(<span class="cf">function</span>(c01,cc){cc[c01<span class="sc">==</span><span class="cn">TRUE</span>,,drop<span class="ot">=</span><span class="cn">FALSE</span>]},</span>
-<span id="cb11-53"><a href="helpers-functions.html#cb11-53" tabindex="-1"></a>                                        <span class="at">c01 =</span> censor.<span class="fl">01.</span>list, <span class="at">cc=</span>Censor.list)</span>
-<span id="cb11-54"><a href="helpers-functions.html#cb11-54" tabindex="-1"></a>  censored.W.list <span class="ot">&lt;-</span> <span class="fu">mapply</span>(<span class="cf">function</span>(c01,ww){ww[c01<span class="sc">==</span><span class="cn">TRUE</span>]},</span>
-<span id="cb11-55"><a href="helpers-functions.html#cb11-55" tabindex="-1"></a>                                        <span class="at">c01 =</span> censor.<span class="fl">01.</span>list, <span class="at">w=</span>W.list)</span>
-<span id="cb11-56"><a href="helpers-functions.html#cb11-56" tabindex="-1"></a>  ntlist.censor <span class="ot">&lt;-</span> <span class="fu">sapply</span>(censor.<span class="fl">01.</span>list, sum) </span>
-<span id="cb11-57"><a href="helpers-functions.html#cb11-57" tabindex="-1"></a></span>
-<span id="cb11-58"><a href="helpers-functions.html#cb11-58" tabindex="-1"></a>  Z.list <span class="ot">=</span> flowmix<span class="sc">::</span><span class="fu">gate</span>(mcres, ylist, <span class="cn">NULL</span>, <span class="dv">1111</span>, <span class="at">eps_estep =</span> <span class="fl">1E-20</span>)</span>
-<span id="cb11-59"><a href="helpers-functions.html#cb11-59" tabindex="-1"></a></span>
-<span id="cb11-60"><a href="helpers-functions.html#cb11-60" tabindex="-1"></a>  censored.Z.list <span class="ot">&lt;-</span> <span class="fu">mapply</span>(<span class="cf">function</span>(c01,zz){zz[c01 <span class="sc">==</span> <span class="cn">TRUE</span>]},</span>
-<span id="cb11-61"><a href="helpers-functions.html#cb11-61" tabindex="-1"></a>                            <span class="at">c01 =</span> censor.<span class="fl">01.</span>list, <span class="at">zz =</span> Z.list)</span>
-<span id="cb11-62"><a href="helpers-functions.html#cb11-62" tabindex="-1"></a></span>
-<span id="cb11-63"><a href="helpers-functions.html#cb11-63" tabindex="-1"></a>  <span class="do">## Sort of expensive</span></span>
-<span id="cb11-64"><a href="helpers-functions.html#cb11-64" tabindex="-1"></a>  samp.region.list <span class="ot">&lt;-</span> <span class="fu">lapply</span>(<span class="dv">1</span><span class="sc">:</span>TT, <span class="cf">function</span>(tt){</span>
-<span id="cb11-65"><a href="helpers-functions.html#cb11-65" tabindex="-1"></a>      c01 <span class="ot">&lt;-</span> censor.<span class="fl">01.</span>list[[tt]]</span>
-<span id="cb11-66"><a href="helpers-functions.html#cb11-66" tabindex="-1"></a>      cc <span class="ot">&lt;-</span> Censor.list[[tt]]</span>
-<span id="cb11-67"><a href="helpers-functions.html#cb11-67" tabindex="-1"></a>      <span class="cf">if</span>(<span class="fu">sum</span>(c01<span class="sc">==</span><span class="cn">TRUE</span>)<span class="sc">&gt;</span><span class="dv">1</span>){</span>
-<span id="cb11-68"><a href="helpers-functions.html#cb11-68" tabindex="-1"></a>          <span class="fu">apply</span>(cc[c01<span class="sc">==</span><span class="cn">TRUE</span>,,<span class="at">drop=</span><span class="cn">FALSE</span>],<span class="dv">1</span>,<span class="cf">function</span>(xx)</span>
-<span id="cb11-69"><a href="helpers-functions.html#cb11-69" tabindex="-1"></a>              <span class="do">## flowcut:::sample.region(xx,Cbox))</span></span>
-<span id="cb11-70"><a href="helpers-functions.html#cb11-70" tabindex="-1"></a>              <a href="helpers-functions.html#sample.region">sample.region</a>(xx,Cbox))</span>
-<span id="cb11-71"><a href="helpers-functions.html#cb11-71" tabindex="-1"></a>      }<span class="cf">else</span> <span class="cf">if</span>(<span class="fu">sum</span>(c01<span class="sc">==</span><span class="cn">TRUE</span>)<span class="sc">==</span><span class="dv">1</span>){</span>
-<span id="cb11-72"><a href="helpers-functions.html#cb11-72" tabindex="-1"></a>          <span class="fu">matrix</span>(<a href="helpers-functions.html#sample.region">sample.region</a>(cc[c01<span class="sc">==</span><span class="cn">TRUE</span>,,<span class="at">drop=</span><span class="cn">FALSE</span>],Cbox),<span class="at">ncol=</span><span class="dv">1</span>)</span>
-<span id="cb11-73"><a href="helpers-functions.html#cb11-73" tabindex="-1"></a>      }<span class="cf">else</span>{</span>
-<span id="cb11-74"><a href="helpers-functions.html#cb11-74" tabindex="-1"></a>          <span class="cn">NULL</span></span>
-<span id="cb11-75"><a href="helpers-functions.html#cb11-75" tabindex="-1"></a>      }</span>
-<span id="cb11-76"><a href="helpers-functions.html#cb11-76" tabindex="-1"></a>  })</span>
-<span id="cb11-77"><a href="helpers-functions.html#cb11-77" tabindex="-1"></a></span>
-<span id="cb11-78"><a href="helpers-functions.html#cb11-78" tabindex="-1"></a>  <span class="do">## Get the censored particles</span></span>
-<span id="cb11-79"><a href="helpers-functions.html#cb11-79" tabindex="-1"></a>  Sig.ell <span class="ot">=</span> mcres<span class="sc">$</span>sigma <span class="sc">%&gt;%</span> <span class="fu">aperm</span>(<span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">1</span>))</span>
-<span id="cb11-80"><a href="helpers-functions.html#cb11-80" tabindex="-1"></a>  imputed.ylist <span class="ot">&lt;-</span> parallel<span class="sc">::</span><span class="fu">mclapply</span>(<span class="dv">1</span><span class="sc">:</span>TT, <span class="cf">function</span>(tt) {</span>
-<span id="cb11-81"><a href="helpers-functions.html#cb11-81" tabindex="-1"></a>    mu.mat <span class="ot">=</span> mcres<span class="sc">$</span>mn[tt,,]</span>
-<span id="cb11-82"><a href="helpers-functions.html#cb11-82" tabindex="-1"></a>    yy <span class="ot">=</span> <a href="helpers-functions.html#impute.censored">impute.censored</a>(<span class="at">ww =</span> censored.W.list[[tt]], </span>
-<span id="cb11-83"><a href="helpers-functions.html#cb11-83" tabindex="-1"></a>                         <span class="at">yy =</span> censored.ylist[[tt]],</span>
-<span id="cb11-84"><a href="helpers-functions.html#cb11-84" tabindex="-1"></a>                         <span class="at">zz =</span> censored.Z.list[[tt]],</span>
-<span id="cb11-85"><a href="helpers-functions.html#cb11-85" tabindex="-1"></a>                         <span class="at">cc.info.mat =</span>  censored.C.list[[tt]],</span>
-<span id="cb11-86"><a href="helpers-functions.html#cb11-86" tabindex="-1"></a>                         <span class="at">bounds.mat =</span> samp.region.list[[tt]],</span>
-<span id="cb11-87"><a href="helpers-functions.html#cb11-87" tabindex="-1"></a>                         <span class="do">##mu.list[[tt]]</span></span>
-<span id="cb11-88"><a href="helpers-functions.html#cb11-88" tabindex="-1"></a>                         <span class="at">mu.mat =</span> mu.mat, <span class="at">Sigma.ell =</span> Sig.ell,</span>
-<span id="cb11-89"><a href="helpers-functions.html#cb11-89" tabindex="-1"></a>                         <span class="at">dimdat =</span> dimdat)</span>
-<span id="cb11-90"><a href="helpers-functions.html#cb11-90" tabindex="-1"></a>    <span class="cf">if</span>(dimdat<span class="sc">==</span><span class="dv">1</span> <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.null</span>(yy)) yy <span class="ot">=</span> <span class="fu">t</span>(yy)</span>
-<span id="cb11-91"><a href="helpers-functions.html#cb11-91" tabindex="-1"></a>    <span class="fu">return</span>(yy)</span>
-<span id="cb11-92"><a href="helpers-functions.html#cb11-92" tabindex="-1"></a>  }, <span class="at">mc.cores =</span> n.cores, <span class="at">mc.preschedule =</span> <span class="cn">FALSE</span>)             </span>
-<span id="cb11-93"><a href="helpers-functions.html#cb11-93" tabindex="-1"></a></span>
-<span id="cb11-94"><a href="helpers-functions.html#cb11-94" tabindex="-1"></a></span>
-<span id="cb11-95"><a href="helpers-functions.html#cb11-95" tabindex="-1"></a>  <span class="do">## Finally, ca</span></span>
-<span id="cb11-96"><a href="helpers-functions.html#cb11-96" tabindex="-1"></a>  imputed_ylist <span class="ot">&lt;-</span></span>
-<span id="cb11-97"><a href="helpers-functions.html#cb11-97" tabindex="-1"></a>    parallel<span class="sc">::</span><span class="fu">mcmapply</span>(<span class="cf">function</span>(yy, c01, imp){<span class="fu">replace</span>(yy, c01, imp)}, </span>
-<span id="cb11-98"><a href="helpers-functions.html#cb11-98" tabindex="-1"></a>                       <span class="at">yy =</span> ylist, <span class="at">c01 =</span> censor.<span class="fl">01.</span>list, <span class="at">imp =</span> imputed.ylist,</span>
-<span id="cb11-99"><a href="helpers-functions.html#cb11-99" tabindex="-1"></a>                       <span class="at">mc.cores =</span> n.cores, <span class="at">SIMPLIFY =</span> <span class="cn">FALSE</span>)            </span>
-<span id="cb11-100"><a href="helpers-functions.html#cb11-100" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">list</span>(<span class="at">imputed_ylist =</span> imputed_ylist, <span class="at">censor.01.list =</span> censor.<span class="fl">01.</span>list,</span>
-<span id="cb11-101"><a href="helpers-functions.html#cb11-101" tabindex="-1"></a>              <span class="at">memlist =</span> Z.list))</span>
-<span id="cb11-102"><a href="helpers-functions.html#cb11-102" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="helpers-functions.html#cb15-1" tabindex="-1"></a><span class="co">#' Imputing particles to impute the y's based on a model defined by the posterior</span></span>
+<span id="cb15-2"><a href="helpers-functions.html#cb15-2" tabindex="-1"></a><span class="co">#' mean of the last 500 draws. This is separated out from the Gibbs since the result takes up a lot of memory.</span></span>
+<span id="cb15-3"><a href="helpers-functions.html#cb15-3" tabindex="-1"></a><span class="co">#' (This is all code in the Gibbs.fast() function.)</span></span>
+<span id="cb15-4"><a href="helpers-functions.html#cb15-4" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb15-5"><a href="helpers-functions.html#cb15-5" tabindex="-1"></a><span class="co">#' </span></span>
+<span id="cb15-6"><a href="helpers-functions.html#cb15-6" tabindex="-1"></a><span class="co">#' @param ylist Original particles</span></span>
+<span id="cb15-7"><a href="helpers-functions.html#cb15-7" tabindex="-1"></a><span class="co">#' @param countslist Biomass list</span></span>
+<span id="cb15-8"><a href="helpers-functions.html#cb15-8" tabindex="-1"></a><span class="co">#' @param Cbox Bounding box.</span></span>
+<span id="cb15-9"><a href="helpers-functions.html#cb15-9" tabindex="-1"></a><span class="co">#' @param mcres The converted MCMC result, using e.g., |<a href="helpers-functions.html#mcmc_res_to_flowmix">mcmc_res_to_flowmix</a>(res,</span></span>
+<span id="cb15-10"><a href="helpers-functions.html#cb15-10" tabindex="-1"></a><span class="co">#'   last_draws_inds = 1001:1500)|</span></span>
+<span id="cb15-11"><a href="helpers-functions.html#cb15-11" tabindex="-1"></a><span class="co">#' @param n.cores number of CPU cores to use</span></span>
+<span id="cb15-12"><a href="helpers-functions.html#cb15-12" tabindex="-1"></a><span class="co">#' </span></span>
+<span id="cb15-13"><a href="helpers-functions.html#cb15-13" tabindex="-1"></a><span class="co">#' @export</span></span>
+<span id="cb15-14"><a href="helpers-functions.html#cb15-14" tabindex="-1"></a><span id="impute">impute</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(ylist, countslist, Cbox, mcres, <span class="at">n.cores=</span><span class="dv">1</span>){</span>
+<span id="cb15-15"><a href="helpers-functions.html#cb15-15" tabindex="-1"></a></span>
+<span id="cb15-16"><a href="helpers-functions.html#cb15-16" tabindex="-1"></a>  <span class="do">## if(FALSE){</span></span>
+<span id="cb15-17"><a href="helpers-functions.html#cb15-17" tabindex="-1"></a>  <span class="do">##   ## Temporary</span></span>
+<span id="cb15-18"><a href="helpers-functions.html#cb15-18" tabindex="-1"></a>  <span class="do">##   ylist = datobj$ylist</span></span>
+<span id="cb15-19"><a href="helpers-functions.html#cb15-19" tabindex="-1"></a>  <span class="do">##   countslist = datobj$countslist</span></span>
+<span id="cb15-20"><a href="helpers-functions.html#cb15-20" tabindex="-1"></a></span>
+<span id="cb15-21"><a href="helpers-functions.html#cb15-21" tabindex="-1"></a>  <span class="do">##   ## TEMPORARY: Add a bounding box |Cbox|</span></span>
+<span id="cb15-22"><a href="helpers-functions.html#cb15-22" tabindex="-1"></a>  <span class="do">##   bounds.lower &lt;- lapply(datobj$ylist,function(xx)</span></span>
+<span id="cb15-23"><a href="helpers-functions.html#cb15-23" tabindex="-1"></a>  <span class="do">##     Rfast::colMins(xx,value = TRUE)) %&gt;%</span></span>
+<span id="cb15-24"><a href="helpers-functions.html#cb15-24" tabindex="-1"></a>  <span class="do">##     do.call(rbind,.) %&gt;% Rfast::colMins(.,value = TRUE)</span></span>
+<span id="cb15-25"><a href="helpers-functions.html#cb15-25" tabindex="-1"></a>  <span class="do">##   bounds.upper &lt;- lapply(datobj$ylist,function(xx)</span></span>
+<span id="cb15-26"><a href="helpers-functions.html#cb15-26" tabindex="-1"></a>  <span class="do">##     Rfast::colMaxs(xx,value = TRUE)) %&gt;%</span></span>
+<span id="cb15-27"><a href="helpers-functions.html#cb15-27" tabindex="-1"></a>  <span class="do">##     do.call(rbind,.) %&gt;% Rfast::colMaxs(.,value = TRUE)</span></span>
+<span id="cb15-28"><a href="helpers-functions.html#cb15-28" tabindex="-1"></a>  <span class="do">##   Cbox &lt;- cbind(bounds.lower,bounds.upper)</span></span>
+<span id="cb15-29"><a href="helpers-functions.html#cb15-29" tabindex="-1"></a>  <span class="do">##   Cbox &lt;- res$dat.info$Cbox</span></span>
+<span id="cb15-30"><a href="helpers-functions.html#cb15-30" tabindex="-1"></a>  <span class="do">##   datobj$Cbox = Cbox</span></span>
+<span id="cb15-31"><a href="helpers-functions.html#cb15-31" tabindex="-1"></a></span>
+<span id="cb15-32"><a href="helpers-functions.html#cb15-32" tabindex="-1"></a>  <span class="do">##   ## Temporary</span></span>
+<span id="cb15-33"><a href="helpers-functions.html#cb15-33" tabindex="-1"></a>  <span class="do">##   mcres = <a href="helpers-functions.html#mcmc_res_to_flowmix">mcmc_res_to_flowmix</a>(res, last_draws_inds = 1001:1500)</span></span>
+<span id="cb15-34"><a href="helpers-functions.html#cb15-34" tabindex="-1"></a>  <span class="do">## }</span></span>
+<span id="cb15-35"><a href="helpers-functions.html#cb15-35" tabindex="-1"></a>  </span>
+<span id="cb15-36"><a href="helpers-functions.html#cb15-36" tabindex="-1"></a>  <span class="do">## Get everything</span></span>
+<span id="cb15-37"><a href="helpers-functions.html#cb15-37" tabindex="-1"></a>  ntlist <span class="ot">=</span> <span class="fu">sapply</span>(ylist, nrow)</span>
+<span id="cb15-38"><a href="helpers-functions.html#cb15-38" tabindex="-1"></a>  TT <span class="ot">=</span> <span class="fu">length</span>(ylist)</span>
+<span id="cb15-39"><a href="helpers-functions.html#cb15-39" tabindex="-1"></a>  NN <span class="ot">&lt;-</span> <span class="fu">sum</span>(ntlist)</span>
+<span id="cb15-40"><a href="helpers-functions.html#cb15-40" tabindex="-1"></a>  dimdat <span class="ot">&lt;-</span> <span class="fu">ncol</span>(ylist[[<span class="dv">1</span>]])</span>
+<span id="cb15-41"><a href="helpers-functions.html#cb15-41" tabindex="-1"></a>  countsTotal <span class="ot">&lt;-</span> <span class="fu">sapply</span>(countslist,sum) <span class="sc">%&gt;%</span> <span class="fu">sum</span>() </span>
+<span id="cb15-42"><a href="helpers-functions.html#cb15-42" tabindex="-1"></a>  alpha.factor <span class="ot">&lt;-</span> NN<span class="sc">/</span>countsTotal  </span>
+<span id="cb15-43"><a href="helpers-functions.html#cb15-43" tabindex="-1"></a>  W.list <span class="ot">&lt;-</span> <span class="fu">lapply</span>(countslist, <span class="cf">function</span>(xx) xx<span class="sc">*</span>alpha.factor) </span>
+<span id="cb15-44"><a href="helpers-functions.html#cb15-44" tabindex="-1"></a></span>
+<span id="cb15-45"><a href="helpers-functions.html#cb15-45" tabindex="-1"></a>  <span class="do">## More processing</span></span>
+<span id="cb15-46"><a href="helpers-functions.html#cb15-46" tabindex="-1"></a>  Censor.list <span class="ot">&lt;-</span> <span class="fu">lapply</span>(ylist, <span class="cf">function</span>(x) <a href="helpers-functions.html#censorIndicator">censorIndicator</a>(x,Cbox))  </span>
+<span id="cb15-47"><a href="helpers-functions.html#cb15-47" tabindex="-1"></a>  censor.<span class="fl">01.</span>list <span class="ot">&lt;-</span> <span class="fu">lapply</span>(Censor.list, <span class="cf">function</span>(x) <span class="fu">apply</span>(x,<span class="dv">1</span>, <span class="cf">function</span>(xx){</span>
+<span id="cb15-48"><a href="helpers-functions.html#cb15-48" tabindex="-1"></a>    <span class="fu">sum</span>(<span class="fu">abs</span>(xx)) <span class="sc">&gt;</span> <span class="dv">0</span>})) <span class="do">## expensive</span></span>
+<span id="cb15-49"><a href="helpers-functions.html#cb15-49" tabindex="-1"></a>  censor.which.list <span class="ot">&lt;-</span> <span class="fu">lapply</span>(censor.<span class="fl">01.</span>list, <span class="cf">function</span>(cc) <span class="fu">which</span>(cc<span class="sc">==</span><span class="cn">TRUE</span>))</span>
+<span id="cb15-50"><a href="helpers-functions.html#cb15-50" tabindex="-1"></a>  censored.ylist <span class="ot">&lt;-</span> <span class="fu">mapply</span>(<span class="cf">function</span>(yy,c01) {yy[c01<span class="sc">==</span><span class="cn">TRUE</span>,,drop<span class="ot">=</span><span class="cn">FALSE</span>]},</span>
+<span id="cb15-51"><a href="helpers-functions.html#cb15-51" tabindex="-1"></a>                                       <span class="at">yy =</span> ylist, <span class="at">c01 =</span> censor.<span class="fl">01.</span>list)</span>
+<span id="cb15-52"><a href="helpers-functions.html#cb15-52" tabindex="-1"></a>  censored.C.list <span class="ot">&lt;-</span> <span class="fu">mapply</span>(<span class="cf">function</span>(c01,cc){cc[c01<span class="sc">==</span><span class="cn">TRUE</span>,,drop<span class="ot">=</span><span class="cn">FALSE</span>]},</span>
+<span id="cb15-53"><a href="helpers-functions.html#cb15-53" tabindex="-1"></a>                                        <span class="at">c01 =</span> censor.<span class="fl">01.</span>list, <span class="at">cc=</span>Censor.list)</span>
+<span id="cb15-54"><a href="helpers-functions.html#cb15-54" tabindex="-1"></a>  censored.W.list <span class="ot">&lt;-</span> <span class="fu">mapply</span>(<span class="cf">function</span>(c01,ww){ww[c01<span class="sc">==</span><span class="cn">TRUE</span>]},</span>
+<span id="cb15-55"><a href="helpers-functions.html#cb15-55" tabindex="-1"></a>                                        <span class="at">c01 =</span> censor.<span class="fl">01.</span>list, <span class="at">w=</span>W.list)</span>
+<span id="cb15-56"><a href="helpers-functions.html#cb15-56" tabindex="-1"></a>  ntlist.censor <span class="ot">&lt;-</span> <span class="fu">sapply</span>(censor.<span class="fl">01.</span>list, sum) </span>
+<span id="cb15-57"><a href="helpers-functions.html#cb15-57" tabindex="-1"></a></span>
+<span id="cb15-58"><a href="helpers-functions.html#cb15-58" tabindex="-1"></a>  Z.list <span class="ot">=</span> flowmix<span class="sc">::</span><span class="fu">gate</span>(mcres, ylist, <span class="cn">NULL</span>, <span class="dv">1111</span>, <span class="at">eps_estep =</span> <span class="fl">1E-20</span>)</span>
+<span id="cb15-59"><a href="helpers-functions.html#cb15-59" tabindex="-1"></a></span>
+<span id="cb15-60"><a href="helpers-functions.html#cb15-60" tabindex="-1"></a>  censored.Z.list <span class="ot">&lt;-</span> <span class="fu">mapply</span>(<span class="cf">function</span>(c01,zz){zz[c01 <span class="sc">==</span> <span class="cn">TRUE</span>]},</span>
+<span id="cb15-61"><a href="helpers-functions.html#cb15-61" tabindex="-1"></a>                            <span class="at">c01 =</span> censor.<span class="fl">01.</span>list, <span class="at">zz =</span> Z.list)</span>
+<span id="cb15-62"><a href="helpers-functions.html#cb15-62" tabindex="-1"></a></span>
+<span id="cb15-63"><a href="helpers-functions.html#cb15-63" tabindex="-1"></a>  <span class="do">## Sort of expensive</span></span>
+<span id="cb15-64"><a href="helpers-functions.html#cb15-64" tabindex="-1"></a>  samp.region.list <span class="ot">&lt;-</span> <span class="fu">lapply</span>(<span class="dv">1</span><span class="sc">:</span>TT, <span class="cf">function</span>(tt){</span>
+<span id="cb15-65"><a href="helpers-functions.html#cb15-65" tabindex="-1"></a>      c01 <span class="ot">&lt;-</span> censor.<span class="fl">01.</span>list[[tt]]</span>
+<span id="cb15-66"><a href="helpers-functions.html#cb15-66" tabindex="-1"></a>      cc <span class="ot">&lt;-</span> Censor.list[[tt]]</span>
+<span id="cb15-67"><a href="helpers-functions.html#cb15-67" tabindex="-1"></a>      <span class="cf">if</span>(<span class="fu">sum</span>(c01<span class="sc">==</span><span class="cn">TRUE</span>)<span class="sc">&gt;</span><span class="dv">1</span>){</span>
+<span id="cb15-68"><a href="helpers-functions.html#cb15-68" tabindex="-1"></a>          <span class="fu">apply</span>(cc[c01<span class="sc">==</span><span class="cn">TRUE</span>,,<span class="at">drop=</span><span class="cn">FALSE</span>],<span class="dv">1</span>,<span class="cf">function</span>(xx)</span>
+<span id="cb15-69"><a href="helpers-functions.html#cb15-69" tabindex="-1"></a>              <span class="do">## flowcut:::sample.region(xx,Cbox))</span></span>
+<span id="cb15-70"><a href="helpers-functions.html#cb15-70" tabindex="-1"></a>              <a href="helpers-functions.html#sample.region">sample.region</a>(xx,Cbox))</span>
+<span id="cb15-71"><a href="helpers-functions.html#cb15-71" tabindex="-1"></a>      }<span class="cf">else</span> <span class="cf">if</span>(<span class="fu">sum</span>(c01<span class="sc">==</span><span class="cn">TRUE</span>)<span class="sc">==</span><span class="dv">1</span>){</span>
+<span id="cb15-72"><a href="helpers-functions.html#cb15-72" tabindex="-1"></a>          <span class="fu">matrix</span>(<a href="helpers-functions.html#sample.region">sample.region</a>(cc[c01<span class="sc">==</span><span class="cn">TRUE</span>,,<span class="at">drop=</span><span class="cn">FALSE</span>],Cbox),<span class="at">ncol=</span><span class="dv">1</span>)</span>
+<span id="cb15-73"><a href="helpers-functions.html#cb15-73" tabindex="-1"></a>      }<span class="cf">else</span>{</span>
+<span id="cb15-74"><a href="helpers-functions.html#cb15-74" tabindex="-1"></a>          <span class="cn">NULL</span></span>
+<span id="cb15-75"><a href="helpers-functions.html#cb15-75" tabindex="-1"></a>      }</span>
+<span id="cb15-76"><a href="helpers-functions.html#cb15-76" tabindex="-1"></a>  })</span>
+<span id="cb15-77"><a href="helpers-functions.html#cb15-77" tabindex="-1"></a></span>
+<span id="cb15-78"><a href="helpers-functions.html#cb15-78" tabindex="-1"></a>  <span class="do">## Get the censored particles</span></span>
+<span id="cb15-79"><a href="helpers-functions.html#cb15-79" tabindex="-1"></a>  Sig.ell <span class="ot">=</span> mcres<span class="sc">$</span>sigma <span class="sc">%&gt;%</span> <span class="fu">aperm</span>(<span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">1</span>))</span>
+<span id="cb15-80"><a href="helpers-functions.html#cb15-80" tabindex="-1"></a>  imputed.ylist <span class="ot">&lt;-</span> parallel<span class="sc">::</span><span class="fu">mclapply</span>(<span class="dv">1</span><span class="sc">:</span>TT, <span class="cf">function</span>(tt) {</span>
+<span id="cb15-81"><a href="helpers-functions.html#cb15-81" tabindex="-1"></a>    mu.mat <span class="ot">=</span> mcres<span class="sc">$</span>mn[tt,,]</span>
+<span id="cb15-82"><a href="helpers-functions.html#cb15-82" tabindex="-1"></a>    yy <span class="ot">=</span> <a href="helpers-functions.html#impute.censored">impute.censored</a>(<span class="at">ww =</span> censored.W.list[[tt]], </span>
+<span id="cb15-83"><a href="helpers-functions.html#cb15-83" tabindex="-1"></a>                         <span class="at">yy =</span> censored.ylist[[tt]],</span>
+<span id="cb15-84"><a href="helpers-functions.html#cb15-84" tabindex="-1"></a>                         <span class="at">zz =</span> censored.Z.list[[tt]],</span>
+<span id="cb15-85"><a href="helpers-functions.html#cb15-85" tabindex="-1"></a>                         <span class="at">cc.info.mat =</span>  censored.C.list[[tt]],</span>
+<span id="cb15-86"><a href="helpers-functions.html#cb15-86" tabindex="-1"></a>                         <span class="at">bounds.mat =</span> samp.region.list[[tt]],</span>
+<span id="cb15-87"><a href="helpers-functions.html#cb15-87" tabindex="-1"></a>                         <span class="do">##mu.list[[tt]]</span></span>
+<span id="cb15-88"><a href="helpers-functions.html#cb15-88" tabindex="-1"></a>                         <span class="at">mu.mat =</span> mu.mat, <span class="at">Sigma.ell =</span> Sig.ell,</span>
+<span id="cb15-89"><a href="helpers-functions.html#cb15-89" tabindex="-1"></a>                         <span class="at">dimdat =</span> dimdat)</span>
+<span id="cb15-90"><a href="helpers-functions.html#cb15-90" tabindex="-1"></a>    <span class="cf">if</span>(dimdat<span class="sc">==</span><span class="dv">1</span> <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.null</span>(yy)) yy <span class="ot">=</span> <span class="fu">t</span>(yy)</span>
+<span id="cb15-91"><a href="helpers-functions.html#cb15-91" tabindex="-1"></a>    <span class="fu">return</span>(yy)</span>
+<span id="cb15-92"><a href="helpers-functions.html#cb15-92" tabindex="-1"></a>  }, <span class="at">mc.cores =</span> n.cores, <span class="at">mc.preschedule =</span> <span class="cn">FALSE</span>)             </span>
+<span id="cb15-93"><a href="helpers-functions.html#cb15-93" tabindex="-1"></a></span>
+<span id="cb15-94"><a href="helpers-functions.html#cb15-94" tabindex="-1"></a></span>
+<span id="cb15-95"><a href="helpers-functions.html#cb15-95" tabindex="-1"></a>  <span class="do">## Finally, ca</span></span>
+<span id="cb15-96"><a href="helpers-functions.html#cb15-96" tabindex="-1"></a>  imputed_ylist <span class="ot">&lt;-</span></span>
+<span id="cb15-97"><a href="helpers-functions.html#cb15-97" tabindex="-1"></a>    parallel<span class="sc">::</span><span class="fu">mcmapply</span>(<span class="cf">function</span>(yy, c01, imp){<span class="fu">replace</span>(yy, c01, imp)}, </span>
+<span id="cb15-98"><a href="helpers-functions.html#cb15-98" tabindex="-1"></a>                       <span class="at">yy =</span> ylist, <span class="at">c01 =</span> censor.<span class="fl">01.</span>list, <span class="at">imp =</span> imputed.ylist,</span>
+<span id="cb15-99"><a href="helpers-functions.html#cb15-99" tabindex="-1"></a>                       <span class="at">mc.cores =</span> n.cores, <span class="at">SIMPLIFY =</span> <span class="cn">FALSE</span>)            </span>
+<span id="cb15-100"><a href="helpers-functions.html#cb15-100" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">list</span>(<span class="at">imputed_ylist =</span> imputed_ylist, <span class="at">censor.01.list =</span> censor.<span class="fl">01.</span>list,</span>
+<span id="cb15-101"><a href="helpers-functions.html#cb15-101" tabindex="-1"></a>              <span class="at">memlist =</span> Z.list))</span>
+<span id="cb15-102"><a href="helpers-functions.html#cb15-102" tabindex="-1"></a>}</span></code></pre></div>
 
+</div>
 </div>
             </section>
 </div>

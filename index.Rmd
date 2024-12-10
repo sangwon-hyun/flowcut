@@ -26,8 +26,7 @@ This line is purely for testing (to be deleted later!).
 
 ```{r, eval = FALSE}
 litr::load_all("index.Rmd")##, output_format = litr::litr_gitbook())
-my_load <- function(){
-  litr::render("~/repos/flowcut/index.Rmd", output_format = litr::litr_gitbook(minimal_eval = TRUE))
+my_load <- function(){litr::render("~/repos/flowcut/index.Rmd", output_format = litr::litr_gitbook(minimal_eval = TRUE))
   devtools::load_all("~/repos/flowcut/flowcut")
 }
 my_load()

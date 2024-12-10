@@ -1,6 +1,7 @@
 introduction
 package-setup
 helpers-functions
+ball-constraint-on-xt-beta_k
 syntheticdata
 gibbs-sampler
 the-main-gibbs-sampler

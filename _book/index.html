@@ -12,7 +12,7 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Creating the flowcut R package">
 <meta name="author" content="Sheng Jiang, Sangwon Hyun">
-<meta name="date" content="2024-12-05">
+<meta name="date" content="2024-12-09">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -108,7 +108,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
       <nav role="navigation"><ul class="summary">
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
 <li class="chapter" data-level="2" data-path="package-setup.html"><a href="package-setup.html"><i class="fa fa-check"></i><b>2</b> Package setup</a></li>
-<li class="chapter" data-level="3" data-path="helpers-functions.html"><a href="helpers-functions.html"><i class="fa fa-check"></i><b>3</b> Helpers functions</a></li>
+<li class="chapter" data-level="3" data-path="helpers-functions.html">
+<a href="helpers-functions.html"><i class="fa fa-check"></i><b>3</b> Helpers functions</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="helpers-functions.html"><a href="helpers-functions.html#ball-constraint-on-xt-beta_k"><i class="fa fa-check"></i><b>3.1</b> Ball constraint on <span class="math inline">\(X^{(t)} \beta_k\)</span></a></li>
+</ul>
+</li>
 <li class="chapter" data-level="4" data-path="syntheticdata.html"><a href="syntheticdata.html"><i class="fa fa-check"></i><b>4</b> Generating synthetic data</a></li>
 <li class="chapter" data-level="5" data-path="gibbs-sampler.html">
 <a href="gibbs-sampler.html"><i class="fa fa-check"></i><b>5</b> Gibbs sampler</a>
@@ -141,7 +146,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-"><div id="header">
 <h1 class="title">Creating the <code>flowcut</code> R package</h1>
 <p class="author"><em>Sheng Jiang, Sangwon Hyun</em></p>
-<p class="date"><em>2024-12-05</em></p>
+<p class="date"><em>2024-12-09</em></p>
 </div>
 <div id="introduction" class="section level1 hasAnchor" number="1">
 <h1>
@@ -154,10 +159,10 @@ package are both created using one simple command:</p>
 <span id="cb1-2"><a href="index.html#cb1-2" tabindex="-1"></a><span class="do">## install.packages("./flowcut/", repos = NULL, type="source")</span></span></code></pre></div>
 <p>This line is purely for testing (to be deleted later!).</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="index.html#cb2-1" tabindex="-1"></a>litr<span class="sc">::</span><span class="fu">load_all</span>(<span class="st">"index.Rmd"</span>)<span class="do">##, output_format = litr::litr_gitbook())</span></span>
-<span id="cb2-2"><a href="index.html#cb2-2" tabindex="-1"></a><span id="my_load">my_load</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(){</span>
-<span id="cb2-3"><a href="index.html#cb2-3" tabindex="-1"></a>  litr<span class="sc">::</span><span class="fu">render</span>(<span class="st">"~/repos/flowcut/index.Rmd"</span>, <span class="at">output_format =</span> litr<span class="sc">::</span><span class="fu">litr_gitbook</span>(<span class="at">minimal_eval =</span> <span class="cn">TRUE</span>))</span>
-<span id="cb2-4"><a href="index.html#cb2-4" tabindex="-1"></a>  </span>
-<span id="cb2-5"><a href="index.html#cb2-5" tabindex="-1"></a></span>
+<span id="cb2-2"><a href="index.html#cb2-2" tabindex="-1"></a><span id="my_load">my_load</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(){litr<span class="sc">::</span><span class="fu">render</span>(<span class="st">"~/repos/flowcut/index.Rmd"</span>, <span class="at">output_format =</span> litr<span class="sc">::</span><span class="fu">litr_gitbook</span>(<span class="at">minimal_eval =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb2-3"><a href="index.html#cb2-3" tabindex="-1"></a>  devtools<span class="sc">::</span><span class="fu">load_all</span>(<span class="st">"~/repos/flowcut/flowcut"</span>)</span>
+<span id="cb2-4"><a href="index.html#cb2-4" tabindex="-1"></a>}</span>
+<span id="cb2-5"><a href="index.html#cb2-5" tabindex="-1"></a><a href="index.html#my_load">my_load</a>()</span>
 <span id="cb2-6"><a href="index.html#cb2-6" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">check</span>(<span class="st">"~/repos/flowcut/flowcut"</span>, <span class="at">document =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 
 </div>

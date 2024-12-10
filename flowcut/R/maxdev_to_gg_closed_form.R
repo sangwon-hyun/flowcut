@@ -1,0 +1,34 @@
+# Generated from _main.Rmd: do not edit by hand
+
+#' Closed form for obtaining the g parameter by simulation. Currently only works for dimdat=1
+#' 
+#' @param X the design matrix, TT by p, (that doesn't include the intercept) 
+#' @param dimdat the dimension of the cytogram space 
+#' @param maxdev Maximum deviation of cluster means away from its grand mean. 
+#' @param numclust the number of experts 
+#' @param prior_prob prior probability
+#' @param viz show the plot of the fitted relationship between the g parameter and the prior probability.
+#'
+#' 
+#' @return the g parameter with desired prior probability on maxdev 
+#'
+#' @export 
+maxdev_to_gg_closed_form <- function(X, dimdat, maxdev, numclust, prior_prob = 0.99, viz = FALSE){
+
+  stopifnot(dimdat == 1)
+  obj = svd(X)
+  pp = ncol(X)
+  TT = nrow(X)
+  ## maxdev = 0.115525
+
+  ## z_cutoff = 2.58 ## for 99% for one cluster
+  z_cutoff = qnorm(1-(1-prior_prob^(1/numclust))/2)
+  
+  ## Form the constant c and matrix P, multiplied to form the prior covariance cP.
+  P = obj$u %*% t(obj$u)
+  c = (maxdev^2 / z_cutoff^2 / diag(P)) %>% median
+  A = c * obj$v %*% diag(1/(obj$d^2)) %*% t(obj$v) 
+  cP = (X %*% A %*% t(X)) ##%>% diag() %>% plot()
+
+  return(c)
+}

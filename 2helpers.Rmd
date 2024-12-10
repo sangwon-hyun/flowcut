@@ -370,7 +370,9 @@ get_Cbox <- function(ylist){
 }
 ```
 
+## Ball constraint on $X^{(t)} \beta_k$
 
+This function seems to have a bug. 
 
 ```{r}
 #' Obtain the g parameter by simulation. 
@@ -434,7 +436,6 @@ maxdev_to_gg <- function(X, dimdat, maxdev, numclust, ggvec,
   mc.cores = n.cores)
   if(verbose) cat(fill=TRUE)
 
-    
   ## Make linear interpolation at a fine grid
   res = stats::approx(x = unlist(gglist), y = unlist(plist), method="linear", n = 100)
   newx =  res$x
@@ -455,7 +456,10 @@ maxdev_to_gg <- function(X, dimdat, maxdev, numclust, ggvec,
   
   return(newx[imin])
 }
+```
 
+
+```{r}
 #' Closed form for obtaining the g parameter by simulation. Currently only works for dimdat=1
 #' 
 #' @param X the design matrix, TT by p, (that doesn't include the intercept) 
@@ -482,32 +486,183 @@ maxdev_to_gg_closed_form <- function(X, dimdat, maxdev, numclust, prior_prob = 0
   
   ## Form the constant c and matrix P, multiplied to form the prior covariance cP.
   P = obj$u %*% t(obj$u)
-  c = maxdev^2 / z_cutoff^2 /max(diag(P))
+  c = (maxdev^2 / z_cutoff^2 / diag(P)) %>% median
+  A = c * obj$v %*% diag(1/(obj$d^2)) %*% t(obj$v) 
+  cP = (X %*% A %*% t(X)) ##%>% diag() %>% plot()
+
+  return(c)
+}
+``` 
+
+Testing out this function.
+
+
+```{r}
+set.seed(100)
+X = rnorm(1000,0,1) %>% matrix(ncol = 10, nrow = 100)
+obj = svd(X)
+pp = ncol(X)
+TT = nrow(X)
+maxdev = 0.5
+numclust = 1
+prior_probs = seq(from = 0.1, to = 1, by = 0.05)
+sapply(prior_probs, function(prior_prob){
+  z_cutoff = qnorm(1-(1-prior_prob^(1/numclust))/2)
+  
+  ## Form the constant c and matrix P, multiplied to form the prior covariance cP.
+  P = obj$u %*% t(obj$u)
+  c = (maxdev^2 / z_cutoff^2 / diag(P)) %>% median()
+  ## c = (maxdev^2 / z_cutoff^2 / mean(diag(P)))
+  A = c * obj$v %*% diag(1/(obj$d^2)) %*% t(obj$v) 
+  cP = (X %*% A %*% t(X)) ##%>% diag() %>% plot()
+  
+  ## Generate beta and form w = X beta_k
+  many_betas = MASS::mvrnorm(100000, mu = rep(0, pp), Sigma = A)
+  w =  X %*% t(many_betas) 
+  
+  ## Plotting
+  if(FALSE){
+    ## Make a plot of all w = X beta_k
+    w %>% .[,1:500] %>% matplot(pch = 16, col = rgb(0,0,0,0.1))
+    
+    ## Draw the lines where the 95'th quantiles are.
+    qs = w %>% apply(1, function(one_w){
+      quantile(one_w, probs=0.975)})
+    lines(qs, col = 'red')
+    
+    qs = w %>% apply(1, function(one_w){
+      quantile(one_w, probs=0.025)})
+    lines(qs, col = 'red')
+    
+    abline(h = maxdev, lwd = 2, lty = 2, col = 'red')
+    abline(h = -maxdev, lwd = 2, lty = 2, col = 'red')
+    text(x=50, y = maxdev*1.1, labels = "Maximum deviation")
+    legend("topleft", col = 'red', lwd=1, lty=1, legend = c("0.95 quantile"))
+  }
+  sum((abs(w)<maxdev))/length(w)
+}) -> coverages
+plot(x = prior_probs, y = coverages, type = 'o', ylim = c(0,1), xlim = c(0,1),
+     xlab = "Target prior probability of deviation\n of |w| = |X beta| above maxdev",
+     ylab = "Empirical probability of deviation")
+abline(0,1, col = 'red')
+```
+
+
+Here is the 3d version (not properly tested yet, doesn't seem to work).
+
+```{r, eval = FALSE}
+maxdev_to_gg_closed_form_3d <- function(X, dimdat, maxdev, numclust,
+                                        prior_prob = 0.99, viz = FALSE){
+
+  stopifnot(dimdat == 3)
+  obj = svd(X)
+  pp = ncol(X)
+  TT = nrow(X)
+  ## maxdev = 0.115525
+
+  ## z_cutoff = 2.58 ## for 99% for one cluster
+  ## z_cutoff = qnorm(1-(1-prior_prob^(1/numclust))/2)
+  chisq_cutoff = qchisq(p=1-(1-prior_prob^(1/numclust)), df = dimdat)
+  
+  ## Form the constant c and matrix P, multiplied to form the prior covariance cP.
+  P = obj$u %*% t(obj$u)
+  c = (maxdev^2 / chisq_cutoff^2 /diag(P)) %>% median()
   A = c * obj$v %*% diag(1/(obj$d^2)) %*% t(obj$v) 
   cP = (X %*% A %*% t(X)) ##%>% diag() %>% plot()
 
   if(viz){
   
     ## Generate beta and form w = X beta_k
-    many_betas = MASS::mvrnorm(100000, mu = rep(0, pp), Sigma = A)
-    w =  X %*% t(many_betas) 
+    ## many_betas = MASS::mvrnorm(100000, mu = rep(0, pp), Sigma = A)
+    many_betas = matrixsampling::rmatrixnormal(n=100000,
+                                               M=matrix(0, pp, dimdat),
+                                               U=A,
+                                               V = diag(rep(1,dimdat)))
+    wlist = lapply(1:100000, function(ii)X %*% many_betas[,,ii])
+    wlist_rownorms = wlist %>% lapply(function(w) apply(w, 1,function(a)sum(a*a)))
     
-    ## Make a plot of all w = X beta_k
-    w %>% .[,1:500] %>% matplot(pch = 16, col = rgb(0,0,0,0.1))
+    ## Make a plot of all |w|_2, w = X beta_k
+    ## wlist_rownorms %>% lapply(function(a)a[1]) %>%  .[1:500] %>% matplot(pch = 16, col = rgb(0,0,0,0.1))
+    wlist_rownorms %>% .[1:500] %>% do.call(rbind, .) %>%  matplot(pch = 16, col = rgb(0,0,0,0.1))
 
     ## Draw the lines where the 95'th quantiles are.
-    qs = w %>% apply(1, function(one_w){
+    qs =     wlist_rownorms %>% .[1:500] %>% do.call(rbind, .) %>% apply(1, function(one_w){
       quantile(one_w, probs=0.95)})
     lines(qs, col = 'red')
     abline(h = maxdev, lwd = 2, lty = 2, col = 'red')
-    text(x=50, y = maxdev*.98, labels = "Maximum deviation")
+    text(x=50, y = maxdev*1.1, labels = "Maximum deviation")
     legend("topleft", col = 'red', lwd=1, lty=1, legend = c("0.95 quantile"))
   }
 
   return(c)
 }
+```
 
-``` 
+
+
+(This should reduce to the dimdat=1 case. Work in progress!)
+
+```{r, eval = FALSE} 
+set.seed(100)
+X = rnorm(1000,0,1) %>% matrix(ncol = 10, nrow = 100)
+obj = svd(X)
+pp = ncol(X)
+TT = nrow(X)
+maxdev = 0.5
+dimdat = 1
+numclust = 1
+prior_probs = seq(from = 0.1, to = 1, by = 0.1)
+sapply(prior_probs, function(prior_prob){
+  print(prior_prob)
+  chisq_cutoff = qchisq(p = (1-(1-prior_prob^(1/numclust))), df = dimdat)
+  ## print(1-(1-prior_prob^(1/numclust)))
+  ## print(chisq_cutoff)
+
+  ## Form the constant c and matrix P, multiplied to form the prior covariance cP.
+  P = obj$u %*% t(obj$u)
+  c = (maxdev^2 / chisq_cutoff^2 / diag(P)) %>% median()
+  A = c * obj$v %*% diag(1/(obj$d^2)) %*% t(obj$v) 
+  cP = (X %*% A %*% t(X)) ##%>% diag() %>% plot()
+  
+  ## Generate beta and form w = X beta_k
+  ## many_betas = MASS::mvrnorm(100000, mu = rep(0, pp), Sigma = A)
+  nsim = 10000
+  many_betas = matrixsampling::rmatrixnormal(n = nsim,
+                                             M = matrix(0, pp, dimdat),
+                                             U = A,
+                                             V = diag(rep(1,dimdat)))
+  wlist = lapply(1:nsim, function(ii)X %*% many_betas[,,ii])
+  wlist_rownorms = wlist %>% lapply(function(w) apply(w, 1,function(a)sum(a*a)))
+  
+  
+  ## Make a plot of all |w|_2, w = X beta_k
+  if(FALSE){
+    ## wlist_rownorms %>% lapply(function(a)a[1]) %>%  .[1:500] %>% matplot(pch = 16, col = rgb(0,0,0,0.1))
+    wlist_rownorms %>% .[1:500] %>% do.call(rbind, .) %>%  matplot(pch = 16, col = rgb(0,0,0,0.1))
+
+    ## Draw the lines where the 95'th quantiles are.
+    qs = wlist_rownorms %>% .[1:500] %>% do.call(rbind, .) %>% apply(1, function(one_w){
+      quantile(one_w, probs=0.95)})
+    lines(qs, col = 'red')
+    abline(h = maxdev, lwd = 2, lty = 2, col = 'red')
+    text(x=50, y = maxdev*1.1, labels = "Maximum deviation")
+    legend("topleft", col = 'red', lwd=1, lty=1, legend = c("0.95 quantile"))
+  }
+
+  normmat = do.call(rbind, wlist_rownorms)
+  hist(normmat[,1])
+  abline(v = maxdev, col = 'red', lwd=2)
+
+  sum((abs(normmat)< maxdev))/(length(normmat))
+}) -> coverages
+plot(x = prior_probs, y = coverages, type = 'o', ylim = c(0,1), xlim = c(0,1),
+     xlab = "Target prior probability of deviation\n of |w| = |X beta| above maxdev",
+     ylab = "Empirical probability of deviation")
+abline(0,1, col = 'red')
+```
+```
+
+
 
 Here's a function to take the stick-breaking $\gamma$ parameters (with $X$) and
 transform them to a probability vector.
