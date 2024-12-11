@@ -1,7 +1,10 @@
 introduction
 package-setup
 helpers-functions
-ball-constraint-on-xt-beta_k
+ball-constraint-on-xt-beta_k-retire-soon
+closed-form-g-value-in-betas-prior-d1
+closed-form-g-value-in-betas-prior-d1-1
+other-helpers
 syntheticdata
 gibbs-sampler
 the-main-gibbs-sampler

@@ -12,7 +12,7 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="8 Documenting the package and building | Creating the flowcut R package">
 <meta name="author" content="Sheng Jiang, Sangwon Hyun">
-<meta name="date" content="2024-12-09">
+<meta name="date" content="2024-12-10">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -111,7 +111,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="3" data-path="helpers-functions.html">
 <a href="helpers-functions.html"><i class="fa fa-check"></i><b>3</b> Helpers functions</a>
 <ul>
-<li class="chapter" data-level="3.1" data-path="helpers-functions.html"><a href="helpers-functions.html#ball-constraint-on-xt-beta_k"><i class="fa fa-check"></i><b>3.1</b> Ball constraint on <span class="math inline">\(X^{(t)} \beta_k\)</span></a></li>
+<li class="chapter" data-level="3.1" data-path="helpers-functions.html"><a href="helpers-functions.html#ball-constraint-on-xt-beta_k-retire-soon"><i class="fa fa-check"></i><b>3.1</b> Ball constraint on <span class="math inline">\(X^{(t)} \beta_k\)</span> (retire soon)</a></li>
+<li class="chapter" data-level="3.2" data-path="helpers-functions.html"><a href="helpers-functions.html#closed-form-g-value-in-betas-prior-d1"><i class="fa fa-check"></i><b>3.2</b> Closed-form <span class="math inline">\(g\)</span> value in <span class="math inline">\(\beta\)</span>’s prior (<span class="math inline">\(d=1\)</span>)</a></li>
+<li class="chapter" data-level="3.3" data-path="helpers-functions.html"><a href="helpers-functions.html#closed-form-g-value-in-betas-prior-d1-1"><i class="fa fa-check"></i><b>3.3</b> Closed-form <span class="math inline">\(g\)</span> value in <span class="math inline">\(\beta\)</span>’s prior (<span class="math inline">\(d=1\)</span>)</a></li>
+<li class="chapter" data-level="3.4" data-path="helpers-functions.html"><a href="helpers-functions.html#other-helpers"><i class="fa fa-check"></i><b>3.4</b> Other helpers</a></li>
 </ul>
 </li>
 <li class="chapter" data-level="4" data-path="syntheticdata.html"><a href="syntheticdata.html"><i class="fa fa-check"></i><b>4</b> Generating synthetic data</a></li>
@@ -149,7 +152,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </h1>
 <p>We finish by running commands that will document, build, and install the
 package. It may also be a good idea to check the package from within this file.</p>
-<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="documenting-the-package-and-building.html#cb31-1" tabindex="-1"></a>litr<span class="sc">::</span><span class="fu">document</span>() <span class="co"># &lt;-- use instead of devtools::document()</span></span></code></pre></div>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="documenting-the-package-and-building.html#cb39-1" tabindex="-1"></a>litr<span class="sc">::</span><span class="fu">document</span>() <span class="co"># &lt;-- use instead of devtools::document()</span></span></code></pre></div>
 <pre><code>## ℹ Updating flowcut documentation
 ## ℹ Loading flowcut
 ## Loading required package: MASS
@@ -161,17 +164,6 @@ package. It may also be a good idea to check the package from within this file.<
 ## The following object is masked from 'package:dplyr':
 ## 
 ##     select
-## 
-## 
-## Loading required package: matrixNormal
-## 
-## 
-## Attaching package: 'matrixNormal'
-## 
-## 
-## The following object is masked from 'package:base':
-## 
-##     I
 ## 
 ## 
 ## Loading required package: matrixsampling
@@ -258,8 +250,9 @@ package. It may also be a good idea to check the package from within this file.<
 ## Writing 'get_posterior_probs.Rd'
 ## Writing 'impute.Rd'
 ## Writing 'make_sim_model.Rd'
+## Writing 'maxdev_to_g_closed_form_1d.Rd'
+## Writing 'maxdev_to_g_closed_form_3d.Rd'
 ## Writing 'maxdev_to_gg.Rd'
-## Writing 'maxdev_to_gg_closed_form.Rd'
 ## Writing 'mcmc_res_to_flowmix.Rd'
 ## Writing 'post_process_pie.Rd'
 ## Writing 'preimpute.Rd'
