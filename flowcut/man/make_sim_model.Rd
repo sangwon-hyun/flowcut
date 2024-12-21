@@ -5,12 +5,16 @@
 \title{From an original set of model parameters (|true_model|),
 generate synthetic 2-cluster 1-dimensional data with equal probabilities.}
 \usage{
-make_sim_model(orig_model, isignal)
+make_sim_model(orig_model, isignal, shrink_alpha = FALSE)
 }
 \arguments{
-\item{orig_model}{Original model of class flowmix or flowcut; a list that contains alpha, beta and TT.}
+\item{orig_model}{Original model of class flowmix or flowcut; a list that
+contains alpha, beta and TT.}
 
 \item{isignal}{0 to 10, which generates the means.}
+
+\item{shrink_alpha}{If TRUE, "shrink" the alpha coefficients to 40\% their
+size. Defaults to FALSE.}
 }
 \value{
 A list with beta, mn, alpha, prob, X, sigma, TT, numclust.

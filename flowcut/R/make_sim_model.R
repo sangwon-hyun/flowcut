@@ -4,14 +4,18 @@
 #' generate synthetic 2-cluster 1-dimensional data with equal probabilities.
 #'
 #' @param isignal 0 to 10, which generates the means.
-#' @param orig_model Original model of class flowmix or flowcut; a list that contains alpha, beta and TT.
+#' @param orig_model Original model of class flowmix or flowcut; a list that
+#'   contains alpha, beta and TT.
+#' @param shrink_alpha If TRUE, "shrink" the alpha coefficients to 40% their
+#'   size. Defaults to FALSE.
 #'
 #' @return A list with beta, mn, alpha, prob, X, sigma, TT, numclust.
 #' @export
-make_sim_model <- function(orig_model, isignal){
+make_sim_model <- function(orig_model, isignal, shrink_alpha = FALSE){
 
   ## Setup
   stopifnot(isignal %in% 0:10)
+  ## stopifnot(class(orig_model) %in% c("flowmix")) ##, "flowcut"
   new_model = orig_model
   new_model$numclust = 2
 
@@ -38,6 +42,17 @@ make_sim_model <- function(orig_model, isignal){
   new_model$mn = array(NA, dim = c(orig_model$TT, 1, 2))
   new_model$mn[,,1] = (cbind(1,new_model$X))  %*%  (new_model$beta[[1]])
   new_model$mn[,,2] = (cbind(1,new_model$X))  %*%  (new_model$beta[[2]])
+
+
+  ## Shrink the probabilities to be closer to each other.
+  if(shrink_alpha){
+    Xta1 = (new_model$X) %*% ((new_model$alpha[1,-1]) * 0.40)
+    Xta2 = (new_model$X) %*% ((new_model$alpha[2,-1]) * 0.40)
+    ##lines(exp(Xta1)/(exp(Xta1) + exp(Xta2)), ylim = c(0,1))
+    ##lines(exp(Xta2)/(exp(Xta1) + exp(Xta2)), col = 'red')
+    new_model$prob[,1] = exp(Xta1)/(exp(Xta1) + exp(Xta2))
+    new_model$prob[,2] = exp(Xta2)/(exp(Xta1) + exp(Xta2))
+  }
   
   ## Optional: plot the means
   if(FALSE){

@@ -12,7 +12,7 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="5 Gibbs sampler | Creating the flowcut R package">
 <meta name="author" content="Sheng Jiang, Sangwon Hyun">
-<meta name="date" content="2024-12-10">
+<meta name="date" content="2024-12-20">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -343,7 +343,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb29-179"><a href="gibbs-sampler.html#cb29-179" tabindex="-1"></a>      Nburn <span class="ot">&lt;-</span> <span class="dv">0</span> <span class="do">## no need of burn-in </span></span>
 <span id="cb29-180"><a href="gibbs-sampler.html#cb29-180" tabindex="-1"></a>      tt.impute <span class="ot">&lt;-</span> <span class="dv">0</span> </span>
 <span id="cb29-181"><a href="gibbs-sampler.html#cb29-181" tabindex="-1"></a>  }<span class="cf">else</span>{</span>
-<span id="cb29-182"><a href="gibbs-sampler.html#cb29-182" tabindex="-1"></a>      <span class="fu">print</span>(<span class="st">"The MCMC starts with a draw of model parameters from the prior"</span>)</span>
+<span id="cb29-182"><a href="gibbs-sampler.html#cb29-182" tabindex="-1"></a>      <span class="cf">if</span>(verbose) <span class="fu">print</span>(<span class="st">"The MCMC starts with a draw of model parameters from the prior"</span>)</span>
 <span id="cb29-183"><a href="gibbs-sampler.html#cb29-183" tabindex="-1"></a>      </span>
 <span id="cb29-184"><a href="gibbs-sampler.html#cb29-184" tabindex="-1"></a>      beta.ell <span class="ot">&lt;-</span>  <span class="fu">array</span>(stats<span class="sc">::</span><span class="fu">rnorm</span>(numclust<span class="sc">*</span>(p<span class="sc">+</span><span class="dv">1</span>)<span class="sc">*</span>dimdat), <span class="fu">c</span>(dimdat,p<span class="sc">+</span><span class="dv">1</span>,numclust))</span>
 <span id="cb29-185"><a href="gibbs-sampler.html#cb29-185" tabindex="-1"></a>      gamma.ell <span class="ot">&lt;-</span> <span class="fu">matrix</span>(stats<span class="sc">::</span><span class="fu">rnorm</span>((p<span class="sc">+</span><span class="dv">1</span>)<span class="sc">*</span>(numclust<span class="dv">-1</span>)),<span class="at">nrow=</span>p<span class="sc">+</span><span class="dv">1</span>,<span class="at">ncol=</span>numclust<span class="dv">-1</span>)  </span>
@@ -485,7 +485,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb29-321"><a href="gibbs-sampler.html#cb29-321" tabindex="-1"></a>                            <span class="at">simple =</span> <span class="cn">TRUE</span>) </span>
 <span id="cb29-322"><a href="gibbs-sampler.html#cb29-322" tabindex="-1"></a>      <span class="do">## print(sort(round(n.ell/NN,3)))</span></span>
 <span id="cb29-323"><a href="gibbs-sampler.html#cb29-323" tabindex="-1"></a>      <span class="do">## print(sort(round(m.ell/MM,3)))</span></span>
-<span id="cb29-324"><a href="gibbs-sampler.html#cb29-324" tabindex="-1"></a>      <span class="cf">if</span>(jj <span class="sc">%%</span> <span class="dv">10</span> <span class="sc">==</span> <span class="dv">0</span>) <span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"avg loglikelihood: "</span>, <span class="fu">round</span>(loglik,<span class="dv">2</span>), <span class="at">sep=</span><span class="st">" "</span>))</span>
+<span id="cb29-324"><a href="gibbs-sampler.html#cb29-324" tabindex="-1"></a>      <span class="cf">if</span>(jj <span class="sc">%%</span> <span class="dv">10</span> <span class="sc">==</span> <span class="dv">0</span> <span class="sc">&amp;</span> verbose) <span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"avg loglikelihood: "</span>, <span class="fu">round</span>(loglik,<span class="dv">2</span>), <span class="at">sep=</span><span class="st">" "</span>))</span>
 <span id="cb29-325"><a href="gibbs-sampler.html#cb29-325" tabindex="-1"></a></span>
 <span id="cb29-326"><a href="gibbs-sampler.html#cb29-326" tabindex="-1"></a>      <span class="do">## SBMN-logit parameter estimation</span></span>
 <span id="cb29-327"><a href="gibbs-sampler.html#cb29-327" tabindex="-1"></a>      mt.ell <span class="ot">&lt;-</span> parallel<span class="sc">::</span><span class="fu">mcmapply</span>(<span class="cf">function</span>(ww,zz){</span>

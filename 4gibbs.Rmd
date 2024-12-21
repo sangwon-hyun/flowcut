@@ -194,7 +194,7 @@ run.Gibbs.fast <- function(ylist, countslist, X,
       Nburn <- 0 ## no need of burn-in 
       tt.impute <- 0 
   }else{
-      print("The MCMC starts with a draw of model parameters from the prior")
+      if(verbose) print("The MCMC starts with a draw of model parameters from the prior")
       
       beta.ell <-  array(stats::rnorm(numclust*(p+1)*dimdat), c(dimdat,p+1,numclust))
       gamma.ell <- matrix(stats::rnorm((p+1)*(numclust-1)),nrow=p+1,ncol=numclust-1)  
@@ -336,7 +336,7 @@ run.Gibbs.fast <- function(ylist, countslist, X,
                             simple = TRUE) 
       ## print(sort(round(n.ell/NN,3)))
       ## print(sort(round(m.ell/MM,3)))
-      if(jj %% 10 == 0) print(paste("avg loglikelihood: ", round(loglik,2), sep=" "))
+      if(jj %% 10 == 0 & verbose) print(paste("avg loglikelihood: ", round(loglik,2), sep=" "))
 
       ## SBMN-logit parameter estimation
       mt.ell <- parallel::mcmapply(function(ww,zz){

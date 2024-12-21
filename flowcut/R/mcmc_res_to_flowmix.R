@@ -30,7 +30,6 @@ mcmc_res_to_flowmix <- function(res, last_draws_inds=NULL){
   ## Means
   pos.mn <- list()
   for(kk in 1:numclust){
-    last_draws_inds
     pos.mn[[kk]] <- mclapply(last_draws_inds, function(mm){
       res$pos.beta[,,kk,mm,drop=TRUE]%*% rbind(1,t(X))
     },
@@ -46,7 +45,7 @@ mcmc_res_to_flowmix <- function(res, last_draws_inds=NULL){
 
   ## probabilities
   ## pos.gamma.mean = res$pos.gamma[,,last_draws_inds] %>% apply(c(1:2), mean)
-  pos.SB <- apply(res$pos.gamma[,,last_draws_inds], c(2,3), function(ga)
+  pos.SB <- apply(res$pos.gamma[,,last_draws_inds, drop=FALSE], c(2,3), function(ga)
     1/(1+exp(-t(ga) %*% rbind(1,t(X)))))
   pos.MN <- apply(pos.SB, c(1,3), flowcut:::SB2MN)  
   post.pi.mean <- apply(pos.MN,c(1,2), mean)
@@ -57,16 +56,16 @@ mcmc_res_to_flowmix <- function(res, last_draws_inds=NULL){
   obj$numclust = numclust
   res$pos.Sigma %>% dim()
   ## post.Sigma.mean <- apply(res$pos.Sigma,c(1,2,3), mean) %>% aperm(c(3,1,2))
-  pos.Sigma.mean = res$pos.Sigma[,,,last_draws_inds] %>% apply(c(1,2,3), mean) %>% aperm(c(3,1,2)) 
+  pos.Sigma.mean = res$pos.Sigma[,,,last_draws_inds,drop=FALSE] %>% apply(c(1,2,3), mean) %>% aperm(c(3,1,2)) 
   obj$sigma = pos.Sigma.mean
 
   ## mean regression coefficients
-  pos.beta = res$pos.beta[,,,last_draws_inds]
+  pos.beta = res$pos.beta[,,,last_draws_inds,drop=FALSE]
   pos.beta.mean = pos.beta %>% apply(c(1,2,3), mean) 
   obj$beta = pos.beta.mean
   
   ## prob regression coefficients
-  pos.gamma.mean = res$pos.gamma[,,last_draws_inds] %>% apply(c(1:2), mean)
+  pos.gamma.mean = res$pos.gamma[,,last_draws_inds,drop=FALSE] %>% apply(c(1:2), mean)
   obj$alpha = pos.gamma.mean
 
   ## Bundle and return
