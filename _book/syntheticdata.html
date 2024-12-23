@@ -12,7 +12,7 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="4 Generating synthetic data | Creating the flowcut R package">
 <meta name="author" content="Sheng Jiang, Sangwon Hyun">
-<meta name="date" content="2024-12-20">
+<meta name="date" content="2024-12-22">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -167,7 +167,7 @@ boundaries towards the center. (not done yet!)</p></li>
 <code>MGL1704-hourly-paper-1d-diam.RDS</code>, <code>1d-cvres.rds</code>, which can be downloaded from the
 <a href="https://github.com/sangwon-hyun/flowmix/tree/master/paper-data">flowmix R package</a>, is assumed to be in <code>inst/data</code> from the base directory of the repository.)</p>
 <div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="syntheticdata.html#cb24-1" tabindex="-1"></a><span class="do">## dat_1d = readRDS("~/Downloads/paper-data/MGL1704-hourly-paper-1d-diam.RDS") </span></span>
-<span id="cb24-2"><a href="syntheticdata.html#cb24-2" tabindex="-1"></a><span class="do">## res = readRDS("~/Downloads/paper-data/1d-cvres.rds") %&gt;% .$bestres</span></span>
+<span id="cb24-2"><a href="syntheticdata.html#cb24-2" tabindex="-1"></a><span class="co"># res = readRDS("~/Downloads/paper-data/1d-cvres.rds") %&gt;% .$bestres</span></span>
 <span id="cb24-3"><a href="syntheticdata.html#cb24-3" tabindex="-1"></a>datadir <span class="ot">=</span> <span class="st">"../inst/data"</span></span>
 <span id="cb24-4"><a href="syntheticdata.html#cb24-4" tabindex="-1"></a>dat_1d <span class="ot">=</span> <span class="fu">readRDS</span>(<span class="fu">file.path</span>(datadir, <span class="st">"MGL1704-hourly-paper-1d-diam.RDS"</span>))</span>
 <span id="cb24-5"><a href="syntheticdata.html#cb24-5" tabindex="-1"></a>res <span class="ot">=</span> <span class="fu">readRDS</span>(<span class="fu">file.path</span>(datadir, <span class="st">"1d-cvres.rds"</span>)) <span class="sc">%&gt;%</span> .<span class="sc">$</span>bestres</span>

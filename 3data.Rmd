@@ -23,7 +23,7 @@ First load existing cytogram data and flowmix model estimates.
 
 ```{r load-data}
 ## dat_1d = readRDS("~/Downloads/paper-data/MGL1704-hourly-paper-1d-diam.RDS") 
-## res = readRDS("~/Downloads/paper-data/1d-cvres.rds") %>% .$bestres
+# res = readRDS("~/Downloads/paper-data/1d-cvres.rds") %>% .$bestres
 datadir = "../inst/data"
 dat_1d = readRDS(file.path(datadir, "MGL1704-hourly-paper-1d-diam.RDS"))
 res = readRDS(file.path(datadir, "1d-cvres.rds")) %>% .$bestres

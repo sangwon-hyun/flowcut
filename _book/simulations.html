@@ -12,7 +12,7 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="6 Simulations | Creating the flowcut R package">
 <meta name="author" content="Sheng Jiang, Sangwon Hyun">
-<meta name="date" content="2024-12-20">
+<meta name="date" content="2024-12-22">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -284,8 +284,10 @@ dataset |ynew| given GMM model |gmm_model|.</p>
 <span id="cb36-34"><a href="simulations.html#cb36-34" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">list</span>(<span class="at">censored_ylist =</span> censored_ylist,</span>
 <span id="cb36-35"><a href="simulations.html#cb36-35" tabindex="-1"></a>              <span class="at">censored_direction =</span> censored_direction,</span>
 <span id="cb36-36"><a href="simulations.html#cb36-36" tabindex="-1"></a>              <span class="at">inner_ylist =</span> inner_ylist,</span>
-<span id="cb36-37"><a href="simulations.html#cb36-37" tabindex="-1"></a>              <span class="at">inner_countslist =</span> inner_countslist))</span>
-<span id="cb36-38"><a href="simulations.html#cb36-38" tabindex="-1"></a>}</span></code></pre></div>
+<span id="cb36-37"><a href="simulations.html#cb36-37" tabindex="-1"></a>              <span class="at">inner_countslist =</span> inner_countslist,</span>
+<span id="cb36-38"><a href="simulations.html#cb36-38" tabindex="-1"></a>              <span class="at">censor.which.list  =</span> censor.which.list</span>
+<span id="cb36-39"><a href="simulations.html#cb36-39" tabindex="-1"></a>              ))</span>
+<span id="cb36-40"><a href="simulations.html#cb36-40" tabindex="-1"></a>}</span></code></pre></div>
 <p>Here is a function that will pre-impute data for a 2-cluster 1-dimensional
 dataset; used in <code><a href="simulations.html#preimpute">preimpute</a>()</code>.</p>
 <div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="simulations.html#cb37-1" tabindex="-1"></a><span class="co">#' At each time point, we will (1) set aside the censored points, and (2) estimate</span></span>
@@ -311,72 +313,73 @@ dataset; used in <code><a href="simulations.html#preimpute">preimpute</a>()</cod
 <span id="cb37-21"><a href="simulations.html#cb37-21" tabindex="-1"></a>  inner_countslist <span class="ot">=</span> splitres<span class="sc">$</span>inner_countslist</span>
 <span id="cb37-22"><a href="simulations.html#cb37-22" tabindex="-1"></a>  censored_ylist <span class="ot">=</span> splitres<span class="sc">$</span>censored_ylist</span>
 <span id="cb37-23"><a href="simulations.html#cb37-23" tabindex="-1"></a>  censored_direction <span class="ot">=</span> splitres<span class="sc">$</span>censored_direction</span>
-<span id="cb37-24"><a href="simulations.html#cb37-24" tabindex="-1"></a></span>
-<span id="cb37-25"><a href="simulations.html#cb37-25" tabindex="-1"></a>  <span class="do">## Fit 2-mixture Gaussian at each time point.</span></span>
-<span id="cb37-26"><a href="simulations.html#cb37-26" tabindex="-1"></a>  gmm_model_list <span class="ot">&lt;-</span> <span class="fu">mapply</span>(<span class="cf">function</span>(y, counts){</span>
-<span id="cb37-27"><a href="simulations.html#cb37-27" tabindex="-1"></a></span>
-<span id="cb37-28"><a href="simulations.html#cb37-28" tabindex="-1"></a>    <span class="do">## z is just a random initialization of the memberships of the points.</span></span>
-<span id="cb37-29"><a href="simulations.html#cb37-29" tabindex="-1"></a>    z <span class="ot">=</span> mclust<span class="sc">::</span><span class="fu">unmap</span>(<span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="at">size =</span> <span class="fu">length</span>(y), <span class="at">replace=</span><span class="cn">TRUE</span>))</span>
-<span id="cb37-30"><a href="simulations.html#cb37-30" tabindex="-1"></a></span>
-<span id="cb37-31"><a href="simulations.html#cb37-31" tabindex="-1"></a>    <span class="do">## Fit a Gaussian mixture model for weighted data.</span></span>
-<span id="cb37-32"><a href="simulations.html#cb37-32" tabindex="-1"></a>    res <span class="ot">=</span> <span class="fu">me.weighted</span>(<span class="fu">as.numeric</span>(y), <span class="at">modelName =</span> <span class="st">"V"</span>, <span class="at">weights =</span> counts, <span class="at">z =</span> z)</span>
-<span id="cb37-33"><a href="simulations.html#cb37-33" tabindex="-1"></a></span>
-<span id="cb37-34"><a href="simulations.html#cb37-34" tabindex="-1"></a>    <span class="do">## ## Plotting the result</span></span>
-<span id="cb37-35"><a href="simulations.html#cb37-35" tabindex="-1"></a>    <span class="do">## plotrix::weighted.hist(y, counts, breaks=20)</span></span>
-<span id="cb37-36"><a href="simulations.html#cb37-36" tabindex="-1"></a>    <span class="do">## tibble(y=y,counts=counts) %&gt;% ggplot()  + geom_point(aes(x=y,y=0,  alpha = counts)) +</span></span>
-<span id="cb37-37"><a href="simulations.html#cb37-37" tabindex="-1"></a>    <span class="do">##   geom_vline(xintercept = res$parameters$mean, col = 'red')</span></span>
-<span id="cb37-38"><a href="simulations.html#cb37-38" tabindex="-1"></a>    <span class="do">## abline(v = res$parameters$mean, col = 'red')</span></span>
-<span id="cb37-39"><a href="simulations.html#cb37-39" tabindex="-1"></a>    <span class="do">## abline(v = res$parameters$mean + 2*sqrt(res$parameters$variance$sigmasq), col = 'red', lty=2)</span></span>
-<span id="cb37-40"><a href="simulations.html#cb37-40" tabindex="-1"></a>    <span class="do">## abline(v = res$parameters$mean - 2*sqrt(res$parameters$variance$sigmasq), col = 'red', lty=3)</span></span>
-<span id="cb37-41"><a href="simulations.html#cb37-41" tabindex="-1"></a>    <span class="fu">return</span>(res)</span>
-<span id="cb37-42"><a href="simulations.html#cb37-42" tabindex="-1"></a>  }, inner_ylist, inner_countslist, <span class="at">SIMPLIFY =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb37-43"><a href="simulations.html#cb37-43" tabindex="-1"></a></span>
-<span id="cb37-44"><a href="simulations.html#cb37-44" tabindex="-1"></a>  <span class="do">## Impute the points</span></span>
-<span id="cb37-45"><a href="simulations.html#cb37-45" tabindex="-1"></a>  imputed_censored_ylist <span class="ot">=</span> <span class="fu">mapply</span>(<span class="cf">function</span>(gmm_model, ynew, dirs){</span>
-<span id="cb37-46"><a href="simulations.html#cb37-46" tabindex="-1"></a></span>
-<span id="cb37-47"><a href="simulations.html#cb37-47" tabindex="-1"></a>    <span class="do">## Impute based on 2-cluster model</span></span>
-<span id="cb37-48"><a href="simulations.html#cb37-48" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">nrow</span>(ynew) <span class="sc">==</span> <span class="dv">0</span>) <span class="fu">return</span>(ynew)</span>
-<span id="cb37-49"><a href="simulations.html#cb37-49" tabindex="-1"></a>    ynew_imputed <span class="ot">=</span> ynew</span>
-<span id="cb37-50"><a href="simulations.html#cb37-50" tabindex="-1"></a>    post_probs <span class="ot">=</span> <a href="simulations.html#get_posterior_probs">get_posterior_probs</a>(gmm_model, ynew)</span>
-<span id="cb37-51"><a href="simulations.html#cb37-51" tabindex="-1"></a>    new_mems <span class="ot">=</span> post_probs <span class="sc">%&gt;%</span> <span class="fu">apply</span>(<span class="dv">1</span>, <span class="cf">function</span>(ps){ <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="dv">1</span>, <span class="at">prob=</span>ps) })</span>
-<span id="cb37-52"><a href="simulations.html#cb37-52" tabindex="-1"></a></span>
-<span id="cb37-53"><a href="simulations.html#cb37-53" tabindex="-1"></a>    <span class="do">## Get the gaussian means and SDs</span></span>
-<span id="cb37-54"><a href="simulations.html#cb37-54" tabindex="-1"></a>    means <span class="ot">=</span> gmm_model<span class="sc">$</span>parameters<span class="sc">$</span>mean</span>
-<span id="cb37-55"><a href="simulations.html#cb37-55" tabindex="-1"></a>    sds <span class="ot">=</span> gmm_model<span class="sc">$</span>parameters<span class="sc">$</span>variance<span class="sc">$</span>sigmasq <span class="sc">%&gt;%</span> <span class="fu">sqrt</span>()</span>
-<span id="cb37-56"><a href="simulations.html#cb37-56" tabindex="-1"></a></span>
-<span id="cb37-57"><a href="simulations.html#cb37-57" tabindex="-1"></a>    <span class="do">## Information for imputing each points</span></span>
-<span id="cb37-58"><a href="simulations.html#cb37-58" tabindex="-1"></a>    impute_mat <span class="ot">=</span> <span class="fu">tibble</span>(<span class="at">new_mems =</span> new_mems, <span class="at">dir =</span> dirs)</span>
-<span id="cb37-59"><a href="simulations.html#cb37-59" tabindex="-1"></a></span>
-<span id="cb37-60"><a href="simulations.html#cb37-60" tabindex="-1"></a>    <span class="do">## Impute the points</span></span>
-<span id="cb37-61"><a href="simulations.html#cb37-61" tabindex="-1"></a>    <span class="cf">for</span>(irow <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(impute_mat)){</span>
-<span id="cb37-62"><a href="simulations.html#cb37-62" tabindex="-1"></a>      iclust <span class="ot">=</span> impute_mat<span class="sc">$</span>new_mems[irow]</span>
-<span id="cb37-63"><a href="simulations.html#cb37-63" tabindex="-1"></a>      <span class="cf">if</span>(impute_mat<span class="sc">$</span>dir[irow] <span class="sc">==</span> <span class="dv">1</span>){</span>
-<span id="cb37-64"><a href="simulations.html#cb37-64" tabindex="-1"></a>        imputed_point <span class="ot">=</span> truncnorm<span class="sc">::</span><span class="fu">rtruncnorm</span>(<span class="dv">1</span>, <span class="at">a =</span> datobj<span class="sc">$</span>Cbox[<span class="dv">1</span>,<span class="dv">2</span>], <span class="at">mean =</span> means[iclust], <span class="at">sd =</span> sds[iclust])</span>
-<span id="cb37-65"><a href="simulations.html#cb37-65" tabindex="-1"></a>      }</span>
-<span id="cb37-66"><a href="simulations.html#cb37-66" tabindex="-1"></a>      <span class="cf">if</span>(impute_mat<span class="sc">$</span>dir[irow] <span class="sc">==</span> <span class="sc">-</span><span class="dv">1</span>){</span>
-<span id="cb37-67"><a href="simulations.html#cb37-67" tabindex="-1"></a>        imputed_point <span class="ot">=</span> truncnorm<span class="sc">::</span><span class="fu">rtruncnorm</span>(<span class="dv">1</span>, <span class="at">b =</span> datobj<span class="sc">$</span>Cbox[<span class="dv">1</span>,<span class="dv">1</span>], <span class="at">mean =</span> means[iclust], <span class="at">sd =</span> sds[iclust])</span>
-<span id="cb37-68"><a href="simulations.html#cb37-68" tabindex="-1"></a>      }</span>
-<span id="cb37-69"><a href="simulations.html#cb37-69" tabindex="-1"></a>      ynew_imputed[irow] <span class="ot">=</span> imputed_point</span>
-<span id="cb37-70"><a href="simulations.html#cb37-70" tabindex="-1"></a>    }</span>
-<span id="cb37-71"><a href="simulations.html#cb37-71" tabindex="-1"></a>    <span class="fu">return</span>(ynew_imputed)</span>
-<span id="cb37-72"><a href="simulations.html#cb37-72" tabindex="-1"></a>  }, gmm_model_list, censored_ylist, censored_direction, <span class="at">SIMPLIFY =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb37-73"><a href="simulations.html#cb37-73" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">all</span>(<span class="fu">sapply</span>(imputed_censored_ylist, nrow) <span class="sc">==</span> <span class="fu">sapply</span>(censored_ylist, nrow)))</span>
-<span id="cb37-74"><a href="simulations.html#cb37-74" tabindex="-1"></a></span>
-<span id="cb37-75"><a href="simulations.html#cb37-75" tabindex="-1"></a>  <span class="do">##  Return the datobj (ylist, countslist, and flowmix).</span></span>
-<span id="cb37-76"><a href="simulations.html#cb37-76" tabindex="-1"></a>  TT <span class="ot">=</span> <span class="fu">length</span>(datobj<span class="sc">$</span>ylist)</span>
-<span id="cb37-77"><a href="simulations.html#cb37-77" tabindex="-1"></a>  new_ylist <span class="ot">=</span> datobj<span class="sc">$</span>ylist</span>
-<span id="cb37-78"><a href="simulations.html#cb37-78" tabindex="-1"></a>  <span class="cf">for</span>(tt <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>TT){</span>
-<span id="cb37-79"><a href="simulations.html#cb37-79" tabindex="-1"></a>    inds <span class="ot">=</span> censor.which.list[[tt]]</span>
-<span id="cb37-80"><a href="simulations.html#cb37-80" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">length</span>(inds) <span class="sc">==</span> <span class="dv">0</span>) <span class="cf">next</span></span>
-<span id="cb37-81"><a href="simulations.html#cb37-81" tabindex="-1"></a>    ynew <span class="ot">=</span> datobj<span class="sc">$</span>ylist[[tt]]</span>
-<span id="cb37-82"><a href="simulations.html#cb37-82" tabindex="-1"></a>    ynew[inds] <span class="ot">=</span> imputed_censored_ylist[[tt]]</span>
-<span id="cb37-83"><a href="simulations.html#cb37-83" tabindex="-1"></a>    new_ylist[[tt]] <span class="ot">=</span> ynew</span>
-<span id="cb37-84"><a href="simulations.html#cb37-84" tabindex="-1"></a>  }</span>
-<span id="cb37-85"><a href="simulations.html#cb37-85" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">all</span>(<span class="fu">sapply</span>(new_ylist, nrow) <span class="sc">==</span> <span class="fu">sapply</span>(datobj<span class="sc">$</span>ylist, nrow)))</span>
-<span id="cb37-86"><a href="simulations.html#cb37-86" tabindex="-1"></a>  new_datobj <span class="ot">=</span> datobj</span>
-<span id="cb37-87"><a href="simulations.html#cb37-87" tabindex="-1"></a>  new_datobj<span class="sc">$</span>ylist <span class="ot">=</span> new_ylist</span>
-<span id="cb37-88"><a href="simulations.html#cb37-88" tabindex="-1"></a>  <span class="fu">return</span>(new_datobj)</span>
-<span id="cb37-89"><a href="simulations.html#cb37-89" tabindex="-1"></a>}</span></code></pre></div>
+<span id="cb37-24"><a href="simulations.html#cb37-24" tabindex="-1"></a>  censored.which.list <span class="ot">=</span> splitres<span class="sc">$</span>censored.which.list</span>
+<span id="cb37-25"><a href="simulations.html#cb37-25" tabindex="-1"></a></span>
+<span id="cb37-26"><a href="simulations.html#cb37-26" tabindex="-1"></a>  <span class="do">## Fit 2-mixture Gaussian at each time point.</span></span>
+<span id="cb37-27"><a href="simulations.html#cb37-27" tabindex="-1"></a>  gmm_model_list <span class="ot">&lt;-</span> <span class="fu">mapply</span>(<span class="cf">function</span>(y, counts){</span>
+<span id="cb37-28"><a href="simulations.html#cb37-28" tabindex="-1"></a></span>
+<span id="cb37-29"><a href="simulations.html#cb37-29" tabindex="-1"></a>    <span class="do">## z is just a random initialization of the memberships of the points.</span></span>
+<span id="cb37-30"><a href="simulations.html#cb37-30" tabindex="-1"></a>    z <span class="ot">=</span> mclust<span class="sc">::</span><span class="fu">unmap</span>(<span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="at">size =</span> <span class="fu">length</span>(y), <span class="at">replace=</span><span class="cn">TRUE</span>))</span>
+<span id="cb37-31"><a href="simulations.html#cb37-31" tabindex="-1"></a></span>
+<span id="cb37-32"><a href="simulations.html#cb37-32" tabindex="-1"></a>    <span class="do">## Fit a Gaussian mixture model for weighted data.</span></span>
+<span id="cb37-33"><a href="simulations.html#cb37-33" tabindex="-1"></a>    res <span class="ot">=</span> mclust<span class="sc">::</span><span class="fu">me.weighted</span>(<span class="fu">as.numeric</span>(y), <span class="at">modelName =</span> <span class="st">"V"</span>, <span class="at">weights =</span> counts, <span class="at">z =</span> z)</span>
+<span id="cb37-34"><a href="simulations.html#cb37-34" tabindex="-1"></a></span>
+<span id="cb37-35"><a href="simulations.html#cb37-35" tabindex="-1"></a>    <span class="do">## ## Plotting the result</span></span>
+<span id="cb37-36"><a href="simulations.html#cb37-36" tabindex="-1"></a>    <span class="do">## plotrix::weighted.hist(y, counts, breaks=20)</span></span>
+<span id="cb37-37"><a href="simulations.html#cb37-37" tabindex="-1"></a>    <span class="do">## tibble(y=y,counts=counts) %&gt;% ggplot()  + geom_point(aes(x=y,y=0,  alpha = counts)) +</span></span>
+<span id="cb37-38"><a href="simulations.html#cb37-38" tabindex="-1"></a>    <span class="do">##   geom_vline(xintercept = res$parameters$mean, col = 'red')</span></span>
+<span id="cb37-39"><a href="simulations.html#cb37-39" tabindex="-1"></a>    <span class="do">## abline(v = res$parameters$mean, col = 'red')</span></span>
+<span id="cb37-40"><a href="simulations.html#cb37-40" tabindex="-1"></a>    <span class="do">## abline(v = res$parameters$mean + 2*sqrt(res$parameters$variance$sigmasq), col = 'red', lty=2)</span></span>
+<span id="cb37-41"><a href="simulations.html#cb37-41" tabindex="-1"></a>    <span class="do">## abline(v = res$parameters$mean - 2*sqrt(res$parameters$variance$sigmasq), col = 'red', lty=3)</span></span>
+<span id="cb37-42"><a href="simulations.html#cb37-42" tabindex="-1"></a>    <span class="fu">return</span>(res)</span>
+<span id="cb37-43"><a href="simulations.html#cb37-43" tabindex="-1"></a>  }, inner_ylist, inner_countslist, <span class="at">SIMPLIFY =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb37-44"><a href="simulations.html#cb37-44" tabindex="-1"></a></span>
+<span id="cb37-45"><a href="simulations.html#cb37-45" tabindex="-1"></a>  <span class="do">## Impute the points</span></span>
+<span id="cb37-46"><a href="simulations.html#cb37-46" tabindex="-1"></a>  imputed_censored_ylist <span class="ot">=</span> <span class="fu">mapply</span>(<span class="cf">function</span>(gmm_model, ynew, dirs){</span>
+<span id="cb37-47"><a href="simulations.html#cb37-47" tabindex="-1"></a></span>
+<span id="cb37-48"><a href="simulations.html#cb37-48" tabindex="-1"></a>    <span class="do">## Impute based on 2-cluster model</span></span>
+<span id="cb37-49"><a href="simulations.html#cb37-49" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">nrow</span>(ynew) <span class="sc">==</span> <span class="dv">0</span>) <span class="fu">return</span>(ynew)</span>
+<span id="cb37-50"><a href="simulations.html#cb37-50" tabindex="-1"></a>    ynew_imputed <span class="ot">=</span> ynew</span>
+<span id="cb37-51"><a href="simulations.html#cb37-51" tabindex="-1"></a>    post_probs <span class="ot">=</span> <a href="simulations.html#get_posterior_probs">get_posterior_probs</a>(gmm_model, ynew)</span>
+<span id="cb37-52"><a href="simulations.html#cb37-52" tabindex="-1"></a>    new_mems <span class="ot">=</span> post_probs <span class="sc">%&gt;%</span> <span class="fu">apply</span>(<span class="dv">1</span>, <span class="cf">function</span>(ps){ <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="dv">1</span>, <span class="at">prob=</span>ps) })</span>
+<span id="cb37-53"><a href="simulations.html#cb37-53" tabindex="-1"></a></span>
+<span id="cb37-54"><a href="simulations.html#cb37-54" tabindex="-1"></a>    <span class="do">## Get the gaussian means and SDs</span></span>
+<span id="cb37-55"><a href="simulations.html#cb37-55" tabindex="-1"></a>    means <span class="ot">=</span> gmm_model<span class="sc">$</span>parameters<span class="sc">$</span>mean</span>
+<span id="cb37-56"><a href="simulations.html#cb37-56" tabindex="-1"></a>    sds <span class="ot">=</span> gmm_model<span class="sc">$</span>parameters<span class="sc">$</span>variance<span class="sc">$</span>sigmasq <span class="sc">%&gt;%</span> <span class="fu">sqrt</span>()</span>
+<span id="cb37-57"><a href="simulations.html#cb37-57" tabindex="-1"></a></span>
+<span id="cb37-58"><a href="simulations.html#cb37-58" tabindex="-1"></a>    <span class="do">## Information for imputing each points</span></span>
+<span id="cb37-59"><a href="simulations.html#cb37-59" tabindex="-1"></a>    impute_mat <span class="ot">=</span> <span class="fu">tibble</span>(<span class="at">new_mems =</span> new_mems, <span class="at">dir =</span> dirs)</span>
+<span id="cb37-60"><a href="simulations.html#cb37-60" tabindex="-1"></a></span>
+<span id="cb37-61"><a href="simulations.html#cb37-61" tabindex="-1"></a>    <span class="do">## Impute the points</span></span>
+<span id="cb37-62"><a href="simulations.html#cb37-62" tabindex="-1"></a>    <span class="cf">for</span>(irow <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(impute_mat)){</span>
+<span id="cb37-63"><a href="simulations.html#cb37-63" tabindex="-1"></a>      iclust <span class="ot">=</span> impute_mat<span class="sc">$</span>new_mems[irow]</span>
+<span id="cb37-64"><a href="simulations.html#cb37-64" tabindex="-1"></a>      <span class="cf">if</span>(impute_mat<span class="sc">$</span>dir[irow] <span class="sc">==</span> <span class="dv">1</span>){</span>
+<span id="cb37-65"><a href="simulations.html#cb37-65" tabindex="-1"></a>        imputed_point <span class="ot">=</span> truncnorm<span class="sc">::</span><span class="fu">rtruncnorm</span>(<span class="dv">1</span>, <span class="at">a =</span> datobj<span class="sc">$</span>Cbox[<span class="dv">1</span>,<span class="dv">2</span>], <span class="at">mean =</span> means[iclust], <span class="at">sd =</span> sds[iclust])</span>
+<span id="cb37-66"><a href="simulations.html#cb37-66" tabindex="-1"></a>      }</span>
+<span id="cb37-67"><a href="simulations.html#cb37-67" tabindex="-1"></a>      <span class="cf">if</span>(impute_mat<span class="sc">$</span>dir[irow] <span class="sc">==</span> <span class="sc">-</span><span class="dv">1</span>){</span>
+<span id="cb37-68"><a href="simulations.html#cb37-68" tabindex="-1"></a>        imputed_point <span class="ot">=</span> truncnorm<span class="sc">::</span><span class="fu">rtruncnorm</span>(<span class="dv">1</span>, <span class="at">b =</span> datobj<span class="sc">$</span>Cbox[<span class="dv">1</span>,<span class="dv">1</span>], <span class="at">mean =</span> means[iclust], <span class="at">sd =</span> sds[iclust])</span>
+<span id="cb37-69"><a href="simulations.html#cb37-69" tabindex="-1"></a>      }</span>
+<span id="cb37-70"><a href="simulations.html#cb37-70" tabindex="-1"></a>      ynew_imputed[irow] <span class="ot">=</span> imputed_point</span>
+<span id="cb37-71"><a href="simulations.html#cb37-71" tabindex="-1"></a>    }</span>
+<span id="cb37-72"><a href="simulations.html#cb37-72" tabindex="-1"></a>    <span class="fu">return</span>(ynew_imputed)</span>
+<span id="cb37-73"><a href="simulations.html#cb37-73" tabindex="-1"></a>  }, gmm_model_list, censored_ylist, censored_direction, <span class="at">SIMPLIFY =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb37-74"><a href="simulations.html#cb37-74" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">all</span>(<span class="fu">sapply</span>(imputed_censored_ylist, nrow) <span class="sc">==</span> <span class="fu">sapply</span>(censored_ylist, nrow)))</span>
+<span id="cb37-75"><a href="simulations.html#cb37-75" tabindex="-1"></a></span>
+<span id="cb37-76"><a href="simulations.html#cb37-76" tabindex="-1"></a>  <span class="do">##  Return the datobj (ylist, countslist, and flowmix).</span></span>
+<span id="cb37-77"><a href="simulations.html#cb37-77" tabindex="-1"></a>  TT <span class="ot">=</span> <span class="fu">length</span>(datobj<span class="sc">$</span>ylist)</span>
+<span id="cb37-78"><a href="simulations.html#cb37-78" tabindex="-1"></a>  new_ylist <span class="ot">=</span> datobj<span class="sc">$</span>ylist</span>
+<span id="cb37-79"><a href="simulations.html#cb37-79" tabindex="-1"></a>  <span class="cf">for</span>(tt <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>TT){</span>
+<span id="cb37-80"><a href="simulations.html#cb37-80" tabindex="-1"></a>    inds <span class="ot">=</span> censor.which.list[[tt]]</span>
+<span id="cb37-81"><a href="simulations.html#cb37-81" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">length</span>(inds) <span class="sc">==</span> <span class="dv">0</span>) <span class="cf">next</span></span>
+<span id="cb37-82"><a href="simulations.html#cb37-82" tabindex="-1"></a>    ynew <span class="ot">=</span> datobj<span class="sc">$</span>ylist[[tt]]</span>
+<span id="cb37-83"><a href="simulations.html#cb37-83" tabindex="-1"></a>    ynew[inds] <span class="ot">=</span> imputed_censored_ylist[[tt]]</span>
+<span id="cb37-84"><a href="simulations.html#cb37-84" tabindex="-1"></a>    new_ylist[[tt]] <span class="ot">=</span> ynew</span>
+<span id="cb37-85"><a href="simulations.html#cb37-85" tabindex="-1"></a>  }</span>
+<span id="cb37-86"><a href="simulations.html#cb37-86" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">all</span>(<span class="fu">sapply</span>(new_ylist, nrow) <span class="sc">==</span> <span class="fu">sapply</span>(datobj<span class="sc">$</span>ylist, nrow)))</span>
+<span id="cb37-87"><a href="simulations.html#cb37-87" tabindex="-1"></a>  new_datobj <span class="ot">=</span> datobj</span>
+<span id="cb37-88"><a href="simulations.html#cb37-88" tabindex="-1"></a>  new_datobj<span class="sc">$</span>ylist <span class="ot">=</span> new_ylist</span>
+<span id="cb37-89"><a href="simulations.html#cb37-89" tabindex="-1"></a>  <span class="fu">return</span>(new_datobj)</span>
+<span id="cb37-90"><a href="simulations.html#cb37-90" tabindex="-1"></a>}</span></code></pre></div>
 
 </div>
 </div>

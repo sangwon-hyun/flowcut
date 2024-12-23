@@ -36,5 +36,7 @@ split_data <- function(datobj){
   return(list(censored_ylist = censored_ylist,
               censored_direction = censored_direction,
               inner_ylist = inner_ylist,
-              inner_countslist = inner_countslist))
+              inner_countslist = inner_countslist,
+              censor.which.list  = censor.which.list
+              ))
 }

@@ -23,6 +23,7 @@ preimpute <- function(datobj){
   inner_countslist = splitres$inner_countslist
   censored_ylist = splitres$censored_ylist
   censored_direction = splitres$censored_direction
+  censored.which.list = splitres$censored.which.list
 
   ## Fit 2-mixture Gaussian at each time point.
   gmm_model_list <- mapply(function(y, counts){
@@ -31,7 +32,7 @@ preimpute <- function(datobj){
     z = mclust::unmap(sample(1:2, size = length(y), replace=TRUE))
 
     ## Fit a Gaussian mixture model for weighted data.
-    res = me.weighted(as.numeric(y), modelName = "V", weights = counts, z = z)
+    res = mclust::me.weighted(as.numeric(y), modelName = "V", weights = counts, z = z)
 
     ## ## Plotting the result
     ## plotrix::weighted.hist(y, counts, breaks=20)
