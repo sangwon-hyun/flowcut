@@ -197,7 +197,7 @@ preimpute <- function(datobj){
   inner_countslist = splitres$inner_countslist
   censored_ylist = splitres$censored_ylist
   censored_direction = splitres$censored_direction
-  censored.which.list = splitres$censored.which.list
+  censor.which.list = splitres$censor.which.list
 
   ## Fit 2-mixture Gaussian at each time point.
   gmm_model_list <- mapply(function(y, counts){
