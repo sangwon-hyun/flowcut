@@ -19,6 +19,7 @@ package are both created using one simple command:
 
 ```{r render, eval = FALSE}
 litr::render("index.Rmd", output_format = litr::litr_gitbook())
+install.packages("~/repos/flowcut/flowcut", type='source',repos=NULL)
 ## install.packages("./flowcut/", repos = NULL, type="source")
 ```
 

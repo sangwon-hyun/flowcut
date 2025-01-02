@@ -6,7 +6,7 @@
 contains of the posterior means of the model parametr. This allows you to use
 plotting code from the flowmix and flowtrend package.}
 \usage{
-mcmc_res_to_flowmix(res, last_draws_inds = NULL)
+mcmc_res_to_flowmix(res, last_draws_inds = NULL, last_draws_num = NULL)
 }
 \arguments{
 \item{res}{The result of doing MCMC.}

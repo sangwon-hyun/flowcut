@@ -12,7 +12,7 @@
 #' 
 #' @export
 #' 
-mcmc_res_to_flowmix <- function(res, last_draws_inds=NULL){
+mcmc_res_to_flowmix <- function(res, last_draws_inds=NULL, last_draws_num = NULL){
 
   ## Setup
   X = t(res$dat.info$X)
@@ -25,6 +25,7 @@ mcmc_res_to_flowmix <- function(res, last_draws_inds=NULL){
   Nmc = res$pos.beta %>% dim() %>% tail(1)
   if(is.null(last_draws_inds)) last_draws_inds = 1:Nmc
   if(!is.null(last_draws_inds))stopifnot(all(last_draws_inds<=Nmc))
+  if(!is.null(last_draws_num)) last_draws_inds = (Nmc-last_draws_num+1):Nmc
   ## last_draw_inds = 1:dim(res$pos.beta)[4]
 
   ## Means

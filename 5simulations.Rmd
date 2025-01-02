@@ -126,7 +126,7 @@ get_posterior_probs <- function(gmm_model, ynew){
 Also, here is a helper to split the data into (1) censored and (2) non-censored
 ("inner") particles; used in `preimpute()`.
 
-```{r,}
+```{r}
 #' A helper to split the data into (1) censored and (2) non-censored ("inner") particles.
 #'
 #' @param datobj List containing ylist, countslist, X, and Cbox.
@@ -167,6 +167,7 @@ split_data <- function(datobj){
               censor.which.list  = censor.which.list
               ))
 }
+
 ```
 
 
@@ -199,6 +200,27 @@ preimpute <- function(datobj){
   censored_direction = splitres$censored_direction
   censor.which.list = splitres$censor.which.list
 
+  ## What happens when the "inner" data is empty-ish at some times? We sample
+  ## some points from the rest of the data, and fill the empty-ish cytograms in
+  ## so that there are 5 particles.
+  inner_ntlist = sapply(inner_ylist, nrow)
+  min_num_particles = 5
+  times_empty = which(inner_ntlist < min_num_particles)
+  collapsed_ylist =
+    inner_ylist[-times_empty] %>%
+    lapply(function(y){sample(y, size=ceiling(nrow(y)/3), replace=FALSE)}) %>% 
+    Reduce(c, .)
+
+  if(length(times_empty) > 0){
+    for(tt_empty in times_empty){
+      nt = length(inner_ylist[[tt_empty]])
+      extra_points = sample(collapsed_ylist, min_num_particles - nt) %>% cbind()
+      inner_ylist[[tt_empty]] <- rbind(inner_ylist[[tt_empty]], extra_points)
+      inner_countslist[[tt_empty]] <- c(inner_countslist[[tt_empty]], rep(1, length(extra_points)))
+    }
+  }
+  stopifnot(all(sapply(inner_ylist, nrow)>=min_num_particles))
+
   ## Fit 2-mixture Gaussian at each time point.
   gmm_model_list <- mapply(function(y, counts){
 
@@ -206,15 +228,13 @@ preimpute <- function(datobj){
     z = mclust::unmap(sample(1:2, size = length(y), replace=TRUE))
 
     ## Fit a Gaussian mixture model for weighted data.
-    res = mclust::me.weighted(as.numeric(y), modelName = "V", weights = counts, z = z)
-
-    ## ## Plotting the result
-    ## plotrix::weighted.hist(y, counts, breaks=20)
-    ## tibble(y=y,counts=counts) %>% ggplot()  + geom_point(aes(x=y,y=0,  alpha = counts)) +
-    ##   geom_vline(xintercept = res$parameters$mean, col = 'red')
-    ## abline(v = res$parameters$mean, col = 'red')
-    ## abline(v = res$parameters$mean + 2*sqrt(res$parameters$variance$sigmasq), col = 'red', lty=2)
-    ## abline(v = res$parameters$mean - 2*sqrt(res$parameters$variance$sigmasq), col = 'red', lty=3)
+    ##res = mclust::me.weighted(as.numeric(y), modelName = "V", weights = counts, z = z)
+    res = mclust::Mclust(as.numeric(y), G=2, modelName = "V", verbose = FALSE, warn = FALSE)##, weights = counts, z = z)
+    if(is.null(res)){
+      res = mclust::Mclust(as.numeric(y), G=2, modelName = "E", verbose = FALSE, warn = FALSE)##, weights = counts, z = z)
+      res$parameters$variance$sigmasq = rep(res$parameters$variance$sigmasq,2)
+    }
+    assertthat::assert_that(!is.null(res))
     return(res)
   }, inner_ylist, inner_countslist, SIMPLIFY = FALSE)
 
