@@ -235,7 +235,7 @@ dataset |ynew| given GMM model |gmm_model|.</p>
 <span id="cb35-5"><a href="simulations.html#cb35-5" tabindex="-1"></a><span class="co">#'</span></span>
 <span id="cb35-6"><a href="simulations.html#cb35-6" tabindex="-1"></a><span class="co">#' @return estimated posterior probabilities from an estimated GMM model</span></span>
 <span id="cb35-7"><a href="simulations.html#cb35-7" tabindex="-1"></a><span id="get_posterior_probs">get_posterior_probs</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(gmm_model, ynew){</span>
-<span id="cb35-8"><a href="simulations.html#cb35-8" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">ncol</span>(ynew)<span class="sc">==</span><span class="dv">1</span>)</span>
+<span id="cb35-8"><a href="simulations.html#cb35-8" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">ncol</span>(ynew) <span class="sc">==</span> <span class="dv">1</span>)</span>
 <span id="cb35-9"><a href="simulations.html#cb35-9" tabindex="-1"></a>  numclust <span class="ot">=</span> <span class="fu">length</span>(gmm_model<span class="sc">$</span>parameters<span class="sc">$</span>mean)</span>
 <span id="cb35-10"><a href="simulations.html#cb35-10" tabindex="-1"></a>  mn <span class="ot">=</span> gmm_model<span class="sc">$</span>parameters<span class="sc">$</span>mean</span>
 <span id="cb35-11"><a href="simulations.html#cb35-11" tabindex="-1"></a>  sd <span class="ot">=</span> gmm_model<span class="sc">$</span>parameters<span class="sc">$</span>variance<span class="sc">$</span>sigmasq <span class="sc">%&gt;%</span> <span class="fu">sqrt</span>()</span>
@@ -244,8 +244,13 @@ dataset |ynew| given GMM model |gmm_model|.</p>
 <span id="cb35-14"><a href="simulations.html#cb35-14" tabindex="-1"></a>    weighted_d1 <span class="ot">=</span> <span class="fu">dnorm</span>(ynew, <span class="at">mean =</span> mn[iclust], <span class="at">sd =</span> sd[iclust]) <span class="sc">*</span> pro[iclust]</span>
 <span id="cb35-15"><a href="simulations.html#cb35-15" tabindex="-1"></a>  })  <span class="sc">%&gt;%</span> <span class="fu">do.call</span>(cbind, .)</span>
 <span id="cb35-16"><a href="simulations.html#cb35-16" tabindex="-1"></a>  post_prob <span class="ot">=</span> post_prob<span class="sc">/</span><span class="fu">rowSums</span>(post_prob)</span>
-<span id="cb35-17"><a href="simulations.html#cb35-17" tabindex="-1"></a>  <span class="fu">return</span>(post_prob)</span>
-<span id="cb35-18"><a href="simulations.html#cb35-18" tabindex="-1"></a>}</span></code></pre></div>
+<span id="cb35-17"><a href="simulations.html#cb35-17" tabindex="-1"></a></span>
+<span id="cb35-18"><a href="simulations.html#cb35-18" tabindex="-1"></a>  <span class="do">## Give up on posterior probability calculation and make all things 1/2, when</span></span>
+<span id="cb35-19"><a href="simulations.html#cb35-19" tabindex="-1"></a>  <span class="do">## this (rarely) happens.</span></span>
+<span id="cb35-20"><a href="simulations.html#cb35-20" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">any</span>(<span class="fu">is.nan</span>(post_prob))) post_prob <span class="ot">=</span> <span class="fu">matrix</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>, <span class="at">nrow=</span><span class="fu">nrow</span>(post_prob), <span class="at">ncol=</span><span class="dv">2</span>)</span>
+<span id="cb35-21"><a href="simulations.html#cb35-21" tabindex="-1"></a></span>
+<span id="cb35-22"><a href="simulations.html#cb35-22" tabindex="-1"></a>  <span class="fu">return</span>(post_prob)</span>
+<span id="cb35-23"><a href="simulations.html#cb35-23" tabindex="-1"></a>}</span></code></pre></div>
 <p>Also, here is a helper to split the data into (1) censored and (2) non-censored
 (“inner”) particles; used in <code><a href="simulations.html#preimpute">preimpute</a>()</code>.</p>
 <div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="simulations.html#cb36-1" tabindex="-1"></a><span class="co">#' A helper to split the data into (1) censored and (2) non-censored ("inner") particles.</span></span>
@@ -317,7 +322,7 @@ dataset; used in <code><a href="simulations.html#preimpute">preimpute</a>()</cod
 <span id="cb37-25"><a href="simulations.html#cb37-25" tabindex="-1"></a></span>
 <span id="cb37-26"><a href="simulations.html#cb37-26" tabindex="-1"></a>  <span class="do">## What happens when the "inner" data is empty-ish at some times? We sample</span></span>
 <span id="cb37-27"><a href="simulations.html#cb37-27" tabindex="-1"></a>  <span class="do">## some points from the rest of the data, and fill the empty-ish cytograms in</span></span>
-<span id="cb37-28"><a href="simulations.html#cb37-28" tabindex="-1"></a>  <span class="do">## so that there are 5 particles.</span></span>
+<span id="cb37-28"><a href="simulations.html#cb37-28" tabindex="-1"></a>  <span class="do">## so that there are at least 5 particles in each cytogram.</span></span>
 <span id="cb37-29"><a href="simulations.html#cb37-29" tabindex="-1"></a>  inner_ntlist <span class="ot">=</span> <span class="fu">sapply</span>(inner_ylist, nrow)</span>
 <span id="cb37-30"><a href="simulations.html#cb37-30" tabindex="-1"></a>  min_num_particles <span class="ot">=</span> <span class="dv">5</span></span>
 <span id="cb37-31"><a href="simulations.html#cb37-31" tabindex="-1"></a>  times_empty <span class="ot">=</span> <span class="fu">which</span>(inner_ntlist <span class="sc">&lt;</span> min_num_particles)</span>

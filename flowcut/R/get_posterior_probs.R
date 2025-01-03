@@ -7,7 +7,7 @@
 #'
 #' @return estimated posterior probabilities from an estimated GMM model
 get_posterior_probs <- function(gmm_model, ynew){
-  stopifnot(ncol(ynew)==1)
+  stopifnot(ncol(ynew) == 1)
   numclust = length(gmm_model$parameters$mean)
   mn = gmm_model$parameters$mean
   sd = gmm_model$parameters$variance$sigmasq %>% sqrt()
@@ -16,5 +16,10 @@ get_posterior_probs <- function(gmm_model, ynew){
     weighted_d1 = dnorm(ynew, mean = mn[iclust], sd = sd[iclust]) * pro[iclust]
   })  %>% do.call(cbind, .)
   post_prob = post_prob/rowSums(post_prob)
+
+  ## Give up on posterior probability calculation and make all things 1/2, when
+  ## this (rarely) happens.
+  if(any(is.nan(post_prob))) post_prob = matrix(1/2, nrow=nrow(post_prob), ncol=2)
+
   return(post_prob)
 }

@@ -27,7 +27,7 @@ preimpute <- function(datobj){
 
   ## What happens when the "inner" data is empty-ish at some times? We sample
   ## some points from the rest of the data, and fill the empty-ish cytograms in
-  ## so that there are 5 particles.
+  ## so that there are at least 5 particles in each cytogram.
   inner_ntlist = sapply(inner_ylist, nrow)
   min_num_particles = 5
   times_empty = which(inner_ntlist < min_num_particles)
