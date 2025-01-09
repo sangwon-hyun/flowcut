@@ -12,7 +12,7 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="8 Documenting the package and building | Creating the flowcut R package">
 <meta name="author" content="Sheng Jiang, Sangwon Hyun">
-<meta name="date" content="2025-01-02">
+<meta name="date" content="2025-01-09">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -152,7 +152,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </h1>
 <p>We finish by running commands that will document, build, and install the
 package. It may also be a good idea to check the package from within this file.</p>
-<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="documenting-the-package-and-building.html#cb39-1" tabindex="-1"></a>litr<span class="sc">::</span><span class="fu">document</span>() <span class="co"># &lt;-- use instead of devtools::document()</span></span></code></pre></div>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="documenting-the-package-and-building.html#cb34-1" tabindex="-1"></a>litr<span class="sc">::</span><span class="fu">document</span>() <span class="co"># &lt;-- use instead of devtools::document()</span></span></code></pre></div>
 <pre><code>## ℹ Updating flowcut documentation
 ## ℹ Loading flowcut
 ## Loading required package: MASS
@@ -164,6 +164,17 @@ package. It may also be a good idea to check the package from within this file.<
 ## The following object is masked from 'package:dplyr':
 ## 
 ##     select
+## 
+## 
+## Loading required package: matrixNormal
+## 
+## 
+## Attaching package: 'matrixNormal'
+## 
+## 
+## The following object is masked from 'package:base':
+## 
+##     I
 ## 
 ## 
 ## Loading required package: matrixsampling
@@ -237,7 +248,7 @@ package. It may also be a good idea to check the package from within this file.<
 ## 
 ## 
 ## Loading required package: tmvnsim</code></pre>
-<pre><code>## Warning: [run.Gibbs.fast.R:25] @return requires a value</code></pre>
+<pre><code>## Warning: [run.Gibbs.fast.R:27] @return requires a value</code></pre>
 <pre><code>## Writing 'NAMESPACE'
 ## Writing 'NAMESPACE'
 ## Writing 'printprogress.Rd'

@@ -22,6 +22,7 @@ run.Gibbs.fast(
   verbose = FALSE,
   last.imputed = NULL,
   last.para = NULL,
+  modified_g_prior = FALSE,
   n.cores = 1
 )
 }
@@ -52,6 +53,9 @@ details. If a value is provided, |maxdev| and |maxdev_prob| are ignored.}
 overall mean, over time t=1,.., T. Defaults to 0.99.}
 
 \item{verbose}{Whether to be loud.}
+
+\item{modified_g_prior}{Adding a small constant on the diagonal of X^TX to make it
+invertible.}
 
 \item{n.cores}{Number of cores for multiple cores.}
 

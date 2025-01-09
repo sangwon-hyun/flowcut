@@ -19,7 +19,9 @@
 #'   overall mean, over time t=1,.., T. Defaults to 0.99.
 #' @param verbose Whether to be loud.
 #' @param warm.start If supplied, restart the MCMC at these values.
-#' @param n.cores Number of cores for multiple cores. 
+#' @param n.cores Number of cores for multiple cores.
+#' @param modified_g_prior Adding a small constant on the diagonal of X^TX to make it
+#'   invertible.
 #' 
 #'
 #' @return
@@ -39,6 +41,7 @@ run.Gibbs.fast <- function(ylist, countslist, X,
                            verbose = FALSE,
                            last.imputed = NULL, 
                            last.para  = NULL, 
+                           modified_g_prior = FALSE,  
                            n.cores = 1){
     ## Basic setup
     TT <- length(ylist)
@@ -85,6 +88,11 @@ run.Gibbs.fast <- function(ylist, countslist, X,
     ggXtXtTp <- lapply(Xp.list, function(x) x%*%t(x)/gg)
     XTX <- X%*%t(X)
     XTXp <- Xp%*%t(Xp)
+    if(modified_g_prior){
+      eps = 1E-10
+      XTX = XTX + eps * diag(rep(1,p))
+      XTXp = XTXp + eps * diag(rep(1,p+1))
+    }
     inv.XTX <- Rfast::spdinv(XTX)
     inv.XTXp <- Rfast::spdinv(XTXp)
     X0 <- rbind(0, X) 

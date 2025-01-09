@@ -12,7 +12,7 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="6 Simulations | Creating the flowcut R package">
 <meta name="author" content="Sheng Jiang, Sangwon Hyun">
-<meta name="date" content="2025-01-02">
+<meta name="date" content="2025-01-09">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -154,256 +154,256 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Refer back to the data generation in @ref{syntheticdata}. We will be
 top-censoring the data at 0.5. Before censoring, this is what the data looks
 like.</p>
-<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="simulations.html#cb30-1" tabindex="-1"></a><span class="do">## Load the "original" model</span></span>
-<span id="cb30-2"><a href="simulations.html#cb30-2" tabindex="-1"></a>orig_model <span class="ot">=</span> <span class="fu">readRDS</span>(<span class="at">file=</span><span class="fu">file.path</span>(<span class="st">"~/repos/flowcut/inst/output"</span>, <span class="st">"orig_model.RDS"</span>))</span>
-<span id="cb30-3"><a href="simulations.html#cb30-3" tabindex="-1"></a></span>
-<span id="cb30-4"><a href="simulations.html#cb30-4" tabindex="-1"></a><span class="do">## Generate data</span></span>
-<span id="cb30-5"><a href="simulations.html#cb30-5" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">100</span>)</span>
-<span id="cb30-6"><a href="simulations.html#cb30-6" tabindex="-1"></a>isignal <span class="ot">=</span> <span class="dv">10</span></span>
-<span id="cb30-7"><a href="simulations.html#cb30-7" tabindex="-1"></a>new_model <span class="ot">=</span> flowcut<span class="sc">::</span><span class="fu">make_model</span>(orig_model, isignal)</span>
-<span id="cb30-8"><a href="simulations.html#cb30-8" tabindex="-1"></a><span class="do">## new_model = flowcut::make_model(orig_sim_model, isignal)</span></span>
-<span id="cb30-9"><a href="simulations.html#cb30-9" tabindex="-1"></a>ylist <span class="ot">=</span> flowcut<span class="sc">::</span><a href="syntheticdata.html#gen_1d">gen_1d</a>(new_model, <span class="at">nt =</span> <span class="dv">100</span>)</span>
-<span id="cb30-10"><a href="simulations.html#cb30-10" tabindex="-1"></a>flowtrend<span class="sc">::</span><span class="fu">plot_1d</span>(ylist, <span class="at">obj =</span> new_model)</span></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="simulations.html#cb25-1" tabindex="-1"></a><span class="do">## Load the "original" model</span></span>
+<span id="cb25-2"><a href="simulations.html#cb25-2" tabindex="-1"></a>orig_model <span class="ot">=</span> <span class="fu">readRDS</span>(<span class="at">file=</span><span class="fu">file.path</span>(<span class="st">"~/repos/flowcut/inst/output"</span>, <span class="st">"orig_model.RDS"</span>))</span>
+<span id="cb25-3"><a href="simulations.html#cb25-3" tabindex="-1"></a></span>
+<span id="cb25-4"><a href="simulations.html#cb25-4" tabindex="-1"></a><span class="do">## Generate data</span></span>
+<span id="cb25-5"><a href="simulations.html#cb25-5" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">100</span>)</span>
+<span id="cb25-6"><a href="simulations.html#cb25-6" tabindex="-1"></a>isignal <span class="ot">=</span> <span class="dv">10</span></span>
+<span id="cb25-7"><a href="simulations.html#cb25-7" tabindex="-1"></a>new_model <span class="ot">=</span> flowcut<span class="sc">::</span><span class="fu">make_model</span>(orig_model, isignal)</span>
+<span id="cb25-8"><a href="simulations.html#cb25-8" tabindex="-1"></a><span class="do">## new_model = flowcut::make_model(orig_sim_model, isignal)</span></span>
+<span id="cb25-9"><a href="simulations.html#cb25-9" tabindex="-1"></a>ylist <span class="ot">=</span> flowcut<span class="sc">::</span><a href="syntheticdata.html#gen_1d">gen_1d</a>(new_model, <span class="at">nt =</span> <span class="dv">100</span>)</span>
+<span id="cb25-10"><a href="simulations.html#cb25-10" tabindex="-1"></a>flowtrend<span class="sc">::</span><span class="fu">plot_1d</span>(ylist, <span class="at">obj =</span> new_model)</span></code></pre></div>
 <p>After censoring, this is it.</p>
-<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="simulations.html#cb31-1" tabindex="-1"></a><span class="do">## Censor it</span></span>
-<span id="cb31-2"><a href="simulations.html#cb31-2" tabindex="-1"></a>ylist <span class="ot">=</span> <span class="fu">lapply</span>(ylist, <span class="cf">function</span>(y){</span>
-<span id="cb31-3"><a href="simulations.html#cb31-3" tabindex="-1"></a>  y <span class="ot">=</span> <span class="fu">pmin</span>(y, <span class="fl">0.5</span>)</span>
-<span id="cb31-4"><a href="simulations.html#cb31-4" tabindex="-1"></a>})</span>
-<span id="cb31-5"><a href="simulations.html#cb31-5" tabindex="-1"></a>flowtrend<span class="sc">::</span><span class="fu">plot_1d</span>(ylist, <span class="at">obj =</span> new_model)</span></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="simulations.html#cb26-1" tabindex="-1"></a><span class="do">## Censor it</span></span>
+<span id="cb26-2"><a href="simulations.html#cb26-2" tabindex="-1"></a>ylist <span class="ot">=</span> <span class="fu">lapply</span>(ylist, <span class="cf">function</span>(y){</span>
+<span id="cb26-3"><a href="simulations.html#cb26-3" tabindex="-1"></a>  y <span class="ot">=</span> <span class="fu">pmin</span>(y, <span class="fl">0.5</span>)</span>
+<span id="cb26-4"><a href="simulations.html#cb26-4" tabindex="-1"></a>})</span>
+<span id="cb26-5"><a href="simulations.html#cb26-5" tabindex="-1"></a>flowtrend<span class="sc">::</span><span class="fu">plot_1d</span>(ylist, <span class="at">obj =</span> new_model)</span></code></pre></div>
 <p>We need to specify a few things (1) like the censoring limits <code>Cbox</code> and (2)
 <code>countslist</code> before running the MCMC.</p>
-<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="simulations.html#cb32-1" tabindex="-1"></a><span class="do">## Form the censoring "box"</span></span>
-<span id="cb32-2"><a href="simulations.html#cb32-2" tabindex="-1"></a>Cbox <span class="ot">=</span> <span class="fu">rbind</span>(<span class="fu">c</span>(<span class="sc">-</span><span class="cn">Inf</span>, <span class="fl">0.5</span>)) </span>
-<span id="cb32-3"><a href="simulations.html#cb32-3" tabindex="-1"></a></span>
-<span id="cb32-4"><a href="simulations.html#cb32-4" tabindex="-1"></a><span class="do">## Counts are all equal for now</span></span>
-<span id="cb32-5"><a href="simulations.html#cb32-5" tabindex="-1"></a>countslist <span class="ot">=</span> <span class="fu">lapply</span>(ylist, <span class="cf">function</span>(y){ <span class="fu">rep</span>(<span class="dv">1</span>, <span class="fu">nrow</span>(y)) })</span>
-<span id="cb32-6"><a href="simulations.html#cb32-6" tabindex="-1"></a></span>
-<span id="cb32-7"><a href="simulations.html#cb32-7" tabindex="-1"></a><span class="do">## Save the metadata</span></span>
-<span id="cb32-8"><a href="simulations.html#cb32-8" tabindex="-1"></a>datobj <span class="ot">=</span> <span class="fu">list</span>(<span class="at">ylist=</span>ylist, <span class="at">countslist=</span>countslist, <span class="at">Cbox=</span>Cbox, <span class="at">X=</span>orig_model<span class="sc">$</span>X)</span>
-<span id="cb32-9"><a href="simulations.html#cb32-9" tabindex="-1"></a><span class="do">## datobj = list(ylist=ylist, countslist=countslist, Cbox=Cbox, X=orig_sim_model$X)</span></span>
-<span id="cb32-10"><a href="simulations.html#cb32-10" tabindex="-1"></a><span class="fu">saveRDS</span>(datobj,</span>
-<span id="cb32-11"><a href="simulations.html#cb32-11" tabindex="-1"></a>        <span class="fu">file.path</span>(<span class="st">"~/repos/flowcut/inst/output"</span>,</span>
-<span id="cb32-12"><a href="simulations.html#cb32-12" tabindex="-1"></a>                  <span class="fu">paste0</span>(<span class="st">"isignal-"</span>, isignal, <span class="st">"-datobj.RDS"</span>)))</span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="simulations.html#cb27-1" tabindex="-1"></a><span class="do">## Form the censoring "box"</span></span>
+<span id="cb27-2"><a href="simulations.html#cb27-2" tabindex="-1"></a>Cbox <span class="ot">=</span> <span class="fu">rbind</span>(<span class="fu">c</span>(<span class="sc">-</span><span class="cn">Inf</span>, <span class="fl">0.5</span>)) </span>
+<span id="cb27-3"><a href="simulations.html#cb27-3" tabindex="-1"></a></span>
+<span id="cb27-4"><a href="simulations.html#cb27-4" tabindex="-1"></a><span class="do">## Counts are all equal for now</span></span>
+<span id="cb27-5"><a href="simulations.html#cb27-5" tabindex="-1"></a>countslist <span class="ot">=</span> <span class="fu">lapply</span>(ylist, <span class="cf">function</span>(y){ <span class="fu">rep</span>(<span class="dv">1</span>, <span class="fu">nrow</span>(y)) })</span>
+<span id="cb27-6"><a href="simulations.html#cb27-6" tabindex="-1"></a></span>
+<span id="cb27-7"><a href="simulations.html#cb27-7" tabindex="-1"></a><span class="do">## Save the metadata</span></span>
+<span id="cb27-8"><a href="simulations.html#cb27-8" tabindex="-1"></a>datobj <span class="ot">=</span> <span class="fu">list</span>(<span class="at">ylist=</span>ylist, <span class="at">countslist=</span>countslist, <span class="at">Cbox=</span>Cbox, <span class="at">X=</span>orig_model<span class="sc">$</span>X)</span>
+<span id="cb27-9"><a href="simulations.html#cb27-9" tabindex="-1"></a><span class="do">## datobj = list(ylist=ylist, countslist=countslist, Cbox=Cbox, X=orig_sim_model$X)</span></span>
+<span id="cb27-10"><a href="simulations.html#cb27-10" tabindex="-1"></a><span class="fu">saveRDS</span>(datobj,</span>
+<span id="cb27-11"><a href="simulations.html#cb27-11" tabindex="-1"></a>        <span class="fu">file.path</span>(<span class="st">"~/repos/flowcut/inst/output"</span>,</span>
+<span id="cb27-12"><a href="simulations.html#cb27-12" tabindex="-1"></a>                  <span class="fu">paste0</span>(<span class="st">"isignal-"</span>, isignal, <span class="st">"-datobj.RDS"</span>)))</span></code></pre></div>
 <p>We also need some <em>prior elicitation</em> to prevent the cluster means from changing
 too much across time.</p>
 <p>(code copy-pasted as-is for now, not meant to be run)</p>
-<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="simulations.html#cb33-1" tabindex="-1"></a>gg <span class="ot">&lt;-</span> <a href="helpers-functions.html#maxdev_to_gg">maxdev_to_gg</a>(datobj<span class="sc">$</span>X, </span>
-<span id="cb33-2"><a href="simulations.html#cb33-2" tabindex="-1"></a>                   <span class="at">dimdat =</span> <span class="dv">3</span>,</span>
-<span id="cb33-3"><a href="simulations.html#cb33-3" tabindex="-1"></a>                   <span class="at">maxdev =</span> <span class="fl">0.5</span>,</span>
-<span id="cb33-4"><a href="simulations.html#cb33-4" tabindex="-1"></a>                   <span class="at">numclust =</span> <span class="dv">10</span>,</span>
-<span id="cb33-5"><a href="simulations.html#cb33-5" tabindex="-1"></a>                   <span class="at">ggvec =</span> (<span class="dv">1</span><span class="sc">:</span><span class="dv">40</span>)<span class="sc">/</span><span class="dv">200</span>, </span>
-<span id="cb33-6"><a href="simulations.html#cb33-6" tabindex="-1"></a>                   <span class="at">n.cores =</span> <span class="fu">detectCores</span>(),</span>
-<span id="cb33-7"><a href="simulations.html#cb33-7" tabindex="-1"></a>                   <span class="at">Nmc =</span> <span class="fl">1e4</span>, <span class="at">viz=</span><span class="cn">FALSE</span>)</span>
-<span id="cb33-8"><a href="simulations.html#cb33-8" tabindex="-1"></a>gg <span class="ot">&lt;-</span> <span class="fl">0.01287879</span></span>
-<span id="cb33-9"><a href="simulations.html#cb33-9" tabindex="-1"></a><span class="do">## hist(<a href="helpers-functions.html#ball.deviance">ball.deviance</a>(0.01,0.5,t(X))$msd, breaks = "FD")</span></span>
-<span id="cb33-10"><a href="simulations.html#cb33-10" tabindex="-1"></a><span class="do">## hist(<a href="helpers-functions.html#ball.deviance">ball.deviance</a>(0.1,0.5,X)$msd, breaks = "FD")</span></span>
-<span id="cb33-11"><a href="simulations.html#cb33-11" tabindex="-1"></a><span class="do">## hist(<a href="helpers-functions.html#ball.deviance">ball.deviance</a>(0.2,0.5,X)$msd, breaks = "FD")</span></span>
-<span id="cb33-12"><a href="simulations.html#cb33-12" tabindex="-1"></a><span class="do">## hist(<a href="helpers-functions.html#ball.deviance">ball.deviance</a>(0.5,0.5,X)$msd, breaks = "FD")</span></span>
-<span id="cb33-13"><a href="simulations.html#cb33-13" tabindex="-1"></a><span class="do">## hist(<a href="helpers-functions.html#ball.deviance">ball.deviance</a>(1,0.5,X)$msd, breaks = "FD")</span></span>
-<span id="cb33-14"><a href="simulations.html#cb33-14" tabindex="-1"></a><span class="do">## hist(<a href="helpers-functions.html#ball.deviance">ball.deviance</a>(2,0.5,X)$msd, breaks = "FD")</span></span></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="simulations.html#cb28-1" tabindex="-1"></a>gg <span class="ot">&lt;-</span> <a href="helpers-functions.html#maxdev_to_gg">maxdev_to_gg</a>(datobj<span class="sc">$</span>X, </span>
+<span id="cb28-2"><a href="simulations.html#cb28-2" tabindex="-1"></a>                   <span class="at">dimdat =</span> <span class="dv">3</span>,</span>
+<span id="cb28-3"><a href="simulations.html#cb28-3" tabindex="-1"></a>                   <span class="at">maxdev =</span> <span class="fl">0.5</span>,</span>
+<span id="cb28-4"><a href="simulations.html#cb28-4" tabindex="-1"></a>                   <span class="at">numclust =</span> <span class="dv">10</span>,</span>
+<span id="cb28-5"><a href="simulations.html#cb28-5" tabindex="-1"></a>                   <span class="at">ggvec =</span> (<span class="dv">1</span><span class="sc">:</span><span class="dv">40</span>)<span class="sc">/</span><span class="dv">200</span>, </span>
+<span id="cb28-6"><a href="simulations.html#cb28-6" tabindex="-1"></a>                   <span class="at">n.cores =</span> <span class="fu">detectCores</span>(),</span>
+<span id="cb28-7"><a href="simulations.html#cb28-7" tabindex="-1"></a>                   <span class="at">Nmc =</span> <span class="fl">1e4</span>, <span class="at">viz=</span><span class="cn">FALSE</span>)</span>
+<span id="cb28-8"><a href="simulations.html#cb28-8" tabindex="-1"></a>gg <span class="ot">&lt;-</span> <span class="fl">0.01287879</span></span>
+<span id="cb28-9"><a href="simulations.html#cb28-9" tabindex="-1"></a><span class="do">## hist(<a href="helpers-functions.html#ball.deviance">ball.deviance</a>(0.01,0.5,t(X))$msd, breaks = "FD")</span></span>
+<span id="cb28-10"><a href="simulations.html#cb28-10" tabindex="-1"></a><span class="do">## hist(<a href="helpers-functions.html#ball.deviance">ball.deviance</a>(0.1,0.5,X)$msd, breaks = "FD")</span></span>
+<span id="cb28-11"><a href="simulations.html#cb28-11" tabindex="-1"></a><span class="do">## hist(<a href="helpers-functions.html#ball.deviance">ball.deviance</a>(0.2,0.5,X)$msd, breaks = "FD")</span></span>
+<span id="cb28-12"><a href="simulations.html#cb28-12" tabindex="-1"></a><span class="do">## hist(<a href="helpers-functions.html#ball.deviance">ball.deviance</a>(0.5,0.5,X)$msd, breaks = "FD")</span></span>
+<span id="cb28-13"><a href="simulations.html#cb28-13" tabindex="-1"></a><span class="do">## hist(<a href="helpers-functions.html#ball.deviance">ball.deviance</a>(1,0.5,X)$msd, breaks = "FD")</span></span>
+<span id="cb28-14"><a href="simulations.html#cb28-14" tabindex="-1"></a><span class="do">## hist(<a href="helpers-functions.html#ball.deviance">ball.deviance</a>(2,0.5,X)$msd, breaks = "FD")</span></span></code></pre></div>
 <p>Next, we run the MCMC.</p>
-<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="simulations.html#cb34-1" tabindex="-1"></a><span class="do">## Run the MCMC</span></span>
-<span id="cb34-2"><a href="simulations.html#cb34-2" tabindex="-1"></a>Nmc <span class="ot">&lt;-</span> <span class="fl">1e3</span> <span class="sc">*</span> <span class="dv">5</span></span>
-<span id="cb34-3"><a href="simulations.html#cb34-3" tabindex="-1"></a>Nburn <span class="ot">&lt;-</span> <span class="dv">500</span></span>
-<span id="cb34-4"><a href="simulations.html#cb34-4" tabindex="-1"></a></span>
-<span id="cb34-5"><a href="simulations.html#cb34-5" tabindex="-1"></a>Nmc <span class="ot">&lt;-</span> <span class="dv">20</span></span>
-<span id="cb34-6"><a href="simulations.html#cb34-6" tabindex="-1"></a>Nburn <span class="ot">&lt;-</span> <span class="dv">10</span></span>
-<span id="cb34-7"><a href="simulations.html#cb34-7" tabindex="-1"></a></span>
-<span id="cb34-8"><a href="simulations.html#cb34-8" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
-<span id="cb34-9"><a href="simulations.html#cb34-9" tabindex="-1"></a>Gibbs.res <span class="ot">&lt;-</span> <a href="gibbs-sampler.html#run.Gibbs.fast">run.Gibbs.fast</a>(<span class="at">ylist =</span> datobj<span class="sc">$</span>ylist,</span>
-<span id="cb34-10"><a href="simulations.html#cb34-10" tabindex="-1"></a>                            <span class="at">countslist =</span> datobj<span class="sc">$</span>countslist,</span>
-<span id="cb34-11"><a href="simulations.html#cb34-11" tabindex="-1"></a>                            <span class="at">numclust =</span> <span class="dv">2</span>,</span>
-<span id="cb34-12"><a href="simulations.html#cb34-12" tabindex="-1"></a>                            <span class="at">Nmc =</span> Nmc, <span class="at">Nburn =</span> Nburn,</span>
-<span id="cb34-13"><a href="simulations.html#cb34-13" tabindex="-1"></a>                            <span class="at">gg =</span> <span class="fl">0.1</span>, </span>
-<span id="cb34-14"><a href="simulations.html#cb34-14" tabindex="-1"></a>                            <span class="at">X =</span> <span class="fu">t</span>(datobj<span class="sc">$</span>X),</span>
-<span id="cb34-15"><a href="simulations.html#cb34-15" tabindex="-1"></a>                            <span class="at">Cbox =</span> datobj<span class="sc">$</span>Cbox, <span class="at">verbose =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb34-16"><a href="simulations.html#cb34-16" tabindex="-1"></a></span>
-<span id="cb34-17"><a href="simulations.html#cb34-17" tabindex="-1"></a><span class="do">## Save the results</span></span>
-<span id="cb34-18"><a href="simulations.html#cb34-18" tabindex="-1"></a><span class="fu">saveRDS</span>(Gibbs.res,</span>
-<span id="cb34-19"><a href="simulations.html#cb34-19" tabindex="-1"></a>        <span class="fu">file.path</span>(<span class="st">"~/repos/flowcut/inst/output"</span>,</span>
-<span id="cb34-20"><a href="simulations.html#cb34-20" tabindex="-1"></a>                  <span class="fu">paste0</span>(<span class="st">"isignal-"</span>, isignal, <span class="st">"-gibbs.RDS"</span>)))</span></code></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="simulations.html#cb29-1" tabindex="-1"></a><span class="do">## Run the MCMC</span></span>
+<span id="cb29-2"><a href="simulations.html#cb29-2" tabindex="-1"></a>Nmc <span class="ot">&lt;-</span> <span class="fl">1e3</span> <span class="sc">*</span> <span class="dv">5</span></span>
+<span id="cb29-3"><a href="simulations.html#cb29-3" tabindex="-1"></a>Nburn <span class="ot">&lt;-</span> <span class="dv">500</span></span>
+<span id="cb29-4"><a href="simulations.html#cb29-4" tabindex="-1"></a></span>
+<span id="cb29-5"><a href="simulations.html#cb29-5" tabindex="-1"></a>Nmc <span class="ot">&lt;-</span> <span class="dv">20</span></span>
+<span id="cb29-6"><a href="simulations.html#cb29-6" tabindex="-1"></a>Nburn <span class="ot">&lt;-</span> <span class="dv">10</span></span>
+<span id="cb29-7"><a href="simulations.html#cb29-7" tabindex="-1"></a></span>
+<span id="cb29-8"><a href="simulations.html#cb29-8" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb29-9"><a href="simulations.html#cb29-9" tabindex="-1"></a>Gibbs.res <span class="ot">&lt;-</span> <a href="gibbs-sampler.html#run.Gibbs.fast">run.Gibbs.fast</a>(<span class="at">ylist =</span> datobj<span class="sc">$</span>ylist,</span>
+<span id="cb29-10"><a href="simulations.html#cb29-10" tabindex="-1"></a>                            <span class="at">countslist =</span> datobj<span class="sc">$</span>countslist,</span>
+<span id="cb29-11"><a href="simulations.html#cb29-11" tabindex="-1"></a>                            <span class="at">numclust =</span> <span class="dv">2</span>,</span>
+<span id="cb29-12"><a href="simulations.html#cb29-12" tabindex="-1"></a>                            <span class="at">Nmc =</span> Nmc, <span class="at">Nburn =</span> Nburn,</span>
+<span id="cb29-13"><a href="simulations.html#cb29-13" tabindex="-1"></a>                            <span class="at">gg =</span> <span class="fl">0.1</span>, </span>
+<span id="cb29-14"><a href="simulations.html#cb29-14" tabindex="-1"></a>                            <span class="at">X =</span> <span class="fu">t</span>(datobj<span class="sc">$</span>X),</span>
+<span id="cb29-15"><a href="simulations.html#cb29-15" tabindex="-1"></a>                            <span class="at">Cbox =</span> datobj<span class="sc">$</span>Cbox, <span class="at">verbose =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb29-16"><a href="simulations.html#cb29-16" tabindex="-1"></a></span>
+<span id="cb29-17"><a href="simulations.html#cb29-17" tabindex="-1"></a><span class="do">## Save the results</span></span>
+<span id="cb29-18"><a href="simulations.html#cb29-18" tabindex="-1"></a><span class="fu">saveRDS</span>(Gibbs.res,</span>
+<span id="cb29-19"><a href="simulations.html#cb29-19" tabindex="-1"></a>        <span class="fu">file.path</span>(<span class="st">"~/repos/flowcut/inst/output"</span>,</span>
+<span id="cb29-20"><a href="simulations.html#cb29-20" tabindex="-1"></a>                  <span class="fu">paste0</span>(<span class="st">"isignal-"</span>, isignal, <span class="st">"-gibbs.RDS"</span>)))</span></code></pre></div>
 <div id="simulation-helpers" class="section level2 hasAnchor" number="6.1">
 <h2>
 <span class="header-section-number">6.1</span> Simulation helpers<a href="simulations.html#simulation-helpers" class="anchor-section" aria-label="Anchor link to header"></a>
 </h2>
 <p>Here is a helper function for obtaining the membership probabilities of a new
 dataset |ynew| given GMM model |gmm_model|.</p>
-<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="simulations.html#cb35-1" tabindex="-1"></a><span class="co">#' Get the membership probabilities of a new dataset |ynew| given GMM model |gmm_model|.</span></span>
-<span id="cb35-2"><a href="simulations.html#cb35-2" tabindex="-1"></a><span class="co">#'</span></span>
-<span id="cb35-3"><a href="simulations.html#cb35-3" tabindex="-1"></a><span class="co">#' @param gmm_model from mclust or me.weighted</span></span>
-<span id="cb35-4"><a href="simulations.html#cb35-4" tabindex="-1"></a><span class="co">#' @param ynew new data to get predicted posterior membership for.</span></span>
-<span id="cb35-5"><a href="simulations.html#cb35-5" tabindex="-1"></a><span class="co">#'</span></span>
-<span id="cb35-6"><a href="simulations.html#cb35-6" tabindex="-1"></a><span class="co">#' @return estimated posterior probabilities from an estimated GMM model</span></span>
-<span id="cb35-7"><a href="simulations.html#cb35-7" tabindex="-1"></a><span id="get_posterior_probs">get_posterior_probs</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(gmm_model, ynew){</span>
-<span id="cb35-8"><a href="simulations.html#cb35-8" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">ncol</span>(ynew) <span class="sc">==</span> <span class="dv">1</span>)</span>
-<span id="cb35-9"><a href="simulations.html#cb35-9" tabindex="-1"></a>  numclust <span class="ot">=</span> <span class="fu">length</span>(gmm_model<span class="sc">$</span>parameters<span class="sc">$</span>mean)</span>
-<span id="cb35-10"><a href="simulations.html#cb35-10" tabindex="-1"></a>  mn <span class="ot">=</span> gmm_model<span class="sc">$</span>parameters<span class="sc">$</span>mean</span>
-<span id="cb35-11"><a href="simulations.html#cb35-11" tabindex="-1"></a>  sd <span class="ot">=</span> gmm_model<span class="sc">$</span>parameters<span class="sc">$</span>variance<span class="sc">$</span>sigmasq <span class="sc">%&gt;%</span> <span class="fu">sqrt</span>()</span>
-<span id="cb35-12"><a href="simulations.html#cb35-12" tabindex="-1"></a>  pro <span class="ot">=</span> gmm_model<span class="sc">$</span>parameters<span class="sc">$</span>pro</span>
-<span id="cb35-13"><a href="simulations.html#cb35-13" tabindex="-1"></a>  post_prob <span class="ot">=</span> <span class="fu">lapply</span>(<span class="dv">1</span><span class="sc">:</span>numclust, <span class="cf">function</span>(iclust){</span>
-<span id="cb35-14"><a href="simulations.html#cb35-14" tabindex="-1"></a>    weighted_d1 <span class="ot">=</span> <span class="fu">dnorm</span>(ynew, <span class="at">mean =</span> mn[iclust], <span class="at">sd =</span> sd[iclust]) <span class="sc">*</span> pro[iclust]</span>
-<span id="cb35-15"><a href="simulations.html#cb35-15" tabindex="-1"></a>  })  <span class="sc">%&gt;%</span> <span class="fu">do.call</span>(cbind, .)</span>
-<span id="cb35-16"><a href="simulations.html#cb35-16" tabindex="-1"></a>  post_prob <span class="ot">=</span> post_prob<span class="sc">/</span><span class="fu">rowSums</span>(post_prob)</span>
-<span id="cb35-17"><a href="simulations.html#cb35-17" tabindex="-1"></a></span>
-<span id="cb35-18"><a href="simulations.html#cb35-18" tabindex="-1"></a>  <span class="do">## Give up on posterior probability calculation and make all things 1/2, when</span></span>
-<span id="cb35-19"><a href="simulations.html#cb35-19" tabindex="-1"></a>  <span class="do">## this (rarely) happens.</span></span>
-<span id="cb35-20"><a href="simulations.html#cb35-20" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">any</span>(<span class="fu">is.nan</span>(post_prob))) post_prob <span class="ot">=</span> <span class="fu">matrix</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>, <span class="at">nrow=</span><span class="fu">nrow</span>(post_prob), <span class="at">ncol=</span><span class="dv">2</span>)</span>
-<span id="cb35-21"><a href="simulations.html#cb35-21" tabindex="-1"></a></span>
-<span id="cb35-22"><a href="simulations.html#cb35-22" tabindex="-1"></a>  <span class="fu">return</span>(post_prob)</span>
-<span id="cb35-23"><a href="simulations.html#cb35-23" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="simulations.html#cb30-1" tabindex="-1"></a><span class="co">#' Get the membership probabilities of a new dataset |ynew| given GMM model |gmm_model|.</span></span>
+<span id="cb30-2"><a href="simulations.html#cb30-2" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb30-3"><a href="simulations.html#cb30-3" tabindex="-1"></a><span class="co">#' @param gmm_model from mclust or me.weighted</span></span>
+<span id="cb30-4"><a href="simulations.html#cb30-4" tabindex="-1"></a><span class="co">#' @param ynew new data to get predicted posterior membership for.</span></span>
+<span id="cb30-5"><a href="simulations.html#cb30-5" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb30-6"><a href="simulations.html#cb30-6" tabindex="-1"></a><span class="co">#' @return estimated posterior probabilities from an estimated GMM model</span></span>
+<span id="cb30-7"><a href="simulations.html#cb30-7" tabindex="-1"></a><span id="get_posterior_probs">get_posterior_probs</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(gmm_model, ynew){</span>
+<span id="cb30-8"><a href="simulations.html#cb30-8" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">ncol</span>(ynew) <span class="sc">==</span> <span class="dv">1</span>)</span>
+<span id="cb30-9"><a href="simulations.html#cb30-9" tabindex="-1"></a>  numclust <span class="ot">=</span> <span class="fu">length</span>(gmm_model<span class="sc">$</span>parameters<span class="sc">$</span>mean)</span>
+<span id="cb30-10"><a href="simulations.html#cb30-10" tabindex="-1"></a>  mn <span class="ot">=</span> gmm_model<span class="sc">$</span>parameters<span class="sc">$</span>mean</span>
+<span id="cb30-11"><a href="simulations.html#cb30-11" tabindex="-1"></a>  sd <span class="ot">=</span> gmm_model<span class="sc">$</span>parameters<span class="sc">$</span>variance<span class="sc">$</span>sigmasq <span class="sc">%&gt;%</span> <span class="fu">sqrt</span>()</span>
+<span id="cb30-12"><a href="simulations.html#cb30-12" tabindex="-1"></a>  pro <span class="ot">=</span> gmm_model<span class="sc">$</span>parameters<span class="sc">$</span>pro</span>
+<span id="cb30-13"><a href="simulations.html#cb30-13" tabindex="-1"></a>  post_prob <span class="ot">=</span> <span class="fu">lapply</span>(<span class="dv">1</span><span class="sc">:</span>numclust, <span class="cf">function</span>(iclust){</span>
+<span id="cb30-14"><a href="simulations.html#cb30-14" tabindex="-1"></a>    weighted_d1 <span class="ot">=</span> <span class="fu">dnorm</span>(ynew, <span class="at">mean =</span> mn[iclust], <span class="at">sd =</span> sd[iclust]) <span class="sc">*</span> pro[iclust]</span>
+<span id="cb30-15"><a href="simulations.html#cb30-15" tabindex="-1"></a>  })  <span class="sc">%&gt;%</span> <span class="fu">do.call</span>(cbind, .)</span>
+<span id="cb30-16"><a href="simulations.html#cb30-16" tabindex="-1"></a>  post_prob <span class="ot">=</span> post_prob<span class="sc">/</span><span class="fu">rowSums</span>(post_prob)</span>
+<span id="cb30-17"><a href="simulations.html#cb30-17" tabindex="-1"></a></span>
+<span id="cb30-18"><a href="simulations.html#cb30-18" tabindex="-1"></a>  <span class="do">## Give up on posterior probability calculation and make all things 1/2, when</span></span>
+<span id="cb30-19"><a href="simulations.html#cb30-19" tabindex="-1"></a>  <span class="do">## this (rarely) happens.</span></span>
+<span id="cb30-20"><a href="simulations.html#cb30-20" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">any</span>(<span class="fu">is.nan</span>(post_prob))) post_prob <span class="ot">=</span> <span class="fu">matrix</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>, <span class="at">nrow=</span><span class="fu">nrow</span>(post_prob), <span class="at">ncol=</span><span class="dv">2</span>)</span>
+<span id="cb30-21"><a href="simulations.html#cb30-21" tabindex="-1"></a></span>
+<span id="cb30-22"><a href="simulations.html#cb30-22" tabindex="-1"></a>  <span class="fu">return</span>(post_prob)</span>
+<span id="cb30-23"><a href="simulations.html#cb30-23" tabindex="-1"></a>}</span></code></pre></div>
 <p>Also, here is a helper to split the data into (1) censored and (2) non-censored
 (“inner”) particles; used in <code><a href="simulations.html#preimpute">preimpute</a>()</code>.</p>
-<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="simulations.html#cb36-1" tabindex="-1"></a><span class="co">#' A helper to split the data into (1) censored and (2) non-censored ("inner") particles.</span></span>
-<span id="cb36-2"><a href="simulations.html#cb36-2" tabindex="-1"></a><span class="co">#'</span></span>
-<span id="cb36-3"><a href="simulations.html#cb36-3" tabindex="-1"></a><span class="co">#' @param datobj List containing ylist, countslist, X, and Cbox.</span></span>
-<span id="cb36-4"><a href="simulations.html#cb36-4" tabindex="-1"></a><span class="co">#'</span></span>
-<span id="cb36-5"><a href="simulations.html#cb36-5" tabindex="-1"></a><span class="co">#' @return List of particles on /and/ inside censor boundary. And the directions</span></span>
-<span id="cb36-6"><a href="simulations.html#cb36-6" tabindex="-1"></a><span class="co">#'   in which they were censored.</span></span>
-<span id="cb36-7"><a href="simulations.html#cb36-7" tabindex="-1"></a><span class="co">#'</span></span>
-<span id="cb36-8"><a href="simulations.html#cb36-8" tabindex="-1"></a><span class="co">#' @export</span></span>
-<span id="cb36-9"><a href="simulations.html#cb36-9" tabindex="-1"></a><span id="split_data">split_data</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(datobj){</span>
-<span id="cb36-10"><a href="simulations.html#cb36-10" tabindex="-1"></a>  <span class="do">## At each time point, set aside censored points.</span></span>
-<span id="cb36-11"><a href="simulations.html#cb36-11" tabindex="-1"></a>  censor.direction.full.list <span class="ot">&lt;-</span> <span class="fu">lapply</span>(datobj<span class="sc">$</span>ylist,</span>
-<span id="cb36-12"><a href="simulations.html#cb36-12" tabindex="-1"></a>                        <span class="cf">function</span>(x){</span>
-<span id="cb36-13"><a href="simulations.html#cb36-13" tabindex="-1"></a>                          flowcut<span class="sc">:::</span><a href="helpers-functions.html#censorIndicator">censorIndicator</a>(x[,<span class="dv">1</span>, <span class="at">drop=</span><span class="cn">FALSE</span>],</span>
-<span id="cb36-14"><a href="simulations.html#cb36-14" tabindex="-1"></a>                                                    datobj<span class="sc">$</span>Cbox[<span class="dv">1</span>,,<span class="at">drop=</span><span class="cn">FALSE</span>])})</span>
-<span id="cb36-15"><a href="simulations.html#cb36-15" tabindex="-1"></a>  censor.which.list <span class="ot">=</span> censor.direction.full.list <span class="sc">%&gt;%</span></span>
-<span id="cb36-16"><a href="simulations.html#cb36-16" tabindex="-1"></a>    <span class="fu">lapply</span>(<span class="cf">function</span>(x) <span class="fu">apply</span>(x,<span class="dv">1</span>, <span class="cf">function</span>(xx){ <span class="fu">sum</span>(<span class="fu">abs</span>(xx)) <span class="sc">&gt;</span> <span class="dv">0</span> })) <span class="sc">%&gt;%</span></span>
-<span id="cb36-17"><a href="simulations.html#cb36-17" tabindex="-1"></a>    <span class="fu">lapply</span>(which)</span>
-<span id="cb36-18"><a href="simulations.html#cb36-18" tabindex="-1"></a>  censored_ylist <span class="ot">&lt;-</span> <span class="fu">mapply</span>(<span class="cf">function</span>(y, censor_which){y[censor_which,,drop<span class="ot">=</span><span class="cn">FALSE</span>]},</span>
-<span id="cb36-19"><a href="simulations.html#cb36-19" tabindex="-1"></a>         datobj<span class="sc">$</span>ylist, censor.which.list, <span class="at">SIMPLIFY =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb36-20"><a href="simulations.html#cb36-20" tabindex="-1"></a>  censored_direction <span class="ot">&lt;-</span> <span class="fu">mapply</span>(<span class="cf">function</span>(censor_direction, censor_which){</span>
-<span id="cb36-21"><a href="simulations.html#cb36-21" tabindex="-1"></a>    censor_direction[censor_which,,drop<span class="ot">=</span><span class="cn">FALSE</span>]</span>
-<span id="cb36-22"><a href="simulations.html#cb36-22" tabindex="-1"></a>  }, censor.direction.full.list, censor.which.list, <span class="at">SIMPLIFY =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb36-23"><a href="simulations.html#cb36-23" tabindex="-1"></a></span>
-<span id="cb36-24"><a href="simulations.html#cb36-24" tabindex="-1"></a>  <span class="do">## here are data</span></span>
-<span id="cb36-25"><a href="simulations.html#cb36-25" tabindex="-1"></a>  inner_ylist <span class="ot">&lt;-</span> <span class="fu">mapply</span>(<span class="cf">function</span>(y, censor_which){</span>
-<span id="cb36-26"><a href="simulations.html#cb36-26" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">length</span>(censor_which) <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="fu">return</span>(y[<span class="sc">-</span>censor_which,,<span class="at">drop=</span><span class="cn">FALSE</span>])</span>
-<span id="cb36-27"><a href="simulations.html#cb36-27" tabindex="-1"></a>    <span class="cf">if</span>(<span class="sc">!</span><span class="fu">length</span>(censor_which) <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="fu">return</span>(y)</span>
-<span id="cb36-28"><a href="simulations.html#cb36-28" tabindex="-1"></a>  }, datobj<span class="sc">$</span>ylist, censor.which.list, <span class="at">SIMPLIFY =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb36-29"><a href="simulations.html#cb36-29" tabindex="-1"></a>  inner_countslist <span class="ot">&lt;-</span> <span class="fu">mapply</span>(<span class="cf">function</span>(counts, censor_which){</span>
-<span id="cb36-30"><a href="simulations.html#cb36-30" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">length</span>(censor_which) <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="fu">return</span>(counts[<span class="sc">-</span>censor_which])</span>
-<span id="cb36-31"><a href="simulations.html#cb36-31" tabindex="-1"></a>    <span class="cf">if</span>(<span class="sc">!</span><span class="fu">length</span>(censor_which) <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="fu">return</span>(counts)</span>
-<span id="cb36-32"><a href="simulations.html#cb36-32" tabindex="-1"></a>  }, datobj<span class="sc">$</span>countslist, censor.which.list, <span class="at">SIMPLIFY =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb36-33"><a href="simulations.html#cb36-33" tabindex="-1"></a></span>
-<span id="cb36-34"><a href="simulations.html#cb36-34" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">list</span>(<span class="at">censored_ylist =</span> censored_ylist,</span>
-<span id="cb36-35"><a href="simulations.html#cb36-35" tabindex="-1"></a>              <span class="at">censored_direction =</span> censored_direction,</span>
-<span id="cb36-36"><a href="simulations.html#cb36-36" tabindex="-1"></a>              <span class="at">inner_ylist =</span> inner_ylist,</span>
-<span id="cb36-37"><a href="simulations.html#cb36-37" tabindex="-1"></a>              <span class="at">inner_countslist =</span> inner_countslist,</span>
-<span id="cb36-38"><a href="simulations.html#cb36-38" tabindex="-1"></a>              <span class="at">censor.which.list  =</span> censor.which.list</span>
-<span id="cb36-39"><a href="simulations.html#cb36-39" tabindex="-1"></a>              ))</span>
-<span id="cb36-40"><a href="simulations.html#cb36-40" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="simulations.html#cb31-1" tabindex="-1"></a><span class="co">#' A helper to split the data into (1) censored and (2) non-censored ("inner") particles.</span></span>
+<span id="cb31-2"><a href="simulations.html#cb31-2" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb31-3"><a href="simulations.html#cb31-3" tabindex="-1"></a><span class="co">#' @param datobj List containing ylist, countslist, X, and Cbox.</span></span>
+<span id="cb31-4"><a href="simulations.html#cb31-4" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb31-5"><a href="simulations.html#cb31-5" tabindex="-1"></a><span class="co">#' @return List of particles on /and/ inside censor boundary. And the directions</span></span>
+<span id="cb31-6"><a href="simulations.html#cb31-6" tabindex="-1"></a><span class="co">#'   in which they were censored.</span></span>
+<span id="cb31-7"><a href="simulations.html#cb31-7" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb31-8"><a href="simulations.html#cb31-8" tabindex="-1"></a><span class="co">#' @export</span></span>
+<span id="cb31-9"><a href="simulations.html#cb31-9" tabindex="-1"></a><span id="split_data">split_data</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(datobj){</span>
+<span id="cb31-10"><a href="simulations.html#cb31-10" tabindex="-1"></a>  <span class="do">## At each time point, set aside censored points.</span></span>
+<span id="cb31-11"><a href="simulations.html#cb31-11" tabindex="-1"></a>  censor.direction.full.list <span class="ot">&lt;-</span> <span class="fu">lapply</span>(datobj<span class="sc">$</span>ylist,</span>
+<span id="cb31-12"><a href="simulations.html#cb31-12" tabindex="-1"></a>                        <span class="cf">function</span>(x){</span>
+<span id="cb31-13"><a href="simulations.html#cb31-13" tabindex="-1"></a>                          flowcut<span class="sc">:::</span><a href="helpers-functions.html#censorIndicator">censorIndicator</a>(x[,<span class="dv">1</span>, <span class="at">drop=</span><span class="cn">FALSE</span>],</span>
+<span id="cb31-14"><a href="simulations.html#cb31-14" tabindex="-1"></a>                                                    datobj<span class="sc">$</span>Cbox[<span class="dv">1</span>,,<span class="at">drop=</span><span class="cn">FALSE</span>])})</span>
+<span id="cb31-15"><a href="simulations.html#cb31-15" tabindex="-1"></a>  censor.which.list <span class="ot">=</span> censor.direction.full.list <span class="sc">%&gt;%</span></span>
+<span id="cb31-16"><a href="simulations.html#cb31-16" tabindex="-1"></a>    <span class="fu">lapply</span>(<span class="cf">function</span>(x) <span class="fu">apply</span>(x,<span class="dv">1</span>, <span class="cf">function</span>(xx){ <span class="fu">sum</span>(<span class="fu">abs</span>(xx)) <span class="sc">&gt;</span> <span class="dv">0</span> })) <span class="sc">%&gt;%</span></span>
+<span id="cb31-17"><a href="simulations.html#cb31-17" tabindex="-1"></a>    <span class="fu">lapply</span>(which)</span>
+<span id="cb31-18"><a href="simulations.html#cb31-18" tabindex="-1"></a>  censored_ylist <span class="ot">&lt;-</span> <span class="fu">mapply</span>(<span class="cf">function</span>(y, censor_which){y[censor_which,,drop<span class="ot">=</span><span class="cn">FALSE</span>]},</span>
+<span id="cb31-19"><a href="simulations.html#cb31-19" tabindex="-1"></a>         datobj<span class="sc">$</span>ylist, censor.which.list, <span class="at">SIMPLIFY =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb31-20"><a href="simulations.html#cb31-20" tabindex="-1"></a>  censored_direction <span class="ot">&lt;-</span> <span class="fu">mapply</span>(<span class="cf">function</span>(censor_direction, censor_which){</span>
+<span id="cb31-21"><a href="simulations.html#cb31-21" tabindex="-1"></a>    censor_direction[censor_which,,drop<span class="ot">=</span><span class="cn">FALSE</span>]</span>
+<span id="cb31-22"><a href="simulations.html#cb31-22" tabindex="-1"></a>  }, censor.direction.full.list, censor.which.list, <span class="at">SIMPLIFY =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb31-23"><a href="simulations.html#cb31-23" tabindex="-1"></a></span>
+<span id="cb31-24"><a href="simulations.html#cb31-24" tabindex="-1"></a>  <span class="do">## here are data</span></span>
+<span id="cb31-25"><a href="simulations.html#cb31-25" tabindex="-1"></a>  inner_ylist <span class="ot">&lt;-</span> <span class="fu">mapply</span>(<span class="cf">function</span>(y, censor_which){</span>
+<span id="cb31-26"><a href="simulations.html#cb31-26" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">length</span>(censor_which) <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="fu">return</span>(y[<span class="sc">-</span>censor_which,,<span class="at">drop=</span><span class="cn">FALSE</span>])</span>
+<span id="cb31-27"><a href="simulations.html#cb31-27" tabindex="-1"></a>    <span class="cf">if</span>(<span class="sc">!</span><span class="fu">length</span>(censor_which) <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="fu">return</span>(y)</span>
+<span id="cb31-28"><a href="simulations.html#cb31-28" tabindex="-1"></a>  }, datobj<span class="sc">$</span>ylist, censor.which.list, <span class="at">SIMPLIFY =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb31-29"><a href="simulations.html#cb31-29" tabindex="-1"></a>  inner_countslist <span class="ot">&lt;-</span> <span class="fu">mapply</span>(<span class="cf">function</span>(counts, censor_which){</span>
+<span id="cb31-30"><a href="simulations.html#cb31-30" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">length</span>(censor_which) <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="fu">return</span>(counts[<span class="sc">-</span>censor_which])</span>
+<span id="cb31-31"><a href="simulations.html#cb31-31" tabindex="-1"></a>    <span class="cf">if</span>(<span class="sc">!</span><span class="fu">length</span>(censor_which) <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="fu">return</span>(counts)</span>
+<span id="cb31-32"><a href="simulations.html#cb31-32" tabindex="-1"></a>  }, datobj<span class="sc">$</span>countslist, censor.which.list, <span class="at">SIMPLIFY =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb31-33"><a href="simulations.html#cb31-33" tabindex="-1"></a></span>
+<span id="cb31-34"><a href="simulations.html#cb31-34" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">list</span>(<span class="at">censored_ylist =</span> censored_ylist,</span>
+<span id="cb31-35"><a href="simulations.html#cb31-35" tabindex="-1"></a>              <span class="at">censored_direction =</span> censored_direction,</span>
+<span id="cb31-36"><a href="simulations.html#cb31-36" tabindex="-1"></a>              <span class="at">inner_ylist =</span> inner_ylist,</span>
+<span id="cb31-37"><a href="simulations.html#cb31-37" tabindex="-1"></a>              <span class="at">inner_countslist =</span> inner_countslist,</span>
+<span id="cb31-38"><a href="simulations.html#cb31-38" tabindex="-1"></a>              <span class="at">censor.which.list  =</span> censor.which.list</span>
+<span id="cb31-39"><a href="simulations.html#cb31-39" tabindex="-1"></a>              ))</span>
+<span id="cb31-40"><a href="simulations.html#cb31-40" tabindex="-1"></a>}</span></code></pre></div>
 <p>Here is a function that will pre-impute data for a 2-cluster 1-dimensional
 dataset; used in <code><a href="simulations.html#preimpute">preimpute</a>()</code>.</p>
-<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="simulations.html#cb37-1" tabindex="-1"></a><span class="co">#' At each time point, we will (1) set aside the censored points, and (2) estimate</span></span>
-<span id="cb37-2"><a href="simulations.html#cb37-2" tabindex="-1"></a><span class="co">#' a 2-component GMM (2) take the censored points, and "impute" them according to those</span></span>
-<span id="cb37-3"><a href="simulations.html#cb37-3" tabindex="-1"></a><span class="co">#' mixtures. (After that, we'll (3) fit flowmix on the resulting imputed data.)</span></span>
-<span id="cb37-4"><a href="simulations.html#cb37-4" tabindex="-1"></a><span class="co">#'</span></span>
-<span id="cb37-5"><a href="simulations.html#cb37-5" tabindex="-1"></a><span class="co">#' This is only designed for 1-dimensional data with two clusters.</span></span>
-<span id="cb37-6"><a href="simulations.html#cb37-6" tabindex="-1"></a><span class="co">#'</span></span>
-<span id="cb37-7"><a href="simulations.html#cb37-7" tabindex="-1"></a><span class="co">#' @param datobj List with ylist (particles), countslist, X, and Cbox.</span></span>
-<span id="cb37-8"><a href="simulations.html#cb37-8" tabindex="-1"></a><span class="co">#'</span></span>
-<span id="cb37-9"><a href="simulations.html#cb37-9" tabindex="-1"></a><span class="co">#' @return datobj with imputed ylist.</span></span>
-<span id="cb37-10"><a href="simulations.html#cb37-10" tabindex="-1"></a><span class="co">#'</span></span>
-<span id="cb37-11"><a href="simulations.html#cb37-11" tabindex="-1"></a><span class="co">#' @export</span></span>
-<span id="cb37-12"><a href="simulations.html#cb37-12" tabindex="-1"></a><span id="preimpute">preimpute</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(datobj){</span>
-<span id="cb37-13"><a href="simulations.html#cb37-13" tabindex="-1"></a></span>
-<span id="cb37-14"><a href="simulations.html#cb37-14" tabindex="-1"></a>  <span class="do">## Setup</span></span>
-<span id="cb37-15"><a href="simulations.html#cb37-15" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">ncol</span>(datobj<span class="sc">$</span>ylist[[<span class="dv">1</span>]]) <span class="sc">==</span> <span class="dv">1</span>)</span>
-<span id="cb37-16"><a href="simulations.html#cb37-16" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="st">"Cbox"</span> <span class="sc">%in%</span> <span class="fu">names</span>(datobj))</span>
-<span id="cb37-17"><a href="simulations.html#cb37-17" tabindex="-1"></a></span>
-<span id="cb37-18"><a href="simulations.html#cb37-18" tabindex="-1"></a>  <span class="do">## Split the data</span></span>
-<span id="cb37-19"><a href="simulations.html#cb37-19" tabindex="-1"></a>  splitres <span class="ot">=</span> <a href="simulations.html#split_data">split_data</a>(datobj)</span>
-<span id="cb37-20"><a href="simulations.html#cb37-20" tabindex="-1"></a>  inner_ylist <span class="ot">=</span> splitres<span class="sc">$</span>inner_ylist</span>
-<span id="cb37-21"><a href="simulations.html#cb37-21" tabindex="-1"></a>  inner_countslist <span class="ot">=</span> splitres<span class="sc">$</span>inner_countslist</span>
-<span id="cb37-22"><a href="simulations.html#cb37-22" tabindex="-1"></a>  censored_ylist <span class="ot">=</span> splitres<span class="sc">$</span>censored_ylist</span>
-<span id="cb37-23"><a href="simulations.html#cb37-23" tabindex="-1"></a>  censored_direction <span class="ot">=</span> splitres<span class="sc">$</span>censored_direction</span>
-<span id="cb37-24"><a href="simulations.html#cb37-24" tabindex="-1"></a>  censor.which.list <span class="ot">=</span> splitres<span class="sc">$</span>censor.which.list</span>
-<span id="cb37-25"><a href="simulations.html#cb37-25" tabindex="-1"></a></span>
-<span id="cb37-26"><a href="simulations.html#cb37-26" tabindex="-1"></a>  <span class="do">## What happens when the "inner" data is empty-ish at some times? We sample</span></span>
-<span id="cb37-27"><a href="simulations.html#cb37-27" tabindex="-1"></a>  <span class="do">## some points from the rest of the data, and fill the empty-ish cytograms in</span></span>
-<span id="cb37-28"><a href="simulations.html#cb37-28" tabindex="-1"></a>  <span class="do">## so that there are at least 5 particles in each cytogram.</span></span>
-<span id="cb37-29"><a href="simulations.html#cb37-29" tabindex="-1"></a>  inner_ntlist <span class="ot">=</span> <span class="fu">sapply</span>(inner_ylist, nrow)</span>
-<span id="cb37-30"><a href="simulations.html#cb37-30" tabindex="-1"></a>  min_num_particles <span class="ot">=</span> <span class="dv">5</span></span>
-<span id="cb37-31"><a href="simulations.html#cb37-31" tabindex="-1"></a>  times_empty <span class="ot">=</span> <span class="fu">which</span>(inner_ntlist <span class="sc">&lt;</span> min_num_particles)</span>
-<span id="cb37-32"><a href="simulations.html#cb37-32" tabindex="-1"></a>  collapsed_ylist <span class="ot">=</span></span>
-<span id="cb37-33"><a href="simulations.html#cb37-33" tabindex="-1"></a>    inner_ylist[<span class="sc">-</span>times_empty] <span class="sc">%&gt;%</span></span>
-<span id="cb37-34"><a href="simulations.html#cb37-34" tabindex="-1"></a>    <span class="fu">lapply</span>(<span class="cf">function</span>(y){<span class="fu">sample</span>(y, <span class="at">size=</span><span class="fu">ceiling</span>(<span class="fu">nrow</span>(y)<span class="sc">/</span><span class="dv">3</span>), <span class="at">replace=</span><span class="cn">FALSE</span>)}) <span class="sc">%&gt;%</span> </span>
-<span id="cb37-35"><a href="simulations.html#cb37-35" tabindex="-1"></a>    <span class="fu">Reduce</span>(c, .)</span>
-<span id="cb37-36"><a href="simulations.html#cb37-36" tabindex="-1"></a></span>
-<span id="cb37-37"><a href="simulations.html#cb37-37" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">length</span>(times_empty) <span class="sc">&gt;</span> <span class="dv">0</span>){</span>
-<span id="cb37-38"><a href="simulations.html#cb37-38" tabindex="-1"></a>    <span class="cf">for</span>(tt_empty <span class="cf">in</span> times_empty){</span>
-<span id="cb37-39"><a href="simulations.html#cb37-39" tabindex="-1"></a>      nt <span class="ot">=</span> <span class="fu">length</span>(inner_ylist[[tt_empty]])</span>
-<span id="cb37-40"><a href="simulations.html#cb37-40" tabindex="-1"></a>      extra_points <span class="ot">=</span> <span class="fu">sample</span>(collapsed_ylist, min_num_particles <span class="sc">-</span> nt) <span class="sc">%&gt;%</span> <span class="fu">cbind</span>()</span>
-<span id="cb37-41"><a href="simulations.html#cb37-41" tabindex="-1"></a>      inner_ylist[[tt_empty]] <span class="ot">&lt;-</span> <span class="fu">rbind</span>(inner_ylist[[tt_empty]], extra_points)</span>
-<span id="cb37-42"><a href="simulations.html#cb37-42" tabindex="-1"></a>      inner_countslist[[tt_empty]] <span class="ot">&lt;-</span> <span class="fu">c</span>(inner_countslist[[tt_empty]], <span class="fu">rep</span>(<span class="dv">1</span>, <span class="fu">length</span>(extra_points)))</span>
-<span id="cb37-43"><a href="simulations.html#cb37-43" tabindex="-1"></a>    }</span>
-<span id="cb37-44"><a href="simulations.html#cb37-44" tabindex="-1"></a>  }</span>
-<span id="cb37-45"><a href="simulations.html#cb37-45" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">all</span>(<span class="fu">sapply</span>(inner_ylist, nrow)<span class="sc">&gt;=</span>min_num_particles))</span>
-<span id="cb37-46"><a href="simulations.html#cb37-46" tabindex="-1"></a></span>
-<span id="cb37-47"><a href="simulations.html#cb37-47" tabindex="-1"></a>  <span class="do">## Fit 2-mixture Gaussian at each time point.</span></span>
-<span id="cb37-48"><a href="simulations.html#cb37-48" tabindex="-1"></a>  gmm_model_list <span class="ot">&lt;-</span> <span class="fu">mapply</span>(<span class="cf">function</span>(y, counts){</span>
-<span id="cb37-49"><a href="simulations.html#cb37-49" tabindex="-1"></a></span>
-<span id="cb37-50"><a href="simulations.html#cb37-50" tabindex="-1"></a>    <span class="do">## z is just a random initialization of the memberships of the points.</span></span>
-<span id="cb37-51"><a href="simulations.html#cb37-51" tabindex="-1"></a>    z <span class="ot">=</span> mclust<span class="sc">::</span><span class="fu">unmap</span>(<span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="at">size =</span> <span class="fu">length</span>(y), <span class="at">replace=</span><span class="cn">TRUE</span>))</span>
-<span id="cb37-52"><a href="simulations.html#cb37-52" tabindex="-1"></a></span>
-<span id="cb37-53"><a href="simulations.html#cb37-53" tabindex="-1"></a>    <span class="do">## Fit a Gaussian mixture model for weighted data.</span></span>
-<span id="cb37-54"><a href="simulations.html#cb37-54" tabindex="-1"></a>    <span class="do">##res = mclust::me.weighted(as.numeric(y), modelName = "V", weights = counts, z = z)</span></span>
-<span id="cb37-55"><a href="simulations.html#cb37-55" tabindex="-1"></a>    res <span class="ot">=</span> mclust<span class="sc">::</span><span class="fu">Mclust</span>(<span class="fu">as.numeric</span>(y), <span class="at">G=</span><span class="dv">2</span>, <span class="at">modelName =</span> <span class="st">"V"</span>, <span class="at">verbose =</span> <span class="cn">FALSE</span>, <span class="at">warn =</span> <span class="cn">FALSE</span>)<span class="do">##, weights = counts, z = z)</span></span>
-<span id="cb37-56"><a href="simulations.html#cb37-56" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">is.null</span>(res)){</span>
-<span id="cb37-57"><a href="simulations.html#cb37-57" tabindex="-1"></a>      res <span class="ot">=</span> mclust<span class="sc">::</span><span class="fu">Mclust</span>(<span class="fu">as.numeric</span>(y), <span class="at">G=</span><span class="dv">2</span>, <span class="at">modelName =</span> <span class="st">"E"</span>, <span class="at">verbose =</span> <span class="cn">FALSE</span>, <span class="at">warn =</span> <span class="cn">FALSE</span>)<span class="do">##, weights = counts, z = z)</span></span>
-<span id="cb37-58"><a href="simulations.html#cb37-58" tabindex="-1"></a>      res<span class="sc">$</span>parameters<span class="sc">$</span>variance<span class="sc">$</span>sigmasq <span class="ot">=</span> <span class="fu">rep</span>(res<span class="sc">$</span>parameters<span class="sc">$</span>variance<span class="sc">$</span>sigmasq,<span class="dv">2</span>)</span>
-<span id="cb37-59"><a href="simulations.html#cb37-59" tabindex="-1"></a>    }</span>
-<span id="cb37-60"><a href="simulations.html#cb37-60" tabindex="-1"></a>    assertthat<span class="sc">::</span><span class="fu">assert_that</span>(<span class="sc">!</span><span class="fu">is.null</span>(res))</span>
-<span id="cb37-61"><a href="simulations.html#cb37-61" tabindex="-1"></a>    <span class="fu">return</span>(res)</span>
-<span id="cb37-62"><a href="simulations.html#cb37-62" tabindex="-1"></a>  }, inner_ylist, inner_countslist, <span class="at">SIMPLIFY =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb37-63"><a href="simulations.html#cb37-63" tabindex="-1"></a></span>
-<span id="cb37-64"><a href="simulations.html#cb37-64" tabindex="-1"></a>  <span class="do">## Impute the points</span></span>
-<span id="cb37-65"><a href="simulations.html#cb37-65" tabindex="-1"></a>  imputed_censored_ylist <span class="ot">=</span> <span class="fu">mapply</span>(<span class="cf">function</span>(gmm_model, ynew, dirs){</span>
-<span id="cb37-66"><a href="simulations.html#cb37-66" tabindex="-1"></a></span>
-<span id="cb37-67"><a href="simulations.html#cb37-67" tabindex="-1"></a>    <span class="do">## Impute based on 2-cluster model</span></span>
-<span id="cb37-68"><a href="simulations.html#cb37-68" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">nrow</span>(ynew) <span class="sc">==</span> <span class="dv">0</span>) <span class="fu">return</span>(ynew)</span>
-<span id="cb37-69"><a href="simulations.html#cb37-69" tabindex="-1"></a>    ynew_imputed <span class="ot">=</span> ynew</span>
-<span id="cb37-70"><a href="simulations.html#cb37-70" tabindex="-1"></a>    post_probs <span class="ot">=</span> <a href="simulations.html#get_posterior_probs">get_posterior_probs</a>(gmm_model, ynew)</span>
-<span id="cb37-71"><a href="simulations.html#cb37-71" tabindex="-1"></a>    new_mems <span class="ot">=</span> post_probs <span class="sc">%&gt;%</span> <span class="fu">apply</span>(<span class="dv">1</span>, <span class="cf">function</span>(ps){ <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="dv">1</span>, <span class="at">prob=</span>ps) })</span>
-<span id="cb37-72"><a href="simulations.html#cb37-72" tabindex="-1"></a></span>
-<span id="cb37-73"><a href="simulations.html#cb37-73" tabindex="-1"></a>    <span class="do">## Get the gaussian means and SDs</span></span>
-<span id="cb37-74"><a href="simulations.html#cb37-74" tabindex="-1"></a>    means <span class="ot">=</span> gmm_model<span class="sc">$</span>parameters<span class="sc">$</span>mean</span>
-<span id="cb37-75"><a href="simulations.html#cb37-75" tabindex="-1"></a>    sds <span class="ot">=</span> gmm_model<span class="sc">$</span>parameters<span class="sc">$</span>variance<span class="sc">$</span>sigmasq <span class="sc">%&gt;%</span> <span class="fu">sqrt</span>()</span>
-<span id="cb37-76"><a href="simulations.html#cb37-76" tabindex="-1"></a></span>
-<span id="cb37-77"><a href="simulations.html#cb37-77" tabindex="-1"></a>    <span class="do">## Information for imputing each points</span></span>
-<span id="cb37-78"><a href="simulations.html#cb37-78" tabindex="-1"></a>    impute_mat <span class="ot">=</span> <span class="fu">tibble</span>(<span class="at">new_mems =</span> new_mems, <span class="at">dir =</span> dirs)</span>
-<span id="cb37-79"><a href="simulations.html#cb37-79" tabindex="-1"></a></span>
-<span id="cb37-80"><a href="simulations.html#cb37-80" tabindex="-1"></a>    <span class="do">## Impute the points</span></span>
-<span id="cb37-81"><a href="simulations.html#cb37-81" tabindex="-1"></a>    <span class="cf">for</span>(irow <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(impute_mat)){</span>
-<span id="cb37-82"><a href="simulations.html#cb37-82" tabindex="-1"></a>      iclust <span class="ot">=</span> impute_mat<span class="sc">$</span>new_mems[irow]</span>
-<span id="cb37-83"><a href="simulations.html#cb37-83" tabindex="-1"></a>      <span class="cf">if</span>(impute_mat<span class="sc">$</span>dir[irow] <span class="sc">==</span> <span class="dv">1</span>){</span>
-<span id="cb37-84"><a href="simulations.html#cb37-84" tabindex="-1"></a>        imputed_point <span class="ot">=</span> truncnorm<span class="sc">::</span><span class="fu">rtruncnorm</span>(<span class="dv">1</span>, <span class="at">a =</span> datobj<span class="sc">$</span>Cbox[<span class="dv">1</span>,<span class="dv">2</span>], <span class="at">mean =</span> means[iclust], <span class="at">sd =</span> sds[iclust])</span>
-<span id="cb37-85"><a href="simulations.html#cb37-85" tabindex="-1"></a>      }</span>
-<span id="cb37-86"><a href="simulations.html#cb37-86" tabindex="-1"></a>      <span class="cf">if</span>(impute_mat<span class="sc">$</span>dir[irow] <span class="sc">==</span> <span class="sc">-</span><span class="dv">1</span>){</span>
-<span id="cb37-87"><a href="simulations.html#cb37-87" tabindex="-1"></a>        imputed_point <span class="ot">=</span> truncnorm<span class="sc">::</span><span class="fu">rtruncnorm</span>(<span class="dv">1</span>, <span class="at">b =</span> datobj<span class="sc">$</span>Cbox[<span class="dv">1</span>,<span class="dv">1</span>], <span class="at">mean =</span> means[iclust], <span class="at">sd =</span> sds[iclust])</span>
-<span id="cb37-88"><a href="simulations.html#cb37-88" tabindex="-1"></a>      }</span>
-<span id="cb37-89"><a href="simulations.html#cb37-89" tabindex="-1"></a>      ynew_imputed[irow] <span class="ot">=</span> imputed_point</span>
-<span id="cb37-90"><a href="simulations.html#cb37-90" tabindex="-1"></a>    }</span>
-<span id="cb37-91"><a href="simulations.html#cb37-91" tabindex="-1"></a>    <span class="fu">return</span>(ynew_imputed)</span>
-<span id="cb37-92"><a href="simulations.html#cb37-92" tabindex="-1"></a>  }, gmm_model_list, censored_ylist, censored_direction, <span class="at">SIMPLIFY =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb37-93"><a href="simulations.html#cb37-93" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">all</span>(<span class="fu">sapply</span>(imputed_censored_ylist, nrow) <span class="sc">==</span> <span class="fu">sapply</span>(censored_ylist, nrow)))</span>
-<span id="cb37-94"><a href="simulations.html#cb37-94" tabindex="-1"></a></span>
-<span id="cb37-95"><a href="simulations.html#cb37-95" tabindex="-1"></a>  <span class="do">##  Return the datobj (ylist, countslist, and flowmix).</span></span>
-<span id="cb37-96"><a href="simulations.html#cb37-96" tabindex="-1"></a>  TT <span class="ot">=</span> <span class="fu">length</span>(datobj<span class="sc">$</span>ylist)</span>
-<span id="cb37-97"><a href="simulations.html#cb37-97" tabindex="-1"></a>  new_ylist <span class="ot">=</span> datobj<span class="sc">$</span>ylist</span>
-<span id="cb37-98"><a href="simulations.html#cb37-98" tabindex="-1"></a>  <span class="cf">for</span>(tt <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>TT){</span>
-<span id="cb37-99"><a href="simulations.html#cb37-99" tabindex="-1"></a>    inds <span class="ot">=</span> censor.which.list[[tt]]</span>
-<span id="cb37-100"><a href="simulations.html#cb37-100" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">length</span>(inds) <span class="sc">==</span> <span class="dv">0</span>) <span class="cf">next</span></span>
-<span id="cb37-101"><a href="simulations.html#cb37-101" tabindex="-1"></a>    ynew <span class="ot">=</span> datobj<span class="sc">$</span>ylist[[tt]]</span>
-<span id="cb37-102"><a href="simulations.html#cb37-102" tabindex="-1"></a>    ynew[inds] <span class="ot">=</span> imputed_censored_ylist[[tt]]</span>
-<span id="cb37-103"><a href="simulations.html#cb37-103" tabindex="-1"></a>    new_ylist[[tt]] <span class="ot">=</span> ynew</span>
-<span id="cb37-104"><a href="simulations.html#cb37-104" tabindex="-1"></a>  }</span>
-<span id="cb37-105"><a href="simulations.html#cb37-105" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">all</span>(<span class="fu">sapply</span>(new_ylist, nrow) <span class="sc">==</span> <span class="fu">sapply</span>(datobj<span class="sc">$</span>ylist, nrow)))</span>
-<span id="cb37-106"><a href="simulations.html#cb37-106" tabindex="-1"></a>  new_datobj <span class="ot">=</span> datobj</span>
-<span id="cb37-107"><a href="simulations.html#cb37-107" tabindex="-1"></a>  new_datobj<span class="sc">$</span>ylist <span class="ot">=</span> new_ylist</span>
-<span id="cb37-108"><a href="simulations.html#cb37-108" tabindex="-1"></a>  <span class="fu">return</span>(new_datobj)</span>
-<span id="cb37-109"><a href="simulations.html#cb37-109" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="simulations.html#cb32-1" tabindex="-1"></a><span class="co">#' At each time point, we will (1) set aside the censored points, and (2) estimate</span></span>
+<span id="cb32-2"><a href="simulations.html#cb32-2" tabindex="-1"></a><span class="co">#' a 2-component GMM (2) take the censored points, and "impute" them according to those</span></span>
+<span id="cb32-3"><a href="simulations.html#cb32-3" tabindex="-1"></a><span class="co">#' mixtures. (After that, we'll (3) fit flowmix on the resulting imputed data.)</span></span>
+<span id="cb32-4"><a href="simulations.html#cb32-4" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb32-5"><a href="simulations.html#cb32-5" tabindex="-1"></a><span class="co">#' This is only designed for 1-dimensional data with two clusters.</span></span>
+<span id="cb32-6"><a href="simulations.html#cb32-6" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb32-7"><a href="simulations.html#cb32-7" tabindex="-1"></a><span class="co">#' @param datobj List with ylist (particles), countslist, X, and Cbox.</span></span>
+<span id="cb32-8"><a href="simulations.html#cb32-8" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb32-9"><a href="simulations.html#cb32-9" tabindex="-1"></a><span class="co">#' @return datobj with imputed ylist.</span></span>
+<span id="cb32-10"><a href="simulations.html#cb32-10" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb32-11"><a href="simulations.html#cb32-11" tabindex="-1"></a><span class="co">#' @export</span></span>
+<span id="cb32-12"><a href="simulations.html#cb32-12" tabindex="-1"></a><span id="preimpute">preimpute</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(datobj){</span>
+<span id="cb32-13"><a href="simulations.html#cb32-13" tabindex="-1"></a></span>
+<span id="cb32-14"><a href="simulations.html#cb32-14" tabindex="-1"></a>  <span class="do">## Setup</span></span>
+<span id="cb32-15"><a href="simulations.html#cb32-15" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">ncol</span>(datobj<span class="sc">$</span>ylist[[<span class="dv">1</span>]]) <span class="sc">==</span> <span class="dv">1</span>)</span>
+<span id="cb32-16"><a href="simulations.html#cb32-16" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="st">"Cbox"</span> <span class="sc">%in%</span> <span class="fu">names</span>(datobj))</span>
+<span id="cb32-17"><a href="simulations.html#cb32-17" tabindex="-1"></a></span>
+<span id="cb32-18"><a href="simulations.html#cb32-18" tabindex="-1"></a>  <span class="do">## Split the data</span></span>
+<span id="cb32-19"><a href="simulations.html#cb32-19" tabindex="-1"></a>  splitres <span class="ot">=</span> <a href="simulations.html#split_data">split_data</a>(datobj)</span>
+<span id="cb32-20"><a href="simulations.html#cb32-20" tabindex="-1"></a>  inner_ylist <span class="ot">=</span> splitres<span class="sc">$</span>inner_ylist</span>
+<span id="cb32-21"><a href="simulations.html#cb32-21" tabindex="-1"></a>  inner_countslist <span class="ot">=</span> splitres<span class="sc">$</span>inner_countslist</span>
+<span id="cb32-22"><a href="simulations.html#cb32-22" tabindex="-1"></a>  censored_ylist <span class="ot">=</span> splitres<span class="sc">$</span>censored_ylist</span>
+<span id="cb32-23"><a href="simulations.html#cb32-23" tabindex="-1"></a>  censored_direction <span class="ot">=</span> splitres<span class="sc">$</span>censored_direction</span>
+<span id="cb32-24"><a href="simulations.html#cb32-24" tabindex="-1"></a>  censor.which.list <span class="ot">=</span> splitres<span class="sc">$</span>censor.which.list</span>
+<span id="cb32-25"><a href="simulations.html#cb32-25" tabindex="-1"></a></span>
+<span id="cb32-26"><a href="simulations.html#cb32-26" tabindex="-1"></a>  <span class="do">## What happens when the "inner" data is empty-ish at some times? We sample</span></span>
+<span id="cb32-27"><a href="simulations.html#cb32-27" tabindex="-1"></a>  <span class="do">## some points from the rest of the data, and fill the empty-ish cytograms in</span></span>
+<span id="cb32-28"><a href="simulations.html#cb32-28" tabindex="-1"></a>  <span class="do">## so that there are at least 5 particles in each cytogram.</span></span>
+<span id="cb32-29"><a href="simulations.html#cb32-29" tabindex="-1"></a>  inner_ntlist <span class="ot">=</span> <span class="fu">sapply</span>(inner_ylist, nrow)</span>
+<span id="cb32-30"><a href="simulations.html#cb32-30" tabindex="-1"></a>  min_num_particles <span class="ot">=</span> <span class="dv">5</span></span>
+<span id="cb32-31"><a href="simulations.html#cb32-31" tabindex="-1"></a>  times_empty <span class="ot">=</span> <span class="fu">which</span>(inner_ntlist <span class="sc">&lt;</span> min_num_particles)</span>
+<span id="cb32-32"><a href="simulations.html#cb32-32" tabindex="-1"></a>  collapsed_ylist <span class="ot">=</span></span>
+<span id="cb32-33"><a href="simulations.html#cb32-33" tabindex="-1"></a>    inner_ylist[<span class="sc">-</span>times_empty] <span class="sc">%&gt;%</span></span>
+<span id="cb32-34"><a href="simulations.html#cb32-34" tabindex="-1"></a>    <span class="fu">lapply</span>(<span class="cf">function</span>(y){<span class="fu">sample</span>(y, <span class="at">size=</span><span class="fu">ceiling</span>(<span class="fu">nrow</span>(y)<span class="sc">/</span><span class="dv">3</span>), <span class="at">replace=</span><span class="cn">FALSE</span>)}) <span class="sc">%&gt;%</span> </span>
+<span id="cb32-35"><a href="simulations.html#cb32-35" tabindex="-1"></a>    <span class="fu">Reduce</span>(c, .)</span>
+<span id="cb32-36"><a href="simulations.html#cb32-36" tabindex="-1"></a></span>
+<span id="cb32-37"><a href="simulations.html#cb32-37" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">length</span>(times_empty) <span class="sc">&gt;</span> <span class="dv">0</span>){</span>
+<span id="cb32-38"><a href="simulations.html#cb32-38" tabindex="-1"></a>    <span class="cf">for</span>(tt_empty <span class="cf">in</span> times_empty){</span>
+<span id="cb32-39"><a href="simulations.html#cb32-39" tabindex="-1"></a>      nt <span class="ot">=</span> <span class="fu">length</span>(inner_ylist[[tt_empty]])</span>
+<span id="cb32-40"><a href="simulations.html#cb32-40" tabindex="-1"></a>      extra_points <span class="ot">=</span> <span class="fu">sample</span>(collapsed_ylist, min_num_particles <span class="sc">-</span> nt) <span class="sc">%&gt;%</span> <span class="fu">cbind</span>()</span>
+<span id="cb32-41"><a href="simulations.html#cb32-41" tabindex="-1"></a>      inner_ylist[[tt_empty]] <span class="ot">&lt;-</span> <span class="fu">rbind</span>(inner_ylist[[tt_empty]], extra_points)</span>
+<span id="cb32-42"><a href="simulations.html#cb32-42" tabindex="-1"></a>      inner_countslist[[tt_empty]] <span class="ot">&lt;-</span> <span class="fu">c</span>(inner_countslist[[tt_empty]], <span class="fu">rep</span>(<span class="dv">1</span>, <span class="fu">length</span>(extra_points)))</span>
+<span id="cb32-43"><a href="simulations.html#cb32-43" tabindex="-1"></a>    }</span>
+<span id="cb32-44"><a href="simulations.html#cb32-44" tabindex="-1"></a>  }</span>
+<span id="cb32-45"><a href="simulations.html#cb32-45" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">all</span>(<span class="fu">sapply</span>(inner_ylist, nrow)<span class="sc">&gt;=</span>min_num_particles))</span>
+<span id="cb32-46"><a href="simulations.html#cb32-46" tabindex="-1"></a></span>
+<span id="cb32-47"><a href="simulations.html#cb32-47" tabindex="-1"></a>  <span class="do">## Fit 2-mixture Gaussian at each time point.</span></span>
+<span id="cb32-48"><a href="simulations.html#cb32-48" tabindex="-1"></a>  gmm_model_list <span class="ot">&lt;-</span> <span class="fu">mapply</span>(<span class="cf">function</span>(y, counts){</span>
+<span id="cb32-49"><a href="simulations.html#cb32-49" tabindex="-1"></a></span>
+<span id="cb32-50"><a href="simulations.html#cb32-50" tabindex="-1"></a>    <span class="do">## z is just a random initialization of the memberships of the points.</span></span>
+<span id="cb32-51"><a href="simulations.html#cb32-51" tabindex="-1"></a>    z <span class="ot">=</span> mclust<span class="sc">::</span><span class="fu">unmap</span>(<span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="at">size =</span> <span class="fu">length</span>(y), <span class="at">replace=</span><span class="cn">TRUE</span>))</span>
+<span id="cb32-52"><a href="simulations.html#cb32-52" tabindex="-1"></a></span>
+<span id="cb32-53"><a href="simulations.html#cb32-53" tabindex="-1"></a>    <span class="do">## Fit a Gaussian mixture model for weighted data.</span></span>
+<span id="cb32-54"><a href="simulations.html#cb32-54" tabindex="-1"></a>    <span class="do">##res = mclust::me.weighted(as.numeric(y), modelName = "V", weights = counts, z = z)</span></span>
+<span id="cb32-55"><a href="simulations.html#cb32-55" tabindex="-1"></a>    res <span class="ot">=</span> mclust<span class="sc">::</span><span class="fu">Mclust</span>(<span class="fu">as.numeric</span>(y), <span class="at">G=</span><span class="dv">2</span>, <span class="at">modelName =</span> <span class="st">"V"</span>, <span class="at">verbose =</span> <span class="cn">FALSE</span>, <span class="at">warn =</span> <span class="cn">FALSE</span>)<span class="do">##, weights = counts, z = z)</span></span>
+<span id="cb32-56"><a href="simulations.html#cb32-56" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">is.null</span>(res)){</span>
+<span id="cb32-57"><a href="simulations.html#cb32-57" tabindex="-1"></a>      res <span class="ot">=</span> mclust<span class="sc">::</span><span class="fu">Mclust</span>(<span class="fu">as.numeric</span>(y), <span class="at">G=</span><span class="dv">2</span>, <span class="at">modelName =</span> <span class="st">"E"</span>, <span class="at">verbose =</span> <span class="cn">FALSE</span>, <span class="at">warn =</span> <span class="cn">FALSE</span>)<span class="do">##, weights = counts, z = z)</span></span>
+<span id="cb32-58"><a href="simulations.html#cb32-58" tabindex="-1"></a>      res<span class="sc">$</span>parameters<span class="sc">$</span>variance<span class="sc">$</span>sigmasq <span class="ot">=</span> <span class="fu">rep</span>(res<span class="sc">$</span>parameters<span class="sc">$</span>variance<span class="sc">$</span>sigmasq,<span class="dv">2</span>)</span>
+<span id="cb32-59"><a href="simulations.html#cb32-59" tabindex="-1"></a>    }</span>
+<span id="cb32-60"><a href="simulations.html#cb32-60" tabindex="-1"></a>    assertthat<span class="sc">::</span><span class="fu">assert_that</span>(<span class="sc">!</span><span class="fu">is.null</span>(res))</span>
+<span id="cb32-61"><a href="simulations.html#cb32-61" tabindex="-1"></a>    <span class="fu">return</span>(res)</span>
+<span id="cb32-62"><a href="simulations.html#cb32-62" tabindex="-1"></a>  }, inner_ylist, inner_countslist, <span class="at">SIMPLIFY =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb32-63"><a href="simulations.html#cb32-63" tabindex="-1"></a></span>
+<span id="cb32-64"><a href="simulations.html#cb32-64" tabindex="-1"></a>  <span class="do">## Impute the points</span></span>
+<span id="cb32-65"><a href="simulations.html#cb32-65" tabindex="-1"></a>  imputed_censored_ylist <span class="ot">=</span> <span class="fu">mapply</span>(<span class="cf">function</span>(gmm_model, ynew, dirs){</span>
+<span id="cb32-66"><a href="simulations.html#cb32-66" tabindex="-1"></a></span>
+<span id="cb32-67"><a href="simulations.html#cb32-67" tabindex="-1"></a>    <span class="do">## Impute based on 2-cluster model</span></span>
+<span id="cb32-68"><a href="simulations.html#cb32-68" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">nrow</span>(ynew) <span class="sc">==</span> <span class="dv">0</span>) <span class="fu">return</span>(ynew)</span>
+<span id="cb32-69"><a href="simulations.html#cb32-69" tabindex="-1"></a>    ynew_imputed <span class="ot">=</span> ynew</span>
+<span id="cb32-70"><a href="simulations.html#cb32-70" tabindex="-1"></a>    post_probs <span class="ot">=</span> <a href="simulations.html#get_posterior_probs">get_posterior_probs</a>(gmm_model, ynew)</span>
+<span id="cb32-71"><a href="simulations.html#cb32-71" tabindex="-1"></a>    new_mems <span class="ot">=</span> post_probs <span class="sc">%&gt;%</span> <span class="fu">apply</span>(<span class="dv">1</span>, <span class="cf">function</span>(ps){ <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="dv">1</span>, <span class="at">prob=</span>ps) })</span>
+<span id="cb32-72"><a href="simulations.html#cb32-72" tabindex="-1"></a></span>
+<span id="cb32-73"><a href="simulations.html#cb32-73" tabindex="-1"></a>    <span class="do">## Get the gaussian means and SDs</span></span>
+<span id="cb32-74"><a href="simulations.html#cb32-74" tabindex="-1"></a>    means <span class="ot">=</span> gmm_model<span class="sc">$</span>parameters<span class="sc">$</span>mean</span>
+<span id="cb32-75"><a href="simulations.html#cb32-75" tabindex="-1"></a>    sds <span class="ot">=</span> gmm_model<span class="sc">$</span>parameters<span class="sc">$</span>variance<span class="sc">$</span>sigmasq <span class="sc">%&gt;%</span> <span class="fu">sqrt</span>()</span>
+<span id="cb32-76"><a href="simulations.html#cb32-76" tabindex="-1"></a></span>
+<span id="cb32-77"><a href="simulations.html#cb32-77" tabindex="-1"></a>    <span class="do">## Information for imputing each points</span></span>
+<span id="cb32-78"><a href="simulations.html#cb32-78" tabindex="-1"></a>    impute_mat <span class="ot">=</span> <span class="fu">tibble</span>(<span class="at">new_mems =</span> new_mems, <span class="at">dir =</span> dirs)</span>
+<span id="cb32-79"><a href="simulations.html#cb32-79" tabindex="-1"></a></span>
+<span id="cb32-80"><a href="simulations.html#cb32-80" tabindex="-1"></a>    <span class="do">## Impute the points</span></span>
+<span id="cb32-81"><a href="simulations.html#cb32-81" tabindex="-1"></a>    <span class="cf">for</span>(irow <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(impute_mat)){</span>
+<span id="cb32-82"><a href="simulations.html#cb32-82" tabindex="-1"></a>      iclust <span class="ot">=</span> impute_mat<span class="sc">$</span>new_mems[irow]</span>
+<span id="cb32-83"><a href="simulations.html#cb32-83" tabindex="-1"></a>      <span class="cf">if</span>(impute_mat<span class="sc">$</span>dir[irow] <span class="sc">==</span> <span class="dv">1</span>){</span>
+<span id="cb32-84"><a href="simulations.html#cb32-84" tabindex="-1"></a>        imputed_point <span class="ot">=</span> truncnorm<span class="sc">::</span><span class="fu">rtruncnorm</span>(<span class="dv">1</span>, <span class="at">a =</span> datobj<span class="sc">$</span>Cbox[<span class="dv">1</span>,<span class="dv">2</span>], <span class="at">mean =</span> means[iclust], <span class="at">sd =</span> sds[iclust])</span>
+<span id="cb32-85"><a href="simulations.html#cb32-85" tabindex="-1"></a>      }</span>
+<span id="cb32-86"><a href="simulations.html#cb32-86" tabindex="-1"></a>      <span class="cf">if</span>(impute_mat<span class="sc">$</span>dir[irow] <span class="sc">==</span> <span class="sc">-</span><span class="dv">1</span>){</span>
+<span id="cb32-87"><a href="simulations.html#cb32-87" tabindex="-1"></a>        imputed_point <span class="ot">=</span> truncnorm<span class="sc">::</span><span class="fu">rtruncnorm</span>(<span class="dv">1</span>, <span class="at">b =</span> datobj<span class="sc">$</span>Cbox[<span class="dv">1</span>,<span class="dv">1</span>], <span class="at">mean =</span> means[iclust], <span class="at">sd =</span> sds[iclust])</span>
+<span id="cb32-88"><a href="simulations.html#cb32-88" tabindex="-1"></a>      }</span>
+<span id="cb32-89"><a href="simulations.html#cb32-89" tabindex="-1"></a>      ynew_imputed[irow] <span class="ot">=</span> imputed_point</span>
+<span id="cb32-90"><a href="simulations.html#cb32-90" tabindex="-1"></a>    }</span>
+<span id="cb32-91"><a href="simulations.html#cb32-91" tabindex="-1"></a>    <span class="fu">return</span>(ynew_imputed)</span>
+<span id="cb32-92"><a href="simulations.html#cb32-92" tabindex="-1"></a>  }, gmm_model_list, censored_ylist, censored_direction, <span class="at">SIMPLIFY =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb32-93"><a href="simulations.html#cb32-93" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">all</span>(<span class="fu">sapply</span>(imputed_censored_ylist, nrow) <span class="sc">==</span> <span class="fu">sapply</span>(censored_ylist, nrow)))</span>
+<span id="cb32-94"><a href="simulations.html#cb32-94" tabindex="-1"></a></span>
+<span id="cb32-95"><a href="simulations.html#cb32-95" tabindex="-1"></a>  <span class="do">##  Return the datobj (ylist, countslist, and flowmix).</span></span>
+<span id="cb32-96"><a href="simulations.html#cb32-96" tabindex="-1"></a>  TT <span class="ot">=</span> <span class="fu">length</span>(datobj<span class="sc">$</span>ylist)</span>
+<span id="cb32-97"><a href="simulations.html#cb32-97" tabindex="-1"></a>  new_ylist <span class="ot">=</span> datobj<span class="sc">$</span>ylist</span>
+<span id="cb32-98"><a href="simulations.html#cb32-98" tabindex="-1"></a>  <span class="cf">for</span>(tt <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>TT){</span>
+<span id="cb32-99"><a href="simulations.html#cb32-99" tabindex="-1"></a>    inds <span class="ot">=</span> censor.which.list[[tt]]</span>
+<span id="cb32-100"><a href="simulations.html#cb32-100" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">length</span>(inds) <span class="sc">==</span> <span class="dv">0</span>) <span class="cf">next</span></span>
+<span id="cb32-101"><a href="simulations.html#cb32-101" tabindex="-1"></a>    ynew <span class="ot">=</span> datobj<span class="sc">$</span>ylist[[tt]]</span>
+<span id="cb32-102"><a href="simulations.html#cb32-102" tabindex="-1"></a>    ynew[inds] <span class="ot">=</span> imputed_censored_ylist[[tt]]</span>
+<span id="cb32-103"><a href="simulations.html#cb32-103" tabindex="-1"></a>    new_ylist[[tt]] <span class="ot">=</span> ynew</span>
+<span id="cb32-104"><a href="simulations.html#cb32-104" tabindex="-1"></a>  }</span>
+<span id="cb32-105"><a href="simulations.html#cb32-105" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">all</span>(<span class="fu">sapply</span>(new_ylist, nrow) <span class="sc">==</span> <span class="fu">sapply</span>(datobj<span class="sc">$</span>ylist, nrow)))</span>
+<span id="cb32-106"><a href="simulations.html#cb32-106" tabindex="-1"></a>  new_datobj <span class="ot">=</span> datobj</span>
+<span id="cb32-107"><a href="simulations.html#cb32-107" tabindex="-1"></a>  new_datobj<span class="sc">$</span>ylist <span class="ot">=</span> new_ylist</span>
+<span id="cb32-108"><a href="simulations.html#cb32-108" tabindex="-1"></a>  <span class="fu">return</span>(new_datobj)</span>
+<span id="cb32-109"><a href="simulations.html#cb32-109" tabindex="-1"></a>}</span></code></pre></div>
 
 </div>
 </div>

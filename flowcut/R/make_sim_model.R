@@ -8,29 +8,40 @@
 #'   contains alpha, beta and TT.
 #' @param shrink_alpha If TRUE, "shrink" the alpha coefficients to 40% their
 #'   size. Defaults to FALSE.
+#' @param coef_is_dense If TRUE, add some Gaussian noise on the non-intercept
+#'   coefficients to make them dense (instead of sparse).
 #'
 #' @return A list with beta, mn, alpha, prob, X, sigma, TT, numclust.
 #' @export
-make_sim_model <- function(orig_model, isignal, shrink_alpha = FALSE){
+make_sim_model <- function(orig_model, isignal, shrink_alpha = FALSE, coef_is_dense = FALSE){
 
   ## Setup
   stopifnot(isignal %in% 0:10)
-  ## stopifnot(class(orig_model) %in% c("flowmix")) ##, "flowcut"
   new_model = orig_model
   new_model$numclust = 2
+  ## stopifnot(class(orig_model) %in% c("flowmix")) ##, "flowcut"
+
+  ## If dense model is called for, make the coefficients all nonzero
+  if(coef_is_dense){
+    dense_model = new_model
+    beta1 = dense_model$beta[[1]][-1]
+    beta2 = dense_model$beta[[2]][-1]
+    sd1 = sd(beta1[which(beta1!=0)])/3
+    sd2 = sd(beta2[which(beta2!=0)])/3
+    p = nrow(dense_model$beta[[1]]) - 1
+    set.seed(4891)
+    dense_model$beta[[1]][-1] = dense_model$beta[[1]][-1] + rnorm(n = p, mean=0, sd=sd1)
+    dense_model$beta[[2]][-1] = dense_model$beta[[2]][-1] + rnorm(n = p, mean=0, sd=sd2)
+    alpha = dense_model$alpha[,-1]
+    sd_alpha = sd(alpha[which(alpha!=0)])/3
+    dense_model$alpha[,-1] = dense_model$alpha[,-1] + rnorm(n=2*p, mean=0, sd = sd_alpha)
+    new_model = dense_model
+  }
 
   ## Calculate + renormalize the probabilities
   link = cbind(1, orig_model$X) %*% t(orig_model$alpha)
   new_model$prob = exp(link) / rowSums(exp(link))
   new_model$prob  %>% matplot(type = 'l', lty = 1)
-
-  ## ## Probabilities
-  ## alphamat = orig_model$alpha
-  ## alphamat[,-1] = 0
-  ## alphamat[,1] = 1
-  ## new_model$alpha = alphamat
-  ## ## new_model$prob = matrix(1/2, nrow = orig_model$TT, ncol = 2)
-  ## cbind(1, new_model$X) %*% alphamat
 
   ## Take the two intercepts
   intp_high = orig_model$beta %>% .[[1]]%>% .["intp",]  
@@ -53,12 +64,6 @@ make_sim_model <- function(orig_model, isignal, shrink_alpha = FALSE){
     new_model$prob[,1] = exp(Xta1)/(exp(Xta1) + exp(Xta2))
     new_model$prob[,2] = exp(Xta2)/(exp(Xta1) + exp(Xta2))
   }
-  
-  ## Optional: plot the means
-  if(FALSE){
-    new_model$mn[,1,] %>% matplot(type = 'l', lty = 1)
-    new_model$prob %>% matplot(type = 'l', lty = 1)
-  }
-  
+
   return(new_model)
 }

@@ -854,7 +854,7 @@ like object. This way, we can use the plotting helpers from those packages.
 #' 
 #' @export
 #' 
-mcmc_res_to_flowmix <- function(res, last_draws_inds=NULL, last_draws_num = NULL){
+mcmc_res_to_flowmix <- function(res, last_draws_inds=NULL, last_draws_num = NULL, thin = FALSE){
 
   ## Setup
   X = t(res$dat.info$X)
@@ -868,6 +868,9 @@ mcmc_res_to_flowmix <- function(res, last_draws_inds=NULL, last_draws_num = NULL
   if(is.null(last_draws_inds)) last_draws_inds = 1:Nmc
   if(!is.null(last_draws_inds))stopifnot(all(last_draws_inds<=Nmc))
   if(!is.null(last_draws_num)) last_draws_inds = (Nmc-last_draws_num+1):Nmc
+  if(thin){
+    last_draws_inds = seq(from = (Nmc-last_draws_num+1), to = Nmc, by = 20)
+  }
   ## last_draw_inds = 1:dim(res$pos.beta)[4]
 
   ## Means
