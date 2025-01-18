@@ -40,7 +40,9 @@ run.Gibbs.fast <- function(ylist, countslist, X,
                            prior_spec.list = NULL,
                            verbose = FALSE,
                            last.imputed = NULL, 
-                           last.para  = NULL, 
+                           last.para  = NULL,
+                           save.in.prog = FALSE,
+                           save.data = TRUE, 
                            modified_g_prior = FALSE,  
                            n.cores = 1){
     ## Basic setup
@@ -94,10 +96,13 @@ run.Gibbs.fast <- function(ylist, countslist, X,
       XTXp = XTXp + eps * diag(rep(1,p+1))
     }
     inv.XTX <- Rfast::spdinv(XTX)
+    inv.XTX_gg <- inv.XTX*gg
     inv.XTXp <- Rfast::spdinv(XTXp)
     X0 <- rbind(0, X) 
     XTX0 <- X0%*%t(X0)
     XTX0_gg <-   XTX0/gg
+    inv.XTX0_gg <- rbind(0, cbind(0, inv.XTX*gg))
+    
     
     ## Build censored box
     if(is.null(censorship.info$censored.ylist) & !is.null(Cbox)) {
@@ -146,13 +151,16 @@ run.Gibbs.fast <- function(ylist, countslist, X,
         censored.W.list = censorship.info$censored.W.list 
         censored.ylist = censorship.info$censored.ylist 
     }
-
-    dat.info <- list(ylist = ylist, 
-                     X= X,
-                     countslist = countslist,
-                     numclust = numclust,
-                     Cbox = censorship.info$Cbox) ## store raw data 
     
+    if(save.data){
+        dat.info <- list(ylist = ylist, 
+                         X= X,
+                         countslist = countslist,
+                         numclust = numclust,
+                         Cbox = censorship.info$Cbox) ## store raw data 
+    }else{
+        dat.info  <- NULL
+    }
   
   ## prior specifications
     if(is.null(user.prior)){
@@ -191,12 +199,20 @@ run.Gibbs.fast <- function(ylist, countslist, X,
   }else{
       if(verbose) print("The MCMC starts with a draw of model parameters from the prior")
       
-      beta.ell <-  array(stats::rnorm(numclust*(p+1)*dimdat), c(dimdat,p+1,numclust))
-      gamma.ell <- matrix(stats::rnorm((p+1)*(numclust-1)),nrow=p+1,ncol=numclust-1)  
-      Sig.ell <- matrixsampling::rinvwishart(numclust,nu0+dimdat,S0)## %>% as.matrix()        
-      sig2_gamma <- 1/stats::rgamma(1, a_gamma/2, b_gamma/2) 
+      Sig.ell <- matrixsampling::rinvwishart(numclust, nu0, S0 ) ## %>% as.matrix()
+      beta.ell <-  array(0, c(dimdat,p+1,numclust))
+      for(ell in 1:numclust){
+          beta.ell[,,ell] <- cbind(runif(dimdat)*Cbox[ , 2]*1.5 - 1, 
+                                   rmatnorm.fast(M = matrix(0,nrow = dimdat, ncol=p), 
+                                                 U = Sig.ell[,,ell], 
+                                                 V = inv.XTX_gg)) 
+      } 
+      sig2_gamma <- 1/stats::rgamma(1, a_gamma/2, b_gamma/2)
+      gamma.ell <- cbind((runif(numclust - 1)-0.5)*Cbox[ , 2]*2, 
+                         Rfast::matrnorm(numclust-1,p) %*% Rfast::cholesky(inv.XTX) * sqrt(sig2_gamma)) %>% t() 
   }
     inv_sig_gamma <- 1 / sig2_gamma
+    a_gamma_n <- (numclust-1) * p + a_gamma 
 
   if(!is.null(last.imputed)){
       print("continue with previously imputed latent variables.") 
@@ -225,9 +241,9 @@ run.Gibbs.fast <- function(ylist, countslist, X,
   pos.sig2_gamma <- matrix(NA, nrow = 1, ncol = Nmc) 
   pos.avgloglik <- rep(NA, Nmc) 
 
+    list.iter <- seq(from=Nburn+1, to = Nmc+Nburn, length.out = 6) %>% floor()
     if(verbose){
         start.date <- Sys.time() %>% as.Date()
-        list.iter <- seq(from=Nburn+1, to = Nmc+Nburn, length.out = 6) %>% floor()
         ptm <- NULL 
         print("The Gibbs sampler starts now.")
         print(paste0("save files to ", getwd())) 
@@ -239,7 +255,7 @@ run.Gibbs.fast <- function(ylist, countslist, X,
             if(jj > Nburn){
                 cat("MCMC iteration:", jj-Nburn, fill = TRUE)
             }else{
-                cat("MCMC iteration:", jj, fill = TRUE) 
+                cat("MCMC (burn-in) iteration:", jj, fill = TRUE) 
             }
             
             if(jj ==1 & Nburn > 0){
@@ -262,17 +278,17 @@ run.Gibbs.fast <- function(ylist, countslist, X,
                 print(paste("Expected time to draw", Nmc, "posterior samples: ", 
                             round(burn.tc[3]*Nmc/60/60,2), " hours", sep=" "))
             }
-            if(jj == list.iter[1]){
-                saveRDS(list(burn.beta, burn.Sigma, burn.gamma, burn.avgloglik, burn.sig2_gamma),
-                        file = paste0("MCMC-numclust",numclust,"-",start.date,"-burn.rds"))   
-            }else if(jj %in% list.iter){
-                saveRDS(list(pos.beta, pos.Sigma, pos.gamma, pos.avgloglik, pos.sig2_gamma,
-                             ast.ylist = ylist, last.Z.list = Z.list), 
-                        file = paste0("MCMC-numclust",numclust,"-",start.date,"-pos-",
-                                     which(list.iter==jj)-1,".rds"))   
-            }
         }
         
+    if(jj == list.iter[1] & save.in.prog){
+        saveRDS(list(burn.beta, burn.Sigma, burn.gamma, burn.avgloglik, burn.sig2_gamma),
+                file = paste0("MCMC-numclust",numclust,"-",start.date,"-burn.rds"))   
+    }else if(jj %in% list.iter & save.in.prog){
+        saveRDS(list(pos.beta, pos.Sigma, pos.gamma, pos.avgloglik, pos.sig2_gamma,
+                     ast.ylist = ylist, last.Z.list = Z.list), 
+                file = paste0("MCMC-numclust",numclust,"-",start.date,"-pos-",
+                              which(list.iter==jj)-1,".rds"))   
+    }
         
         ## expert assignment ###
       XpGamma <- Rfast::Crossprod(gamma.ell, Xp) ## K-1 x TT 
@@ -331,15 +347,15 @@ run.Gibbs.fast <- function(ylist, countslist, X,
                             simple = TRUE) 
       ## print(sort(round(n.ell/NN,3)))
       ## print(sort(round(m.ell/MM,3)))
-      if(jj %% 10 == 0 & verbose) print(paste("avg loglikelihood: ", round(loglik,2), sep=" "))
-
-      ## SBMN-logit parameter estimation
-      mt.ell <- parallel::mcmapply(function(ww,zz){
-        sapply(1:numclust, function(kk) sum(ww[zz==kk]))},
-        ww = W.list, zz = Z.list, SIMPLIFY = TRUE,
-        mc.cores = n.cores)
+        if(jj %% 10 == 0 & verbose) print(paste("avg loglikelihood: ", round(loglik,2), sep=" "))
+        
+        ## SBMN-logit parameter estimation
+        mt.ell <- parallel::mcmapply(function(ww,zz){
+            sapply(1:numclust, function(kk) sum(ww[zz==kk]))},
+            ww = W.list, zz = Z.list, SIMPLIFY = TRUE,
+            mc.cores = n.cores)
         m.ell <-  Rfast::rowsums(mt.ell)
-      
+        
       XpGamma.abs <- Rfast::Crossprod(gamma.ell, Xp) %>% abs() ## numclust-1 x TT   
       mt.cumsum <- Rfast::colCumSums(as.matrix(mt.ell))  
       Mt.ell <- rbind(mt,
@@ -351,14 +367,29 @@ run.Gibbs.fast <- function(ylist, countslist, X,
                            nrow=numclust-1, ncol = TT)
       kappa <- mt.ell[-numclust, , drop=FALSE] - Mt.ell[-numclust, , drop=FALSE]/2
 
-        V.omell <- parallel::mclapply(1:(numclust-1), function(ell){
-            Rfast::spdinv(Reduce('+', Map('*', XtXtTp, omega.tell[ell,])) + XTX0 * inv_sig_gamma)},
-            mc.cores = n.cores)
-        gamma.ell <- parallel::mclapply(1:(numclust-1), function(ell){
-            Rfast::rmvnorm(1, V.omell[[ell]] %*% Reduce('+', Map('*', Xp.list , kappa[ell,])), 
-                           V.omell[[ell]])} , mc.cores = n.cores)  %>% do.call(rbind, .) %>% t()
-
-        a_gamma_n <- (numclust-1) * p + a_gamma
+        ## if(min(m.ell)<1)  browser() 
+        numclust.pos <- which(m.ell>0) %>% max()
+        
+        if(numclust.pos < (numclust - 1)){
+            V.omell <- parallel::mclapply(1 : numclust.pos, function(ell){
+                Rfast::spdinv(Reduce('+', Map('*', XtXtTp, omega.tell[ell,])) + XTX0 * inv_sig_gamma)},
+                mc.cores = n.cores)
+            gamma.ell[ , 1 : numclust.pos] <- parallel::mclapply(1 : numclust.pos, function(ell){
+                Rfast::rmvnorm(1, V.omell[[ell]] %*% Reduce('+', Map('*', Xp.list , kappa[ell,])), 
+                               V.omell[[ell]])} , mc.cores = n.cores)  %>% do.call(rbind, .) %>% t()
+            ## empty cluster, sample from the prior 
+            gamma.ell[1, (numclust.pos+1) : (numclust-1)] <-  (runif(numclust - 1 - numclust.pos)-0.5)*10
+            gamma.ell[2:(p+1), (numclust.pos+1):(numclust-1)] <- 
+                t(Rfast::matrnorm(numclust-1 - numclust.pos , p ) %*% Rfast::cholesky(inv.XTX)) * sqrt(sig2_gamma)
+        }else{
+            V.omell <- parallel::mclapply(1 : (numclust-1), function(ell){
+                Rfast::spdinv(Reduce('+', Map('*', XtXtTp, omega.tell[ell,])) + XTX0 * inv_sig_gamma)},
+                mc.cores = n.cores)
+            gamma.ell <- parallel::mclapply(1 : (numclust-1), function(ell){
+                Rfast::rmvnorm(1, V.omell[[ell]] %*% Reduce('+', Map('*', Xp.list , kappa[ell,])), 
+                               V.omell[[ell]])} , mc.cores = n.cores)  %>% do.call(rbind, .) %>% t()
+        }
+            
         b_gamma_n <- apply(t(X) %*% gamma.ell[-1, ], 2, crossprod) %>% sum() + b_gamma
         inv_sig_gamma  <- stats::rgamma(1, a_gamma_n/2, b_gamma_n/2)
         sig2_gamma <- 1 / inv_sig_gamma
@@ -370,42 +401,50 @@ run.Gibbs.fast <- function(ylist, countslist, X,
         
         ## experts' estimation 
       for(ell in 1:numclust){
-
-        ## sample beta (including the intercept) jointly
-        SX.ell <- XTX0_gg + Reduce('+', Map(`*`, XtXtTp, mt.ell[ell,]))
-        inv.SX.ell <- Rfast::spdinv(SX.ell) ## (p+1) x (p+1)
-
-        Sy.ell <- parallel::mcmapply(function(yy,zz,ww){
-          Rfast::Crossprod(as.matrix(ww[zz==ell]),
-                           yy[zz==ell,,drop=FALSE])},
-          ww = W.list, yy = ylist, zz = Z.list, SIMPLIFY = TRUE,
-          mc.cores = n.cores)
-        if(dimdat == 1){
-          Sxy.ell <-  Xp %*% as.matrix(Sy.ell)  ## (p+1) x 1
-        } else {
-          Sxy.ell <-  Rfast::Tcrossprod(Xp, Sy.ell)  ## (p+1) x d
-        }
-        beta.ell[,,ell] <- rmatnorm.fast(M = crossprod(Sxy.ell,inv.SX.ell), 
-                                         U = Sig.ell[,,ell], 
-                                         V = inv.SX.ell)
+          ## sample beta (including the intercept) jointly
+          if(m.ell[ell]>0){
+              SX.ell <- XTX0_gg + Reduce('+', Map(`*`, XtXtTp, mt.ell[ell,]))  
+              inv.SX.ell <- Rfast::spdinv(SX.ell) ## (p+1) x (p+1)
+              Sy.ell <- parallel::mcmapply(function(yy,zz,ww){
+                  Rfast::Crossprod(as.matrix(ww[zz==ell]),
+                                   yy[zz==ell,,drop=FALSE])},
+                  ww = W.list, yy = ylist, zz = Z.list, SIMPLIFY = TRUE,
+                  mc.cores = n.cores)
+              if(dimdat == 1){
+                  Sxy.ell <-  Xp %*% as.matrix(Sy.ell)  ## (p+1) x 1
+              } else {
+                  Sxy.ell <-  Rfast::Tcrossprod(Xp, Sy.ell)  ## (p+1) x d
+              }
+              beta.ell[,,ell] <- rmatnorm.fast(M = crossprod(Sxy.ell,inv.SX.ell), 
+                                               U = Sig.ell[,,ell], 
+                                               V = inv.SX.ell)
+              sse <- parallel::mcmapply(function(ww,xx,yy,zz) {
+                  wcrossprod.fast(Rfast::eachrow(as.matrix(yy[zz==ell,,drop=FALSE]),
+                                                 beta.ell[,,ell]%*%xx, '-'),
+                                  ww[zz==ell], weighting = TRUE)},
+                  xx = Xp.list, yy = ylist, zz=Z.list, ww = W.sq.list, 
+                  SIMPLIFY = FALSE,
+                  mc.cores = n.cores) 
+              if(dimdat == 1) Sn.ell = sum(unlist(sse))
+              if(dimdat > 1) {
+                  Sn.ell <- Reduce('+', sse[sapply(sse,length)>0] )
+                  if(! isSymmetric(Sn.ell)){ ## check symmetry
+                      Sn.ell <- (Sn.ell+t(Sn.ell))/2 
+                  } 
+              }
+              Sig.ell[,,ell] <- matrixsampling::rinvwishart(1, nu0 + m.ell[ell], 
+                                                            S0 + Sn.ell , checkSymmetry=FALSE )[,,1]
+          }else{
+              ## browser()
+              ## no particles allocated, empty class-> no data, sample from the prior 
+              beta.ell[,,ell] <- cbind(runif(dimdat)*Cbox[ , 2], 
+                                       rmatnorm.fast(M = matrix(0,nrow = dimdat, ncol=p), 
+                                                     U = Sig.ell[,,ell], 
+                                                     V = inv.XTX_gg) )
+              Sig.ell[,,ell] <- matrixsampling::rinvwishart(1,nu0,S0)[,,1]
+          } 
+      }
         
-        sse <- parallel::mcmapply(function(ww,xx,yy,zz) {
-          wcrossprod.fast(Rfast::eachrow(as.matrix(yy[zz==ell,,drop=FALSE]),
-                                         beta.ell[,,ell]%*%xx, '-'),
-                          ww[zz==ell], weighting = TRUE)},
-          xx = Xp.list, yy = ylist, zz=Z.list, ww = W.sq.list, 
-          SIMPLIFY = FALSE,
-          mc.cores = n.cores) 
-        if(dimdat == 1) Sn.ell = sum(unlist(sse))
-        if(dimdat > 1) {
-            Sn.ell <- Reduce('+',sse[sapply(sse,length)>0])
-            if(! isSymmetric(Sn.ell)){ ## check symmetry
-                Sn.ell <- (Sn.ell+t(Sn.ell))/2 
-            } 
-        }
-        Sig.ell[,,ell] <- matrixsampling::rinvwishart(1, nu0 + m.ell[ell], 
-                                                      S0 + Sn.ell , checkSymmetry=FALSE )[,,1]
-        }
         
       ## collecting posterior samples 
       if(jj > Nburn){
@@ -435,20 +474,20 @@ run.Gibbs.fast <- function(ylist, countslist, X,
     print("time cost per iteration, in seconds") 
     print((proc.time()-ptm)/(Nburn+Nmc - tt.impute))
   }
-        last.imputed <- list(last.ylist = ylist,
-                             last.Z.list = Z.list)
-        last.para <- list(last.gamma = gamma.ell,
-                          last.beta = beta.ell,
-                          last.Sigma = Sig.ell,
-                          last.sig2_gamma = sig2_gamma) 
+    last.imputed <- list(last.ylist = ylist,
+                         last.Z.list = Z.list)
+    last.para <- list(last.gamma = gamma.ell,
+                      last.beta = beta.ell,
+                      last.Sigma = Sig.ell,
+                      last.sig2_gamma = sig2_gamma) 
 
         
-        if(is.null(Cbox)){
-            pos.imputed.Y = NULL
-            censorship.info <- NULL 
-        } else {
-            pos.imputed.Y = do.call(rbind, imputed.ylist)
-        }
+    if(is.null(Cbox)){
+        pos.imputed.Y = NULL
+        censorship.info <- NULL 
+    } else {
+        pos.imputed.Y = do.call(rbind, imputed.ylist)
+    }
         ret <- list( 
             burn.beta = burn.beta,
             burn.Sigma = burn.Sigma,

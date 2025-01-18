@@ -22,6 +22,8 @@ run.Gibbs.fast(
   verbose = FALSE,
   last.imputed = NULL,
   last.para = NULL,
+  save.in.prog = FALSE,
+  save.data = TRUE,
   modified_g_prior = FALSE,
   n.cores = 1
 )
