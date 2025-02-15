@@ -450,7 +450,7 @@ run.Gibbs.fast <- function(ylist, countslist, X,
           }else{
               ## browser()
               ## no particles allocated, empty class-> no data, sample from the prior 
-              beta.ell[,,ell] <- cbind(runif(dimdat)*Cbox[ , 2], 
+              beta.ell[,,ell] <- cbind((2* runif(dimdat)-1)*1e3, 
                                        rmatnorm.fast(M = matrix(0,nrow = dimdat, ncol=p), 
                                                      U = Sig.ell[,,ell], 
                                                      V = inv.XTX_gg) )
