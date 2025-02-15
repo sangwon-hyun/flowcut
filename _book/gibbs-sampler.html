@@ -12,7 +12,7 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="5 Gibbs sampler | Creating the flowcut R package">
 <meta name="author" content="Sheng Jiang, Sangwon Hyun">
-<meta name="date" content="2025-01-18">
+<meta name="date" content="2025-02-15">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -364,13 +364,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb32-200"><a href="gibbs-sampler.html#cb32-200" tabindex="-1"></a>      Sig.ell <span class="ot">&lt;-</span> matrixsampling<span class="sc">::</span><span class="fu">rinvwishart</span>(numclust, nu0, S0 ) <span class="do">## %&gt;% as.matrix()</span></span>
 <span id="cb32-201"><a href="gibbs-sampler.html#cb32-201" tabindex="-1"></a>      beta.ell <span class="ot">&lt;-</span>  <span class="fu">array</span>(<span class="dv">0</span>, <span class="fu">c</span>(dimdat,p<span class="sc">+</span><span class="dv">1</span>,numclust))</span>
 <span id="cb32-202"><a href="gibbs-sampler.html#cb32-202" tabindex="-1"></a>      <span class="cf">for</span>(ell <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>numclust){</span>
-<span id="cb32-203"><a href="gibbs-sampler.html#cb32-203" tabindex="-1"></a>          beta.ell[,,ell] <span class="ot">&lt;-</span> <span class="fu">cbind</span>(<span class="fu">runif</span>(dimdat)<span class="sc">*</span>Cbox[ , <span class="dv">2</span>]<span class="sc">*</span><span class="fl">1.5</span> <span class="sc">-</span> <span class="dv">1</span>, </span>
+<span id="cb32-203"><a href="gibbs-sampler.html#cb32-203" tabindex="-1"></a>          beta.ell[,,ell] <span class="ot">&lt;-</span> <span class="fu">cbind</span>( (<span class="dv">2</span><span class="sc">*</span> <span class="fu">runif</span>(dimdat)<span class="sc">-</span><span class="dv">1</span>)<span class="sc">*</span><span class="fl">1e3</span>, </span>
 <span id="cb32-204"><a href="gibbs-sampler.html#cb32-204" tabindex="-1"></a>                                   <a href="helpers-functions.html#rmatnorm.fast">rmatnorm.fast</a>(<span class="at">M =</span> <span class="fu">matrix</span>(<span class="dv">0</span>,<span class="at">nrow =</span> dimdat, <span class="at">ncol=</span>p), </span>
 <span id="cb32-205"><a href="gibbs-sampler.html#cb32-205" tabindex="-1"></a>                                                 <span class="at">U =</span> Sig.ell[,,ell], </span>
 <span id="cb32-206"><a href="gibbs-sampler.html#cb32-206" tabindex="-1"></a>                                                 <span class="at">V =</span> inv.XTX_gg)) </span>
 <span id="cb32-207"><a href="gibbs-sampler.html#cb32-207" tabindex="-1"></a>      } </span>
 <span id="cb32-208"><a href="gibbs-sampler.html#cb32-208" tabindex="-1"></a>      sig2_gamma <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span>stats<span class="sc">::</span><span class="fu">rgamma</span>(<span class="dv">1</span>, a_gamma<span class="sc">/</span><span class="dv">2</span>, b_gamma<span class="sc">/</span><span class="dv">2</span>)</span>
-<span id="cb32-209"><a href="gibbs-sampler.html#cb32-209" tabindex="-1"></a>      gamma.ell <span class="ot">&lt;-</span> <span class="fu">cbind</span>((<span class="fu">runif</span>(numclust <span class="sc">-</span> <span class="dv">1</span>)<span class="sc">-</span><span class="fl">0.5</span>)<span class="sc">*</span>Cbox[ , <span class="dv">2</span>]<span class="sc">*</span><span class="dv">2</span>, </span>
+<span id="cb32-209"><a href="gibbs-sampler.html#cb32-209" tabindex="-1"></a>      gamma.ell <span class="ot">&lt;-</span> <span class="fu">cbind</span>( (<span class="dv">2</span><span class="sc">*</span> <span class="fu">runif</span>(dimdat)<span class="sc">-</span><span class="dv">1</span>)<span class="sc">*</span><span class="fl">1e3</span>, </span>
 <span id="cb32-210"><a href="gibbs-sampler.html#cb32-210" tabindex="-1"></a>                         Rfast<span class="sc">::</span><span class="fu">matrnorm</span>(numclust<span class="dv">-1</span>,p) <span class="sc">%*%</span> Rfast<span class="sc">::</span><span class="fu">cholesky</span>(inv.XTX) <span class="sc">*</span> <span class="fu">sqrt</span>(sig2_gamma)) <span class="sc">%&gt;%</span> <span class="fu">t</span>() </span>
 <span id="cb32-211"><a href="gibbs-sampler.html#cb32-211" tabindex="-1"></a>  }</span>
 <span id="cb32-212"><a href="gibbs-sampler.html#cb32-212" tabindex="-1"></a>    inv_sig_gamma <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">/</span> sig2_gamma</span>

@@ -202,13 +202,13 @@ run.Gibbs.fast <- function(ylist, countslist, X,
       Sig.ell <- matrixsampling::rinvwishart(numclust, nu0, S0 ) ## %>% as.matrix()
       beta.ell <-  array(0, c(dimdat,p+1,numclust))
       for(ell in 1:numclust){
-          beta.ell[,,ell] <- cbind(runif(dimdat)*Cbox[ , 2]*1.5 - 1, 
+          beta.ell[,,ell] <- cbind( (2* runif(dimdat)-1)*1e3, 
                                    rmatnorm.fast(M = matrix(0,nrow = dimdat, ncol=p), 
                                                  U = Sig.ell[,,ell], 
                                                  V = inv.XTX_gg)) 
       } 
       sig2_gamma <- 1/stats::rgamma(1, a_gamma/2, b_gamma/2)
-      gamma.ell <- cbind((runif(numclust - 1)-0.5)*Cbox[ , 2]*2, 
+      gamma.ell <- cbind( (2* runif(dimdat)-1)*1e3, 
                          Rfast::matrnorm(numclust-1,p) %*% Rfast::cholesky(inv.XTX) * sqrt(sig2_gamma)) %>% t() 
   }
     inv_sig_gamma <- 1 / sig2_gamma
